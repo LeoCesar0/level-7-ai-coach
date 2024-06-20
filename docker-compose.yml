@@ -1,0 +1,29 @@
+version: '3.8'
+
+x-common-env: &common-env
+  ENVIRONMENT: "development"
+  NODE_ENV: "development"
+  BACKEND_HOST: "${BACKEND_HOST:-}"
+  BACKEND_PORT: "${BACKEND_PORT:-8000}"
+  FRONTEND_PORT: "${FRONTEND_PORT:-}"
+  FRONTEND_API_URL: "${FRONTEND_API_URL}"
+
+services:
+  backend:
+    restart: always
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "${DOCKER_BACKEND_PORT}:8000"
+    environment:
+      <<: *common-env
+  frontend:
+    restart: always
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "${DOCKER_FRONTEND_PORT}:3000"
+    environment:
+      <<: *common-env
