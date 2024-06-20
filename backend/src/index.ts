@@ -1,12 +1,12 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 
-const port = Number(process.env.PORT || 8000);
+const port = Number(process.env.BACKEND_PORT || 8000);
 
-const app = new Hono();
+const app = new Hono().basePath("/api");
 
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
+app.get("/", (ctx) => {
+  return ctx.text("Hello Hono 2!");
 });
 
 console.log(`Server is running on port ${port}`);
