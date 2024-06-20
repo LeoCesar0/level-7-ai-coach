@@ -17,7 +17,8 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
-    "build": "pkgroll"
+    "build": "pkgroll",
+    "test": "jest"
   },
   "dependencies": {
     "@hono/node-server": "^1.11.4",
