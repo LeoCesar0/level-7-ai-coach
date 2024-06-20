@@ -5,7 +5,7 @@
     "moduleResolution": "Bundler",
     "strict": true,
     "skipLibCheck": true,
-    "types": ["node"],
+    "types": ["node", "jest"],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
     "baseUrl": ".",
@@ -14,5 +14,7 @@
       "@routes/*": ["src/routes/*"],
       "@tests/*": ["tests/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": ["./src/**/*", "./src/**/*.ts", "**/*.ts"]
 }
