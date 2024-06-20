@@ -8,13 +8,15 @@
     "types": ["node", "jest"],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    "baseUrl": ".",
-    "paths": {
-      "@types/*": ["src/types/*"],
-      "@routes/*": ["src/routes/*"],
-      "@tests/*": ["tests/*"]
-    }
+    // "baseUrl": ".",
+    // "paths": {
+    //   "@/*": ["src/*"],
+    //   "@types/*": ["src/types/*"],
+    //   "@routes/*": ["src/routes/*"],
+    //   "@tests/*": ["tests/*"]
+    // },
+    "esModuleInterop": true
   },
   "exclude": ["node_modules", "dist"],
-  "include": ["./src/**/*", "./src/**/*.ts", "**/*.ts"]
+  "include": ["./src/**/*", "./src/**/*.ts", "**/*.ts", "**/*.js"]
 }
