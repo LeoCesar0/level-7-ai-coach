@@ -2,22 +2,15 @@ import { HydratedDocument, model } from "mongoose";
 import { z } from "zod";
 import { zId, zUUID, zodSchema } from "@zodyac/zod-mongoose";
 import { zMongooseBase } from "../../../@schemas/mongoose";
+import { zRole } from "../../../@schemas/roles";
 
 export const zUserRaw = z.object({
+  uid: z.string().min(1),
   name: z.string().min(3).max(255),
-  active: z.boolean().default(false),
-  uid: z.string().min(1)
-  //   access: z.enum(["admin", "user"]).default("user"),
-  //   teamId: zId.describe("ObjectId:Company"),
-  //   address: z.object({
-  //     street: z.string(),
-  //     city: z.string(),
-  //     state: z.string(),
-  //   }),
-  //   tags: z.array(z.string()),
-  //   createdAt: z.date(),
-  //   updatedAt: z.date(),
-  //   birthday: z.date(),
+  active: z.boolean().default(true),
+  imageUrl: z.string().optional(),
+  access: zRole.default("user"),
+
 });
 
 export const zUser = zUserRaw.merge(zMongooseBase);
