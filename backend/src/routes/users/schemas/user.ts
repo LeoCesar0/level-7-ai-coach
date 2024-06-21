@@ -6,6 +6,7 @@ import { zMongooseBase } from "../../../@schemas/mongoose";
 export const zUserRaw = z.object({
   name: z.string().min(3).max(255),
   active: z.boolean().default(false),
+  uid: z.string().min(1)
   //   access: z.enum(["admin", "user"]).default("user"),
   //   teamId: zId.describe("ObjectId:Company"),
   //   address: z.object({

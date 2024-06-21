@@ -1,10 +1,7 @@
 import { Hono } from "hono";
-import { z } from "zod";
 import { zValidator } from "@hono/zod-validator";
-import { UserRaw, UserMongoSchema, zUserRaw, User } from "./schemas/user";
-import { HydratedDocument } from "mongoose";
-import { HTTPException } from "hono/http-exception";
-import { AppError, AppResponse } from "../../@schemas/app";
+import { UserMongoSchema, zUserRaw, User } from "./schemas/user";
+import { AppResponse } from "../../@schemas/app";
 
 const userRoute = new Hono()
   // --------------------------
@@ -13,10 +10,12 @@ const userRoute = new Hono()
   .get("/", async (ctx) => {
     const list = await UserMongoSchema.find();
 
-    return ctx.json({
+    const resData: AppResponse<User[]> = {
       data: list,
       error: null,
-    });
+    };
+
+    return ctx.json(resData);
   })
   // --------------------------
   // GET USER BY ID
@@ -24,26 +23,24 @@ const userRoute = new Hono()
   .get("/:id", async (ctx) => {
     const id = ctx.req.param("id");
 
-    return ctx.json({
-      message: "User id -->",
-      id,
-    });
+    const user = await UserMongoSchema.findById(id);
+
+    const resData: AppResponse<User> = {
+      data: user,
+      error: null,
+    };
+
+    return ctx.json(resData);
   })
   // --------------------------
   // CREATE USER
   // --------------------------
   .post("/", zValidator("json", zUserRaw), async (ctx) => {
-    console.log("HERE");
     const input = ctx.req.valid("json");
 
     const createdUserDoc = await UserMongoSchema.create(input);
 
     const createdUser = createdUserDoc.toObject();
-
-    // const createdUser = UserMongoSchema.create({
-    //   test: "a",
-    // });
-
     const resData: AppResponse<User> = {
       data: createdUser,
       error: null,
