@@ -36,6 +36,7 @@ const honoApp = new Hono().basePath("/api").onError((err, ctx) => {
     },
     data: null,
   };
+  console.log('error', error.error)
   return ctx.json(error);
 });
 

@@ -1,13 +1,12 @@
-import { z } from "zod";
+import { ZodError } from "zod";
 
-export const zAppError = z.object({
-  _isAppError: z.literal(true),
-  _message: z.string().optional(),
-  message: z.string(),
-  code: z.string().optional(),
-});
-
-export type AppError = z.infer<typeof zAppError>;
+export type AppError = {
+  _isAppError: true;
+  _zodError?: ZodError;
+  message: string;
+  code?: string | undefined;
+  _message?: string | undefined;
+};
 
 export type AppResponse<T = any> = {
   data: T | null;

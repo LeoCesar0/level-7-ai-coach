@@ -3,14 +3,18 @@ import { z } from "zod";
 import { zId, zUUID, zodSchema } from "@zodyac/zod-mongoose";
 import { zMongooseBase } from "../../../@schemas/mongoose";
 import { zRole } from "../../../@schemas/roles";
+import { EXCEPTIONS } from "../../../static/exceptions";
 
 export const zUserRaw = z.object({
-  uid: z.string().min(1),
-  name: z.string().min(3).max(255),
+  uid: z.string().min(1, { message: EXCEPTIONS.FIELD_REQUIRED("uid") }),
+  name: z
+    .string()
+    .min(1, { message: EXCEPTIONS.FIELD_REQUIRED("name") })
+    .max(255),
   active: z.boolean().default(true),
   imageUrl: z.string().optional(),
-  access: zRole.default("user"),
-
+  role: zRole.default("user"),
+  organizationId: zId.describe("ObjectId:Company"),
 });
 
 export const zUser = zUserRaw.merge(zMongooseBase);

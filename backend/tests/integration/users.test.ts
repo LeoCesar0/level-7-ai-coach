@@ -28,6 +28,8 @@ describe("users integration suite", () => {
       active: true,
       name: "Maria da Silva",
       uid: Date.now().toString(),
+      role: "user",
+      organizationId: "123123",
     };
     const res = await honoApp.request("/api/users", {
       method: "POST",
@@ -38,6 +40,13 @@ describe("users integration suite", () => {
     });
 
     const json: AppResponse<User> = await res.json();
+
+    // console.log('res', res)
+    console.log('json', json)
+
+    if(json.error){
+      console.log('', json.error)
+    }
 
     expect(res.status).toBe(200);
     expect(json.error).toBe(null);
@@ -64,9 +73,12 @@ describe("users integration suite", () => {
 
     const json: AppResponse<User> = await res.json();
 
+    const user = json.data;
+
     expect(res.status).toBe(200);
-    expect(json.data?.name).toBe(_createdUser.name);
-    expect(json.data?.uid).toBe(_createdUser.uid);
-    expect(json.data?._id).toBe(_createdUser._id);
+    expect(user?.name).toBe(_createdUser.name);
+    expect(user?.uid).toBe(_createdUser.uid);
+    expect(user?._id).toBe(_createdUser._id);
+    expect(user?.organizationId).toBeTruthy();
   });
 });
