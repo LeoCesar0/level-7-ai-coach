@@ -1,18 +1,17 @@
 import { Hono } from "hono";
-import { zValidator } from "@hono/zod-validator";
-import { UserMongoSchema, zUserRaw, User } from "./schemas/user";
+import { UserModel, zCreateUser, User } from "./schemas/user";
 import { AppResponse } from "../../@schemas/app";
-import { getZodErrorMessage } from "../../helpers/getZodErrorMessage";
 import { routeValidator } from "../../helpers/routeValidator";
 import { z } from "zod";
 import { EXCEPTIONS } from "../../static/exceptions";
+import { OrganizationModel } from "../organizations/schemas/organization";
 
 const userRoute = new Hono()
   // --------------------------
   // LIST USERS
   // --------------------------
   .get("/", async (ctx) => {
-    const list = await UserMongoSchema.find();
+    const list = await UserModel.find();
 
     const resData: AppResponse<User[]> = {
       data: list,
@@ -24,33 +23,33 @@ const userRoute = new Hono()
   // --------------------------
   // GET USER BY ID
   // --------------------------
-  .get(
-    "/:id",
-    routeValidator({
-      schema: z.string({ required_error: EXCEPTIONS.FIELD_REQUIRED("id") }),
-    }),
-    async (ctx) => {
-      const id = ctx.req.param("id");
+  .get("/:id", async (ctx) => {
+    const id = ctx.req.param("id");
 
-      const user = await UserMongoSchema.findById(id);
+    const user = await UserModel.findById(id);
 
-      const resData: AppResponse<User> = {
-        data: user,
-        error: null,
-      };
+    const resData: AppResponse<User> = {
+      data: user,
+      error: null,
+    };
 
-      return ctx.json(resData);
-    }
-  )
+    return ctx.json(resData);
+  })
   // --------------------------
   // CREATE USER
   // --------------------------
-  .post("/", routeValidator({ schema: zUserRaw }), async (ctx) => {
+  .post("/", routeValidator({ schema: zCreateUser }), async (ctx) => {
     const input = ctx.req.valid("json");
 
-    const createdUserDoc = await UserMongoSchema.create(input);
+    const createdUserDoc = await UserModel.create(input);
 
     const createdUser = createdUserDoc.toObject();
+
+    await OrganizationModel.updateOne(
+      { _id: createdUser.organization },
+      { $push: { users: createdUser._id } }
+    );
+
     const resData: AppResponse<User> = {
       data: createdUser,
       error: null,

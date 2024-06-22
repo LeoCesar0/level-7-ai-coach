@@ -1,6 +1,6 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import userRoute from "./routes/users";
+import userRoute from "./routes/users/route";
 import dotenv from "dotenv";
 import { HTTPException } from "hono/http-exception";
 import { AppResponse } from "./@schemas/app";
@@ -13,18 +13,14 @@ dotenv.config({ path: "../.env" });
 const port = Number(process.env.BACKEND_PORT || 8000);
 
 if (!process.env.MONGO_DB_CONNECTION_STRING) {
-  console.error("MONGO_DB_CONNECTION_STRING is not defined");
+  console.error("Mongo connection string is not defined");
   process.exit(1);
 }
 
 const honoApp = new Hono().basePath("/api").onError((err, ctx) => {
-  console.log("ON ERROR");
   if (err instanceof HTTPException) {
     console.log("Error is HTTPException");
-    // Get the custom response
     const httpError = err.getResponse();
-    console.log("errorResponse", httpError);
-    // return errorResponse;
     ctx.status(httpError.status as StatusCode);
   }
 
@@ -36,7 +32,6 @@ const honoApp = new Hono().basePath("/api").onError((err, ctx) => {
     },
     data: null,
   };
-  console.log('error', error.error)
   return ctx.json(error);
 });
 

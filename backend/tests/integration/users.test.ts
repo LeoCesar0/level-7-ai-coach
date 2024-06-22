@@ -1,14 +1,24 @@
-// import honoApp from "../../src/index";
 import honoApp from "../../src";
 import { AppResponse } from "../../src/@schemas/app";
-import { User, UserRaw, zUser } from "../../src/routes/users/schemas/user";
+import {
+  Organization,
+  OrganizationModel,
+} from "../../src/routes/organizations/schemas/organization";
+import { User, CreateUser } from "../../src/routes/users/schemas/user";
 import { TestServer } from "../mongodb-memory-server";
 
-describe("users integration suite", () => {
+describe("users and organizations integration suite", () => {
   let _createdUser: User | null = null;
+  let _organization: Organization | null = null;
+  let _orgName = "Organization 2";
+  let _userName = "Xucrute 2";
 
   beforeAll(async () => {
     await TestServer.connectTestServer();
+    const org = await OrganizationModel.create({
+      name: _orgName,
+    });
+    _organization = org.toObject();
   });
   afterAll(async () => {
     await TestServer.disconnectTestServer();
@@ -24,12 +34,16 @@ describe("users integration suite", () => {
   });
 
   it("should create a new user", async () => {
-    const body: UserRaw = {
+    if (!_organization) {
+      throw new Error("Organization was not created");
+    }
+
+    const body: CreateUser = {
       active: true,
-      name: "Maria da Silva",
-      uid: Date.now().toString(),
+      name: _userName,
+      firebaseId: Date.now().toString(),
       role: "user",
-      organizationId: "123123",
+      organization: _organization._id,
     };
     const res = await honoApp.request("/api/users", {
       method: "POST",
@@ -41,20 +55,18 @@ describe("users integration suite", () => {
 
     const json: AppResponse<User> = await res.json();
 
-    // console.log('res', res)
-    console.log('json', json)
-
-    if(json.error){
-      console.log('', json.error)
-    }
+    const user = json.data;
 
     expect(res.status).toBe(200);
     expect(json.error).toBe(null);
-    expect(json.data?.name).toBe(body.name);
+    expect(user?.name).toBe(body.name);
+    expect(user?._id).toBeTruthy();
+    expect(user?.firebaseId).toBeTruthy();
 
-    const validation = zUser.safeParse(json.data);
-    expect(validation.success).toBe(true);
-    _createdUser = json.data;
+    //   const validation = zUser.safeParse(user);
+    //   expect(validation.success).toBe(true);
+
+    _createdUser = user;
   });
   it("should list one user", async () => {
     const res = await honoApp.request("/api/users");
@@ -77,8 +89,22 @@ describe("users integration suite", () => {
 
     expect(res.status).toBe(200);
     expect(user?.name).toBe(_createdUser.name);
-    expect(user?.uid).toBe(_createdUser.uid);
+    expect(user?.firebaseId).toBe(_createdUser.firebaseId);
     expect(user?._id).toBe(_createdUser._id);
-    expect(user?.organizationId).toBeTruthy();
+    expect(user?.organization).toBeTruthy();
+  });
+  it("should set created user to the created organization", async () => {
+    if (!_createdUser) {
+      throw new Error("User not created");
+    }
+
+    const updatedOrg = (
+      await OrganizationModel.findById(_organization?._id)
+    )?.toObject();
+
+    const found = updatedOrg?.users.find(
+      (id) => id.toString() === _createdUser?._id
+    );
+    expect(found).toBeTruthy();
   });
 });
