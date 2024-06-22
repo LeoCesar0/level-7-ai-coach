@@ -1,13 +1,23 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import { ENV } from "../src/static/envs";
+import { MongooseServer } from "../src/lib/mongoose";
 
-// This will create an new instance of "MongoMemoryServer" and automatically start it
+type IConnectTestServer = {
+  CONNECT_REAL_SERVER?: boolean;
+};
 
 export class TestServer {
   static testServer: MongoMemoryServer | undefined;
 
-  static connectTestServer = async () => {
+  static connectTestServer = async (
+    props: IConnectTestServer | undefined = { CONNECT_REAL_SERVER: false }
+  ) => {
+    if (props.CONNECT_REAL_SERVER) {
+      await MongooseServer.connectServer();
+      return;
+    }
+
     if (process.env.NODE_ENV !== ENV.TEST) {
       return;
     }
