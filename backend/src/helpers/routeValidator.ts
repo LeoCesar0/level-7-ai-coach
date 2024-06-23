@@ -1,13 +1,13 @@
-import { ZodSchema } from "zod";
+import { ZodSchema, z } from "zod";
 import { AppResponse } from "../@schemas/app";
 import { getZodErrorMessage } from "./getZodErrorMessage";
 import { zValidator } from "@hono/zod-validator";
 
-export type IRouteValidator = {
-  schema: ZodSchema;
+export type IRouteValidator<T> = {
+  schema: ZodSchema<T>;
 };
 
-export const routeValidator = ({ schema }: IRouteValidator) => {
+export const routeValidator = <T>({ schema }: IRouteValidator<T>) => {
   return zValidator("json", schema, (result, ctx) => {
     if (!result.success) {
       const message = getZodErrorMessage({ error: result.error });
