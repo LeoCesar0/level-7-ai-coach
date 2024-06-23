@@ -31,6 +31,9 @@ export class MongooseServer {
     if (!connectionString?.endsWith("/")) {
       connectionString = connectionString + "/";
     }
+    const [p1] = connectionString.split("mongodb.net/");
+    connectionString = p1 + "mongodb.net/";
+
     connectionString = connectionString + `${env}`;
     const complement = process.env.MONGO_DB_CONNECTION_STRING_COMPLEMENT || "";
     connectionString = connectionString + complement;
