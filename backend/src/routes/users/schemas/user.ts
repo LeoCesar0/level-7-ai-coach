@@ -6,28 +6,39 @@ import { zRole } from "../../../@schemas/roles";
 import { EXCEPTIONS } from "../../../static/exceptions";
 import { ROLES_LIST } from "../../../static/roles";
 
-// export type User = z.infer<typeof zUser>;
+export type CreateUser = z.infer<typeof zCreateUser>;
+
+export type User = z.infer<typeof zUser> & {
+  firebaseId: string;
+};
+
+export type SignUp = z.infer<typeof zSignUp>;
 
 export const zCreateUser = z.object({
-  firebaseId: z
-    .string()
-    .min(1, { message: EXCEPTIONS.FIELD_REQUIRED("firebaseId") }),
   name: z
     .string()
     .min(1, { message: EXCEPTIONS.FIELD_REQUIRED("name") })
     .max(255),
+  email: z
+    .string()
+    .min(1, { message: EXCEPTIONS.FIELD_REQUIRED("email") })
+    .email(),
+  phone: z.string().optional(),
+  phoneCode: z.string().optional(),
   active: z.boolean().default(true),
   imageUrl: z.string().optional(),
   role: zRole.default("user"),
   organization: zId.describe("ObjectId:Organization"),
 });
 
+export const zSignUp = z.object({
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 6 characters long" }),
+  user: zCreateUser,
+});
+
 export const zUser = zCreateUser.merge(zMongoDocument);
-
-export type CreateUser = z.infer<typeof zCreateUser>;
-
-// export type User = InferSchemaType<typeof userSchema>;
-export type User = z.infer<typeof zUser>;
 
 export const userSchema = new Schema<User>(
   {
@@ -36,6 +47,10 @@ export const userSchema = new Schema<User>(
       required: true,
     },
     name: {
+      type: String,
+      required: true,
+    },
+    email: {
       type: String,
       required: true,
     },
@@ -55,6 +70,12 @@ export const userSchema = new Schema<User>(
       type: Schema.Types.ObjectId,
       required: true,
       ref: "Organization",
+    },
+    phone: {
+      type: String,
+    },
+    phoneCode: {
+      type: String,
     },
   },
   { timestamps: true }

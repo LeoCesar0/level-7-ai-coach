@@ -1,20 +1,22 @@
 import honoApp from "../../src";
 import { AppResponse } from "../../src/@schemas/app";
+import { slugify } from "../../src/helpers/slugify";
 import {
   Organization,
   OrganizationModel,
 } from "../../src/routes/organizations/schemas/organization";
-import { User, CreateUser } from "../../src/routes/users/schemas/user";
+import { User, CreateUser, SignUp } from "../../src/routes/users/schemas/user";
 import { TestServer } from "../mongodb-memory-server";
 
 describe("users and organizations integration suite", () => {
   let _createdUser: User | null = null;
   let _organization: Organization | null = null;
   let _orgName = "Organization 2";
-  let _userName = "Xucrute 2";
+  let _userName = "Xucrute " + Date.now();
+  let _userEmail = slugify(_userName) + "@test.com";
 
   beforeAll(async () => {
-    await TestServer.connectTestServer();
+    await TestServer.connectTestServer({ CONNECT_REAL_SERVER: true });
     const org = await OrganizationModel.create({
       name: _orgName,
     });
@@ -38,13 +40,27 @@ describe("users and organizations integration suite", () => {
       throw new Error("Organization was not created");
     }
 
-    const body: CreateUser = {
+    // const body: CreateUser = {
+    //   active: true,
+    //   name: _userName,
+    //   firebaseId: Date.now().toString(),
+    //   role: "user",
+    //   organization: _organization._id,
+    //   email: _userName + "-" + Date.now() + "@test.com",
+    // };
+
+    const userOnCreate: CreateUser = {
       active: true,
       name: _userName,
-      firebaseId: Date.now().toString(),
       role: "user",
       organization: _organization._id,
+      email: _userEmail,
     };
+    const body: SignUp = {
+      password: "123456789",
+      user: userOnCreate,
+    };
+
     const res = await honoApp.request("/api/users", {
       method: "POST",
       body: JSON.stringify(body),
@@ -57,9 +73,13 @@ describe("users and organizations integration suite", () => {
 
     const user = json.data;
 
+    if (json.error) {
+      console.log("Create error", json.error);
+    }
+
     expect(res.status).toBe(200);
     expect(json.error).toBe(null);
-    expect(user?.name).toBe(body.name);
+    expect(user?.name).toBe(userOnCreate.name);
     expect(user?._id).toBeTruthy();
     expect(user?.firebaseId).toBeTruthy();
 
