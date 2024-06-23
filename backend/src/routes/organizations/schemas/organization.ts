@@ -1,10 +1,12 @@
-import { HydratedDocument, InferSchemaType, Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 import { z } from "zod";
-import { zId, zUUID, zodSchema } from "@zodyac/zod-mongoose";
-import { MongoDocument, zMongoDocument } from "../../../@schemas/mongoose";
-import { zRole } from "../../../@schemas/roles";
+import { zId } from "@zodyac/zod-mongoose";
+import { zMongoDocument } from "../../../@schemas/mongoose";
 import { EXCEPTIONS } from "../../../static/exceptions";
-import { ROLES_LIST } from "../../../static/roles";
+
+export type CreateOrganization = z.infer<typeof zCreateOrganization>;
+
+export type Organization = z.infer<typeof zOrganization>;
 
 export const zCreateOrganization = z.object({
   name: z
@@ -17,10 +19,6 @@ export const zCreateOrganization = z.object({
 });
 
 export const zOrganization = zCreateOrganization.merge(zMongoDocument);
-
-export type CreateOrganization = z.infer<typeof zCreateOrganization>;
-
-export type Organization = z.infer<typeof zOrganization>;
 
 export const organizationSchema = new Schema<Organization>(
   {
