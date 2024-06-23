@@ -31,7 +31,7 @@ export class TestServer {
     const uri = this.testServer.getUri();
 
     await mongoose.connect(uri);
-    console.log("Connected to mongoDB memory server");
+    console.log("Connected to mongoDB test server");
   };
 
   static disconnectTestServer = async () => {
