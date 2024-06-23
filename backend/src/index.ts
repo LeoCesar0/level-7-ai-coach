@@ -7,6 +7,7 @@ import { AppResponse } from "./@schemas/app";
 import { StatusCode } from "hono/utils/http-status";
 import { ENV } from "./static/envs";
 import { MongooseServer } from "./lib/mongoose";
+import organizationsRoute from "./routes/organizations/route";
 
 dotenv.config({ path: "../.env" });
 
@@ -32,10 +33,12 @@ const honoApp = new Hono().basePath("/api").onError((err, ctx) => {
     },
     data: null,
   };
-  return ctx.json(error);
+  return ctx.json(error, 500);
 });
 
-const routes = honoApp.route("/users", userRoute);
+const routes = honoApp
+  .route("/users", userRoute)
+  .route("/organizations", organizationsRoute);
 
 export type ApiType = typeof routes;
 

@@ -9,7 +9,7 @@ import { routeValidator } from "../../helpers/routeValidator";
 import { z } from "zod";
 import { EXCEPTIONS } from "../../static/exceptions";
 
-const route = new Hono()
+const organizationsRoute = new Hono()
   // --------------------------
   // LIST
   // --------------------------
@@ -55,4 +55,4 @@ const route = new Hono()
     return ctx.json(resData, 200);
   });
 
-export default route;
+export default organizationsRoute;
