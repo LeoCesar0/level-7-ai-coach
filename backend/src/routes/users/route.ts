@@ -1,13 +1,12 @@
 import { Hono } from "hono";
-import { UserModel, User, zSignUp } from "./schemas/user";
+import { UserModel, IUser } from "./schemas/user";
 import { AppResponse } from "../../@schemas/app";
 import { routeValidator } from "../../middlewares/routeValidator";
 import { EXCEPTIONS } from "../../static/exceptions";
 import { firebaseAuth } from "../../lib/firebase";
-import {
-  authValidator,
-} from "../../middlewares/authValidator";
+import { authValidator } from "../../middlewares/authValidator";
 import { createAppUser } from "../../services/createAppUser";
+import { zSignUp } from "./schemas/signUpRoute";
 
 const userRoute = new Hono()
   // --------------------------
@@ -16,7 +15,7 @@ const userRoute = new Hono()
   .get("/", async (ctx) => {
     const list = await UserModel.find();
 
-    const resData: AppResponse<User[]> = {
+    const resData: AppResponse<IUser[]> = {
       data: list,
       error: null,
     };
@@ -31,7 +30,7 @@ const userRoute = new Hono()
 
     const user = await UserModel.findById(id);
 
-    const resData: AppResponse<User> = {
+    const resData: AppResponse<IUser> = {
       data: user,
       error: null,
     };
@@ -43,18 +42,11 @@ const userRoute = new Hono()
   // --------------------------
   .post(
     "/",
-    // bearerAuth({
-    //   verifyToken: async (token, ctx) => {
-    //     console.log("token", token);
-    //     return token === "123";
-    //   },
-    //   prefix: "Bearer",
-    // }),
     routeValidator({ schema: zSignUp }),
     authValidator({ permissionsTo: ["admin"] }),
     async (ctx) => {
       const inputs = ctx.req.valid("json");
-      let resData: AppResponse<User>;
+      let resData: AppResponse<IUser>;
 
       const firebaseUserExists = await firebaseAuth
         .getUserByEmail(inputs.user.email)

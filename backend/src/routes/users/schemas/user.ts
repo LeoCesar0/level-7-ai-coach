@@ -1,46 +1,16 @@
-import { HydratedDocument, InferSchemaType, Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 import { z } from "zod";
-import { zId, zUUID, zodSchema } from "@zodyac/zod-mongoose";
-import { MongoDocument, zMongoDocument } from "../../../@schemas/mongoose";
-import { zRole } from "../../../@schemas/roles";
-import { EXCEPTIONS } from "../../../static/exceptions";
+import { zMongoDocument } from "../../../@schemas/mongoose";
 import { ROLES_LIST } from "../../../static/roles";
+import { zCreateUser } from "./createUser";
 
-export type CreateUser = z.infer<typeof zCreateUser>;
-
-export type User = z.infer<typeof zUser> & {
+export type IUser = z.infer<typeof zUser> & {
   firebaseId: string;
 };
 
-export type SignUp = z.input<typeof zSignUp>;
-
-export const zCreateUser = z.object({
-  name: z
-    .string()
-    .min(1, { message: EXCEPTIONS.FIELD_REQUIRED("name") })
-    .max(255),
-  email: z
-    .string()
-    .min(1, { message: EXCEPTIONS.FIELD_REQUIRED("email") })
-    .email(),
-  phone: z.string().optional(),
-  phoneCode: z.string().optional(),
-  active: z.boolean().default(true),
-  imageUrl: z.string().optional(),
-  role: zRole.default("user"),
-  organization: zId.describe("ObjectId:Organization"),
-});
-
-export const zSignUp = z.object({
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 6 characters long" }),
-  user: zCreateUser,
-});
-
 export const zUser = zCreateUser.merge(zMongoDocument);
 
-export const userSchema = new Schema<User>(
+export const userSchema = new Schema<IUser>(
   {
     firebaseId: {
       type: String,
@@ -81,7 +51,4 @@ export const userSchema = new Schema<User>(
   { timestamps: true }
 );
 
-// export const zUser = zCreateUser.merge(zMongoDocument);
-
-// export const UserModel = model<UserRaw>("User", zodSchema(zUserRaw));
-export const UserModel = model<User>("User", userSchema);
+export const UserModel = model<IUser>("User", userSchema);

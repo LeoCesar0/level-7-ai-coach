@@ -6,7 +6,7 @@ import {
   Organization,
   OrganizationModel,
 } from "../src/routes/organizations/schemas/organization";
-import { User, UserModel } from "../src/routes/users/schemas/user";
+import { IUser, UserModel } from "../src/routes/users/schemas/user";
 import { createAppUser } from "../src/services/createAppUser";
 
 type IConnectTestServer = {
@@ -16,9 +16,9 @@ type IConnectTestServer = {
 export type SeedResult = {
   organizationMaster: Organization;
   organization1: Organization;
-  admin: User;
-  normalUser: User;
-  coachUser: User;
+  admin: IUser;
+  normalUser: IUser;
+  coachUser: IUser;
   adminTestToken: string;
   normalUserTestToken: string;
   coachUserTestToken: string;

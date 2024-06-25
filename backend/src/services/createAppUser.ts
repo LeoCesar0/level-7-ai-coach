@@ -1,5 +1,6 @@
 import { OrganizationModel } from "../routes/organizations/schemas/organization";
-import { SignUp, UserModel } from "../routes/users/schemas/user";
+import { ISignUpRoute } from "../routes/users/schemas/signUpRoute";
+import { UserModel } from "../routes/users/schemas/user";
 import { ENV } from "../static/envs";
 import { createFirebaseUser } from "./createFirebaseUser";
 
@@ -7,7 +8,7 @@ export const createAppUser = async ({
   inputs,
   withFirebaseUser,
 }: {
-  inputs: SignUp;
+  inputs: ISignUpRoute;
   withFirebaseUser: boolean;
 }) => {
   let uid = "TEST_FIREBASE_UID";

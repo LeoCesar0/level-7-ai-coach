@@ -5,7 +5,9 @@ import {
   Organization,
   OrganizationModel,
 } from "../../src/routes/organizations/schemas/organization";
-import { User, CreateUser, SignUp } from "../../src/routes/users/schemas/user";
+import { ICreateUser } from "../../src/routes/users/schemas/createUser";
+import { ISignUpRoute } from "../../src/routes/users/schemas/signUpRoute";
+import { IUser } from "../../src/routes/users/schemas/user";
 import { EXCEPTIONS } from "../../src/static/exceptions";
 import { SeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";
@@ -13,7 +15,7 @@ import sinon from "sinon";
 describe("users and organizations integration suite", () => {
   let _organization: Organization;
 
-  let _createdUser: User | null = null;
+  let _createdUser: IUser | null = null;
   let _userName = "Xucrute " + Date.now();
   let _userEmail = slugify(_userName) + "@test.com";
 
@@ -21,7 +23,7 @@ describe("users and organizations integration suite", () => {
 
   let stub: sinon.SinonStub<any>;
 
-  const stubGetUserFromToken = async (resolves: User) => {
+  const stubGetUserFromToken = async (resolves: IUser) => {
     const module = (await import("../../src/services/getUserFromToken"))
       .getUserFromToken;
     stub = sinon.stub(module, "exec");
@@ -59,14 +61,14 @@ describe("users and organizations integration suite", () => {
 
     stubGetUserFromToken(_seed.admin);
 
-    const userOnCreate: CreateUser = {
+    const userOnCreate: ICreateUser = {
       active: true,
       name: _userName,
       role: "user",
       organization: _organization._id,
       email: _userEmail,
     };
-    const body: SignUp = {
+    const body: ISignUpRoute = {
       password: "123456789",
       user: userOnCreate,
     };
@@ -84,7 +86,7 @@ describe("users and organizations integration suite", () => {
       },
     });
 
-    const json: AppResponse<User> = await res.json();
+    const json: AppResponse<IUser> = await res.json();
 
     const user = json.data;
 
@@ -112,7 +114,7 @@ describe("users and organizations integration suite", () => {
 
     const res = await honoApp.request("/api/users");
 
-    const json: AppResponse<User[]> = await res.json();
+    const json: AppResponse<IUser[]> = await res.json();
 
     const found = json.data?.find((item) => item._id === _createdUser?._id);
 
@@ -129,7 +131,7 @@ describe("users and organizations integration suite", () => {
 
     const res = await honoApp.request(`/api/users/${_createdUser._id}`);
 
-    const json: AppResponse<User> = await res.json();
+    const json: AppResponse<IUser> = await res.json();
 
     const user = json.data;
 
@@ -168,14 +170,14 @@ describe("users and organizations integration suite", () => {
 
     stubGetUserFromToken(_seed.admin);
 
-    const userOnCreate: CreateUser = {
+    const userOnCreate: ICreateUser = {
       active: true,
       name: _userName,
       role: "user",
       organization: _organization!._id,
       email: _createdUser.email,
     };
-    const body: SignUp = {
+    const body: ISignUpRoute = {
       password: "123456789",
       user: userOnCreate,
     };
@@ -189,7 +191,7 @@ describe("users and organizations integration suite", () => {
       },
     });
 
-    const json: AppResponse<User> = await res.json();
+    const json: AppResponse<IUser> = await res.json();
 
     expect(res.status).toBe(400);
     expect(json.error?.message).toBe(EXCEPTIONS.USER_ALREADY_EXISTS);
