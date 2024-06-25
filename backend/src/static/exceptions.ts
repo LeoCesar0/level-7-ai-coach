@@ -3,4 +3,5 @@ export const EXCEPTIONS = {
   FIELD_REQUIRED: (field: string) => `${field} is required`,
   USER_ALREADY_EXISTS: "User already exists",
   NOT_AUTHORIZED: "User not authorized",
+  SERVER_ERROR: "Unexpected Error",
 };

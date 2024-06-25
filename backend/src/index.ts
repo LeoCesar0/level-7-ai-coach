@@ -9,6 +9,7 @@ import { ENV } from "./static/envs";
 import { MongooseServer } from "./lib/mongoose";
 import organizationsRoute from "./routes/organizations/route";
 import { EXCEPTIONS } from "./static/exceptions";
+import { onAppError } from "./handlers/onAppError";
 
 dotenv.config({ path: "../.env" });
 
@@ -19,38 +20,7 @@ if (!process.env.MONGO_DB_CONNECTION_STRING) {
   process.exit(1);
 }
 
-const honoApp = new Hono().basePath("/api").onError(async (err, ctx) => {
-  let message = "Unexpected Error";
-  let status: StatusCode = 500;
-
-  if (err instanceof HTTPException) {
-    const httpError = err.getResponse();
-    console.log("Error is HTTPException");
-    console.log("httpError.status", httpError.status);
-    console.log("httpError.res", httpError);
-    status = httpError.status as StatusCode;
-    console.log("err.message", err.message);
-    if (status === 401) {
-      message = EXCEPTIONS.NOT_AUTHORIZED;
-    }
-    const text = await httpError.text();
-    const statusText = httpError.statusText;
-    console.log("httpError.statusText", statusText);
-    console.log("httpError.text", text);
-    console.log("httpError.body", httpError.body);
-    ctx.status(status);
-  }
-
-  const error: AppResponse = {
-    error: {
-      message: message,
-      _message: err.message || "",
-      _isAppError: true,
-    },
-    data: null,
-  };
-  return ctx.json(error, status);
-});
+const honoApp = new Hono().basePath("/api").onError(onAppError);
 
 const routes = honoApp
   .route("/users", userRoute)
