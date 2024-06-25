@@ -9,7 +9,7 @@ type TestGlobalConfig = {
 };
 
 declare global {
-  var globalThis.TEST_CONFIG: TestGlobalConfig;
+  var globalThis.TEST_GLOBALS: TestGlobalConfig;
 }
 
 export {};

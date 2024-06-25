@@ -6,47 +6,60 @@ import {
   OrganizationModel,
 } from "../../src/routes/organizations/schemas/organization";
 import { User, CreateUser, SignUp } from "../../src/routes/users/schemas/user";
+import * as getUserFromTokenFile from "../../src/services/getUserFromToken";
 import { EXCEPTIONS } from "../../src/static/exceptions";
-import { TestServer } from "../mongodb-memory-server";
+import { SeedResult, TestServer } from "../mongodb-memory-server";
+import { jest } from "@jest/globals";
+import sinon from "sinon";
 
 describe("users and organizations integration suite", () => {
+  let _organization: Organization;
+
   let _createdUser: User | null = null;
-  let _organization: Organization | null = null;
-  let _orgName = "Organization 2";
   let _userName = "Xucrute " + Date.now();
   let _userEmail = slugify(_userName) + "@test.com";
 
+  let _seed: SeedResult;
+
+  let stub: sinon.SinonStub<any>;
+
+  const stubGetUserFromToken = async (resolves: User) => {
+    const module = (await import("../../src/services/getUserFromToken"))
+      .getUserFromToken;
+    stub = sinon.stub(module, "exec");
+    stub.resolves(resolves);
+  };
+
   beforeAll(async () => {
     await TestServer.connectTestServer();
-    const org = await OrganizationModel.create({
-      name: _orgName,
-    });
-    _organization = org.toObject();
+    _seed = (await TestServer.seedTestServer())!;
+
+    _organization = _seed.organization1;
   });
+
   afterAll(async () => {
     await TestServer.disconnectTestServer();
+    stub.restore();
   });
 
-  // --------------------------
-  // LIST EMPTY
-  // --------------------------
-
-  it("should list empty users", async () => {
-    const res = await honoApp.request("/api/users");
-
-    const json = await res.json();
-
-    expect(res.status).toBe(200);
-    expect(json.data).toStrictEqual([]);
+  afterEach(() => {
+    if (stub) {
+      stub.restore();
+    }
   });
+
   // --------------------------
   // CREATE NEW USER
   // --------------------------
-
-  it("should create a new user", async () => {
+  it("should create a new user, by admin", async () => {
     if (!_organization) {
       throw new Error("Organization was not created");
     }
+    // --------------------------
+    // ARRANGE
+    // --------------------------
+
+    stubGetUserFromToken(_seed.admin);
 
     const userOnCreate: CreateUser = {
       active: true,
@@ -59,6 +72,10 @@ describe("users and organizations integration suite", () => {
       password: "123456789",
       user: userOnCreate,
     };
+
+    // --------------------------
+    // ACT
+    // --------------------------
 
     const res = await honoApp.request("/api/users", {
       method: "POST",
@@ -77,6 +94,10 @@ describe("users and organizations integration suite", () => {
       console.log("Create error", json.error);
     }
 
+    // --------------------------
+    // ASSERT
+    // --------------------------
+
     expect(res.status).toBe(200);
     expect(json.error).toBe(null);
     expect(user?.name).toBe(userOnCreate.name);
@@ -88,13 +109,17 @@ describe("users and organizations integration suite", () => {
   // --------------------------
   // LIST USER
   // --------------------------
-  it("should list one user", async () => {
+  it("should list and find created user", async () => {
+    stubGetUserFromToken(_seed.admin);
+
     const res = await honoApp.request("/api/users");
 
-    const json = await res.json();
+    const json: AppResponse<User[]> = await res.json();
+
+    const found = json.data?.find((item) => item._id === _createdUser?._id);
 
     expect(res.status).toBe(200);
-    expect(json.data).toHaveLength(1);
+    expect(found).toBeTruthy();
   });
   // --------------------------
   // GET USER
@@ -123,10 +148,12 @@ describe("users and organizations integration suite", () => {
     if (!_createdUser) {
       throw new Error("User not created");
     }
+    if (!_organization) {
+      throw new Error("Organization not created");
+    }
+    const updatedOrgRes = await OrganizationModel.findById(_organization?._id);
 
-    const updatedOrg = (
-      await OrganizationModel.findById(_organization?._id)
-    )?.toObject();
+    const updatedOrg = updatedOrgRes?.toObject();
 
     const found = updatedOrg?.users.find(
       (id) => id.toString() === _createdUser?._id
@@ -140,6 +167,8 @@ describe("users and organizations integration suite", () => {
     if (!_createdUser) {
       throw new Error("User not created");
     }
+
+    stubGetUserFromToken(_seed.admin);
 
     const userOnCreate: CreateUser = {
       active: true,
@@ -158,7 +187,7 @@ describe("users and organizations integration suite", () => {
       body: JSON.stringify(body),
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer 123",
+        Authorization: "Bearer any-token",
       },
     });
 

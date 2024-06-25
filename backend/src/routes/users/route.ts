@@ -1,12 +1,13 @@
 import { Hono } from "hono";
 import { UserModel, User, zSignUp } from "./schemas/user";
 import { AppResponse } from "../../@schemas/app";
-import { routeValidator } from "../../helpers/routeValidator";
+import { routeValidator } from "../../middlewares/routeValidator";
 import { EXCEPTIONS } from "../../static/exceptions";
-import { OrganizationModel } from "../organizations/schemas/organization";
 import { firebaseAuth } from "../../lib/firebase";
-import { bearerAuth } from "hono/bearer-auth";
-import { createFirebaseUser } from "../../services/createFirebaseUser";
+import {
+  authValidator,
+} from "../../middlewares/authValidator";
+import { createAppUser } from "../../services/createAppUser";
 
 const userRoute = new Hono()
   // --------------------------
@@ -42,20 +43,21 @@ const userRoute = new Hono()
   // --------------------------
   .post(
     "/",
+    // bearerAuth({
+    //   verifyToken: async (token, ctx) => {
+    //     console.log("token", token);
+    //     return token === "123";
+    //   },
+    //   prefix: "Bearer",
+    // }),
     routeValidator({ schema: zSignUp }),
-    bearerAuth({
-      verifyToken: async (token, ctx) => {
-        console.log("token", token);
-        return token === "123";
-      },
-      prefix: "Bearer",
-    }),
+    authValidator({ permissionsTo: ["admin"] }),
     async (ctx) => {
-      const input = ctx.req.valid("json");
+      const inputs = ctx.req.valid("json");
       let resData: AppResponse<User>;
 
       const firebaseUserExists = await firebaseAuth
-        .getUserByEmail(input.user.email)
+        .getUserByEmail(inputs.user.email)
         .catch((err) => {});
 
       if (firebaseUserExists) {
@@ -69,21 +71,10 @@ const userRoute = new Hono()
         return ctx.json(resData, 400);
       }
 
-      const createdFirebaseUser = await createFirebaseUser({
-        inputs: input,
+      const createdUser = await createAppUser({
+        inputs: inputs,
+        withFirebaseUser: true,
       });
-
-      const createdUserDoc = await UserModel.create({
-        ...input.user,
-        firebaseId: createdFirebaseUser.uid,
-      });
-
-      const createdUser = createdUserDoc.toObject();
-
-      await OrganizationModel.updateOne(
-        { _id: createdUser.organization },
-        { $push: { users: createdUser._id } }
-      );
 
       resData = {
         data: createdUser,
@@ -93,5 +84,14 @@ const userRoute = new Hono()
       return ctx.json(resData, 200);
     }
   );
+// --------------------------
+// UPDATE USER
+// --------------------------
+// .put("/:id", async (ctx) => {
+//   const id = ctx.req.param("id");
+//   const input = ctx.req.valid("json");
+
+//   const updatedUser = await UserModel;
+// });
 
 export default userRoute;

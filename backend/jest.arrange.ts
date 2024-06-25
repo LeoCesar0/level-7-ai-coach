@@ -4,17 +4,17 @@ beforeAll(async () => {});
 
 afterAll(async () => {
   // Your cleanup or finalization code here
-  console.log("All tests are done!");
+  console.log("Running after test setup!");
 
-  globalThis.TEST_CONFIG.createdUsers.forEach((user) => {
+  globalThis.TEST_GLOBALS.createdUsers.forEach((user) => {
     console.log("Deleting test user", user);
   });
-  const ids = globalThis.TEST_CONFIG.createdUsers.map(
+  const ids = globalThis.TEST_GLOBALS.createdUsers.map(
     (item) => item.firebaseId
   );
   if (ids.length) {
     await firebaseAuth.deleteUsers(ids);
   }
 
-  globalThis.TEST_CONFIG.createdUsers = [];
+  globalThis.TEST_GLOBALS.createdUsers = [];
 });

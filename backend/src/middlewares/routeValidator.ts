@@ -1,6 +1,6 @@
 import { ZodSchema, z } from "zod";
 import { AppResponse } from "../@schemas/app";
-import { getZodErrorMessage } from "./getZodErrorMessage";
+import { getZodErrorMessage } from "../helpers/getZodErrorMessage";
 import { zValidator } from "@hono/zod-validator";
 
 export type IRouteValidator<T> = {

@@ -2,13 +2,33 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import { ENV } from "../src/static/envs";
 import { MongooseServer } from "../src/lib/mongoose";
+import {
+  Organization,
+  OrganizationModel,
+} from "../src/routes/organizations/schemas/organization";
+import { User, UserModel } from "../src/routes/users/schemas/user";
+import { createAppUser } from "../src/services/createAppUser";
 
 type IConnectTestServer = {
   CONNECT_REAL_SERVER?: boolean;
 };
 
+export type SeedResult = {
+  organizationMaster: Organization;
+  organization1: Organization;
+  admin: User;
+  normalUser: User;
+  coachUser: User;
+  adminTestToken: string;
+  normalUserTestToken: string;
+  coachUserTestToken: string;
+};
+
 export class TestServer {
   static testServer: MongoMemoryServer | undefined;
+  static adminTestToken: string = "12345admin";
+  static normalUserTestToken: string = "12345user";
+  static coachUserTestToken: string = "12345coach";
 
   static connectTestServer = async (
     props: IConnectTestServer | undefined = { CONNECT_REAL_SERVER: false }
@@ -42,5 +62,94 @@ export class TestServer {
       await mongoose.disconnect();
       await this.testServer.stop();
     }
+  };
+
+  static seedTestServer = async () => {
+    if (process.env.NODE_ENV !== ENV.TEST) {
+      throw new Error("Can't seed, not in test environment");
+    }
+    if (!this.testServer) {
+      throw new Error("Can't seed, test server not connected");
+    }
+
+    console.log("Starting test seed");
+
+    // --------------------------
+    // ADMIN
+    // --------------------------
+
+    const organizationMaster = await OrganizationModel.create({
+      name: "Organization Master Test",
+      active: true,
+    });
+
+    const admin = await createAppUser({
+      inputs: {
+        password: "whatever",
+        user: {
+          active: true,
+          name: "Admin Test",
+          role: "admin",
+          email: "test_admin_lvl7@level7.com",
+          organization: organizationMaster._id,
+        },
+      },
+      withFirebaseUser: false,
+    });
+
+    // --------------------------
+    // USERS
+    // --------------------------
+
+    const organization1 = await OrganizationModel.create({
+      name: "Team Fire Test",
+      active: true,
+    });
+    const now = Date.now();
+    const normalUser = await createAppUser({
+      inputs: {
+        password: "whatever",
+        user: {
+          active: true,
+          name: "user_test " + now,
+          role: "user",
+          email: now + "test_user@level7.com",
+          organization: organization1._id,
+        },
+      },
+      withFirebaseUser: false,
+    });
+    const coachUser = await createAppUser({
+      inputs: {
+        password: "whatever",
+        user: {
+          active: true,
+          name: "coach_test " + now,
+          role: "coach",
+          email: now + "test_coach@level7.com",
+          organization: organization1._id,
+        },
+      },
+      withFirebaseUser: false,
+    });
+
+    const result: SeedResult = {
+      organizationMaster: organizationMaster.toObject(),
+      organization1: organization1.toObject(),
+      admin: admin,
+      normalUser,
+      coachUser,
+      adminTestToken: this.adminTestToken,
+      normalUserTestToken: this.normalUserTestToken,
+      coachUserTestToken: this.normalUserTestToken,
+    };
+
+    Object.entries(result).forEach(([key, value]) => {
+      if (!value) {
+        throw new Error(`Seed failed for ${key}`);
+      }
+    });
+
+    return result;
   };
 }

@@ -10,7 +10,7 @@ export const createFirebaseUser = async ({ inputs }: { inputs: SignUp }) => {
     phoneNumber: inputs.user.phone,
   });
   if (process.env.NODE_ENV === ENV.TEST) {
-    globalThis.TEST_CONFIG.createdUsers.push({
+    globalThis.TEST_GLOBALS.createdUsers.push({
       email: inputs.user.email,
       name: inputs.user.name,
       firebaseId: createdFirebaseUser.uid,

@@ -5,7 +5,7 @@ import {
   zCreateOrganization,
 } from "./schemas/organization";
 import { AppResponse } from "../../@schemas/app";
-import { routeValidator } from "../../helpers/routeValidator";
+import { routeValidator } from "../../middlewares/routeValidator";
 import { z } from "zod";
 import { EXCEPTIONS } from "../../static/exceptions";
 

@@ -19,7 +19,7 @@ if (!process.env.MONGO_DB_CONNECTION_STRING) {
   process.exit(1);
 }
 
-const honoApp = new Hono().basePath("/api").onError((err, ctx) => {
+const honoApp = new Hono().basePath("/api").onError(async (err, ctx) => {
   let message = "Unexpected Error";
   let status: StatusCode = 500;
 
@@ -29,9 +29,15 @@ const honoApp = new Hono().basePath("/api").onError((err, ctx) => {
     console.log("httpError.status", httpError.status);
     console.log("httpError.res", httpError);
     status = httpError.status as StatusCode;
+    console.log("err.message", err.message);
     if (status === 401) {
       message = EXCEPTIONS.NOT_AUTHORIZED;
     }
+    const text = await httpError.text();
+    const statusText = httpError.statusText;
+    console.log("httpError.statusText", statusText);
+    console.log("httpError.text", text);
+    console.log("httpError.body", httpError.body);
     ctx.status(status);
   }
 
