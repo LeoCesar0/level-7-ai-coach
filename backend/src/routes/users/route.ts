@@ -5,6 +5,8 @@ import { routeValidator } from "../../helpers/routeValidator";
 import { EXCEPTIONS } from "../../static/exceptions";
 import { OrganizationModel } from "../organizations/schemas/organization";
 import { firebaseAuth } from "../../lib/firebase";
+import { bearerAuth } from "hono/bearer-auth";
+import { createFirebaseUser } from "../../services/createFirebaseUser";
 
 const userRoute = new Hono()
   // --------------------------
@@ -38,50 +40,58 @@ const userRoute = new Hono()
   // --------------------------
   // CREATE USER
   // --------------------------
-  .post("/", routeValidator({ schema: zSignUp }), async (ctx) => {
-    const input = ctx.req.valid("json");
-    let resData: AppResponse<User>;
+  .post(
+    "/",
+    routeValidator({ schema: zSignUp }),
+    bearerAuth({
+      verifyToken: async (token, ctx) => {
+        console.log("token", token);
+        return token === "123";
+      },
+      prefix: "Bearer",
+    }),
+    async (ctx) => {
+      const input = ctx.req.valid("json");
+      let resData: AppResponse<User>;
 
-    const firebaseUserExists = await firebaseAuth
-      .getUserByEmail(input.user.email)
-      .catch((err) => {});
+      const firebaseUserExists = await firebaseAuth
+        .getUserByEmail(input.user.email)
+        .catch((err) => {});
 
-    if (firebaseUserExists) {
+      if (firebaseUserExists) {
+        resData = {
+          data: null,
+          error: {
+            _isAppError: true,
+            message: EXCEPTIONS.USER_ALREADY_EXISTS,
+          },
+        };
+        return ctx.json(resData, 400);
+      }
+
+      const createdFirebaseUser = await createFirebaseUser({
+        inputs: input,
+      });
+
+      const createdUserDoc = await UserModel.create({
+        ...input.user,
+        firebaseId: createdFirebaseUser.uid,
+      });
+
+      const createdUser = createdUserDoc.toObject();
+
+      await OrganizationModel.updateOne(
+        { _id: createdUser.organization },
+        { $push: { users: createdUser._id } }
+      );
+
       resData = {
-        data: null,
-        error: {
-          _isAppError: true,
-          message: EXCEPTIONS.USER_ALREADY_EXISTS,
-        },
+        data: createdUser,
+        error: null,
       };
-      return ctx.json(resData, 400);
+
+      return ctx.json(resData, 200);
     }
-
-    const createdFirebaseUser = await firebaseAuth.createUser({
-      password: input.password,
-      email: input.user.email,
-      displayName: input.user.name,
-      phoneNumber: input.user.phone,
-    });
-
-    const createdUserDoc = await UserModel.create({
-      ...input.user,
-      firebaseId: createdFirebaseUser.uid,
-    });
-
-    const createdUser = createdUserDoc.toObject();
-
-    await OrganizationModel.updateOne(
-      { _id: createdUser.organization },
-      { $push: { users: createdUser._id } }
-    );
-
-    resData = {
-      data: createdUser,
-      error: null,
-    };
-
-    return ctx.json(resData, 200);
-  });
+  );
 
 export default userRoute;

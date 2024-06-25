@@ -6,6 +6,7 @@ import {
   OrganizationModel,
 } from "../../src/routes/organizations/schemas/organization";
 import { User, CreateUser, SignUp } from "../../src/routes/users/schemas/user";
+import { EXCEPTIONS } from "../../src/static/exceptions";
 import { TestServer } from "../mongodb-memory-server";
 
 describe("users and organizations integration suite", () => {
@@ -16,7 +17,7 @@ describe("users and organizations integration suite", () => {
   let _userEmail = slugify(_userName) + "@test.com";
 
   beforeAll(async () => {
-    await TestServer.connectTestServer({ CONNECT_REAL_SERVER: true });
+    await TestServer.connectTestServer();
     const org = await OrganizationModel.create({
       name: _orgName,
     });
@@ -26,6 +27,10 @@ describe("users and organizations integration suite", () => {
     await TestServer.disconnectTestServer();
   });
 
+  // --------------------------
+  // LIST EMPTY
+  // --------------------------
+
   it("should list empty users", async () => {
     const res = await honoApp.request("/api/users");
 
@@ -34,20 +39,14 @@ describe("users and organizations integration suite", () => {
     expect(res.status).toBe(200);
     expect(json.data).toStrictEqual([]);
   });
+  // --------------------------
+  // CREATE NEW USER
+  // --------------------------
 
   it("should create a new user", async () => {
     if (!_organization) {
       throw new Error("Organization was not created");
     }
-
-    // const body: CreateUser = {
-    //   active: true,
-    //   name: _userName,
-    //   firebaseId: Date.now().toString(),
-    //   role: "user",
-    //   organization: _organization._id,
-    //   email: _userName + "-" + Date.now() + "@test.com",
-    // };
 
     const userOnCreate: CreateUser = {
       active: true,
@@ -66,6 +65,7 @@ describe("users and organizations integration suite", () => {
       body: JSON.stringify(body),
       headers: {
         "Content-Type": "application/json",
+        Authorization: "Bearer 123",
       },
     });
 
@@ -83,11 +83,11 @@ describe("users and organizations integration suite", () => {
     expect(user?._id).toBeTruthy();
     expect(user?.firebaseId).toBeTruthy();
 
-    //   const validation = zUser.safeParse(user);
-    //   expect(validation.success).toBe(true);
-
     _createdUser = user;
   });
+  // --------------------------
+  // LIST USER
+  // --------------------------
   it("should list one user", async () => {
     const res = await honoApp.request("/api/users");
 
@@ -96,6 +96,9 @@ describe("users and organizations integration suite", () => {
     expect(res.status).toBe(200);
     expect(json.data).toHaveLength(1);
   });
+  // --------------------------
+  // GET USER
+  // --------------------------
   it("should get the created user", async () => {
     if (!_createdUser) {
       throw new Error("User not created");
@@ -113,6 +116,9 @@ describe("users and organizations integration suite", () => {
     expect(user?._id).toBe(_createdUser._id);
     expect(user?.organization).toBeTruthy();
   });
+  // --------------------------
+  // VERIFY SET ORGANIZATION
+  // --------------------------
   it("should set created user to the created organization", async () => {
     if (!_createdUser) {
       throw new Error("User not created");
@@ -126,5 +132,39 @@ describe("users and organizations integration suite", () => {
       (id) => id.toString() === _createdUser?._id
     );
     expect(found).toBeTruthy();
+  });
+  // --------------------------
+  // DENY CREATE SAME USER
+  // --------------------------
+  it("should not create user with same email, user exists", async () => {
+    if (!_createdUser) {
+      throw new Error("User not created");
+    }
+
+    const userOnCreate: CreateUser = {
+      active: true,
+      name: _userName,
+      role: "user",
+      organization: _organization!._id,
+      email: _createdUser.email,
+    };
+    const body: SignUp = {
+      password: "123456789",
+      user: userOnCreate,
+    };
+
+    const res = await honoApp.request("/api/users", {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer 123",
+      },
+    });
+
+    const json: AppResponse<User> = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(json.error?.message).toBe(EXCEPTIONS.USER_ALREADY_EXISTS);
   });
 });

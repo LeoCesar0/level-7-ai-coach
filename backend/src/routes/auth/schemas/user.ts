@@ -12,7 +12,7 @@ export type User = z.infer<typeof zUser> & {
   firebaseId: string;
 };
 
-export type SignUp = z.input<typeof zSignUp>;
+export type SignUp = z.infer<typeof zSignUp>;
 
 export const zCreateUser = z.object({
   name: z
