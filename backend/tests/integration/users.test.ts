@@ -6,10 +6,8 @@ import {
   OrganizationModel,
 } from "../../src/routes/organizations/schemas/organization";
 import { User, CreateUser, SignUp } from "../../src/routes/users/schemas/user";
-import * as getUserFromTokenFile from "../../src/services/getUserFromToken";
 import { EXCEPTIONS } from "../../src/static/exceptions";
 import { SeedResult, TestServer } from "../mongodb-memory-server";
-import { jest } from "@jest/globals";
 import sinon from "sinon";
 
 describe("users and organizations integration suite", () => {
