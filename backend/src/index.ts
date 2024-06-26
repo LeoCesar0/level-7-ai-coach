@@ -12,7 +12,7 @@ dotenv.config({ path: "../.env" });
 const port = Number(process.env.BACKEND_PORT || 8000);
 
 if (!process.env.MONGO_DB_CONNECTION_STRING) {
-  console.error("Mongo connection string is not defined");
+  console.error("❌ Mongo connection string is not defined");
   process.exit(1);
 }
 
