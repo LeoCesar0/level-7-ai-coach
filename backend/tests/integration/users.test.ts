@@ -5,10 +5,10 @@ import {
   Organization,
   OrganizationModel,
 } from "../../src/routes/organizations/schemas/organization";
-import { IAthleteInfo } from "../../src/routes/users/schemas/athleteInfo";
+import { IAthleteInfoInput } from "../../src/routes/users/schemas/athleteInfo";
 import { ICreateUser } from "../../src/routes/users/schemas/createUser";
 import { ISignUpRoute } from "../../src/routes/users/schemas/signUpRoute";
-import { IUpdateUserInfoRoute } from "../../src/routes/users/schemas/updateInfoRoute";
+import { IUpdateUserRoute } from "../../src/routes/users/schemas/updateUserRoute";
 import { IUser } from "../../src/routes/users/schemas/user";
 import { EXCEPTIONS } from "../../src/static/exceptions";
 import { SeedResult, TestServer } from "../mongodb-memory-server";
@@ -198,55 +198,154 @@ describe("users and organizations integration suite", () => {
     expect(res.status).toBe(400);
     expect(json.error?.message).toBe(EXCEPTIONS.USER_ALREADY_EXISTS);
   });
-  it("should update user athlete info", async () => {
-    if (!_createdUser) {
-      throw new Error("User not created");
-    }
-    stubGetUserFromToken(_createdUser);
+  // --------------------------
+  // UPDATE USER
+  // --------------------------
+  describe("UPDATE route", () => {
+    let _updatedUser: IUser | null = null;
+    it("should not update user info, not the same user", async () => {
+      if (!_createdUser) {
+        throw new Error("User not created");
+      }
+      if (!_seed.normalUser) {
+        throw new Error("Normal User not created");
+      }
+      stubGetUserFromToken(_seed.normalUser);
 
-    const body: IUpdateUserInfoRoute = {
-      info: {
-        birthday: "1995-05-04",
-        athleteAsMain: true,
-        currentInjury: "Leg hurts",
-        nick: "Jonny",
-        gender: "Male",
-        q_mind_1: "I don't practice dosha, but i am interested",
-        pastInjury: "Broken leg",
-        mainWorkoutDescription: "Soccer player",
-        mainWorkoutDuration: "4 hours",
-        mainWorkoutInterval: "5 days of the week",
-        mainJob: "Soccer player",
-        shortTermGoals: "Become the main goalkeeper in the team",
-        longTermGoals: "Win a gold metal",
-        hobbyDescription: "Play video game with my son",
-        hobbyInterval: "Weekends",
-        hobbyDuration: "All day",
-        medicines: "alprazolam",
-        meditationPreference: "I am interested",
-        currentDietPlan: "Lowcarbs",
-      },
-      userId: _createdUser._id.toString(),
-    };
+      const body: IUpdateUserRoute = {
+        info: {
+          birthday: "1995-05-04",
+          athleteAsMain: true,
+          currentInjury: "Leg hurts",
+          nick: "Jonny",
+          gender: "Male",
+          q_mind_1: "I don't practice dosha, but i am interested",
+          pastInjury: "Broken leg",
+          mainWorkoutDescription: "Soccer player",
+          mainWorkoutDuration: "4 hours",
+          mainWorkoutInterval: "5 days of the week",
+          mainJob: "Soccer player",
+          shortTermGoals: "Become the main goalkeeper in the team",
+          longTermGoals: "Win a gold metal",
+          hobbyDescription: "Play video game with my son",
+          hobbyInterval: "Weekends",
+          hobbyDuration: "All day",
+          medicines: "alprazolam",
+          meditationPreference: "I am interested",
+          currentDietPlan: "Lowcarbs",
+        },
+      };
 
-    const res = await honoApp.request("/api/users/info", {
-      method: "PUT",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer any-token",
-      },
+      const res = await honoApp.request(
+        `/api/users/${_createdUser._id.toString()}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer any-token",
+          },
+        }
+      );
+
+      const json: AppResponse<IUser> = await res.json();
+
+      expect(res.status).toBe(401);
+      expect(json.error?.message).toBe(EXCEPTIONS.NOT_AUTHORIZED);
     });
 
-    const json: AppResponse<IUser> = await res.json();
+    it("should update user athlete info and name", async () => {
+      if (!_createdUser) {
+        throw new Error("User not created");
+      }
+      stubGetUserFromToken(_createdUser);
 
-    const user = json.data;
+      const body: IUpdateUserRoute = {
+        info: {
+          birthday: "1995-05-04",
+          athleteAsMain: true,
+          currentInjury: "Leg hurts",
+          nick: "Jonny",
+          gender: "Male",
+          q_mind_1: "I don't practice dosha, but i am interested",
+          pastInjury: "Broken leg",
+          mainWorkoutDescription: "Soccer player",
+          mainWorkoutDuration: "4 hours",
+          mainWorkoutInterval: "5 days of the week",
+          mainJob: "Soccer player",
+          shortTermGoals: "Become the main goalkeeper in the team",
+          longTermGoals: "Win a gold metal",
+          hobbyDescription: "Play video game with my son",
+          hobbyInterval: "Weekends",
+          hobbyDuration: "All day",
+          medicines: "alprazolam",
+          meditationPreference: "I am interested",
+          currentDietPlan: "Lowcarbs",
+        },
+        name: "Jonny 123",
+      };
 
-    expect(res.status).toBe(200);
-    expect(user?._id).toBe(_createdUser._id.toString());
-    expect(user?.info).toBeTruthy();
-    expect(user?.info?.birthday).toBe(body.info.birthday);
-    expect(user?.info?.currentInjury).toBe(body.info.currentInjury);
-    expect(user?.info?.q_mind_1).toBe(body.info.q_mind_1);
+      const res = await honoApp.request(
+        `/api/users/${_createdUser._id.toString()}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer any-token",
+          },
+        }
+      );
+
+      const json: AppResponse<IUser> = await res.json();
+
+      const user = json.data;
+
+      _updatedUser = user;
+
+      expect(res.status).toBe(200);
+      expect(user?._id).toBe(_createdUser._id.toString());
+      expect(user?.info).toBeTruthy();
+      expect(user?.info?.birthday).toBe(body.info?.birthday);
+      expect(user?.info?.currentInjury).toBe(body.info?.currentInjury);
+      expect(user?.info?.q_mind_1).toBe(body.info?.q_mind_1);
+      expect(user?.info?.disabilities.length).toBeFalsy();
+      expect(user?.name).toBe(body.name);
+      expect(user?.email).toBeTruthy();
+      expect(user?.phone).toBeFalsy();
+    });
+    it("should update user email, updated by admin", async () => {
+      if (!_updatedUser) {
+        throw new Error("User not updated 1st time");
+      }
+      stubGetUserFromToken(_seed.admin);
+
+      const body: IUpdateUserRoute = {
+        phone: "12345678915",
+      };
+
+      const res = await honoApp.request(
+        `/api/users/${_updatedUser._id.toString()}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer any-token",
+          },
+        }
+      );
+
+      const json: AppResponse<IUser> = await res.json();
+
+      const user = json.data;
+
+      expect(res.status).toBe(200);
+      expect(user?.phone).toBe(body.phone);
+      expect(user?._id).toBe(_updatedUser._id.toString());
+      expect(user?.info).toBeTruthy();
+      expect(user?.info?.birthday).toBe(_updatedUser.info?.birthday);
+      expect(user?.name).toBe(_updatedUser.name);
+    });
   });
 });

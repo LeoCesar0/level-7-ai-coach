@@ -16,15 +16,15 @@ export const onAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
     if (status === 401) {
       message = EXCEPTIONS.NOT_AUTHORIZED;
     }
-    const text = await httpError.text();
-    const statusText = httpError.statusText;
-    console.log("Error is HTTPException");
-    console.log("httpError.status", httpError.status);
-    console.log("httpError.res", httpError);
-    console.log("httpError.statusText", statusText);
-    console.log("httpError.text", text);
-    console.log("httpError.body", httpError.body);
-    console.log("err.message", err.message);
+    // const text = await httpError.text();
+    // const statusText = httpError.statusText;
+    // console.log("Error is HTTPException");
+    // console.log("httpError.status", httpError.status);
+    // console.log("httpError.res", httpError);
+    // console.log("httpError.statusText", statusText);
+    // console.log("httpError.text", text);
+    // console.log("httpError.body", httpError.body);
+    // console.log("err.message", err.message);
 
     ctx.status(status);
   }

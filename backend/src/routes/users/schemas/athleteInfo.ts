@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-export type IAthleteInfo = z.input<typeof zAthleteInfo>;
+export type IAthleteInfoInput = z.input<typeof zAthleteInfo>;
+export type IAthleteInfoOutput = z.output<typeof zAthleteInfo>;
 
 const obj = {
   // --------------------------
