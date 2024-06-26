@@ -4,9 +4,13 @@ import { z } from "zod";
 export const zMongoDocument = z.object({
   _id: zId,
   __v: z.number().optional(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 });
 
 export type MongoDocument = {
   _id: string;
   __v: number;
+  createdAt: string;
+  updatedAt: string;
 };

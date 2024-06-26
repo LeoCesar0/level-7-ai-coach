@@ -187,7 +187,7 @@ const userRoute = new Hono()
 
       const result = await UserModel.deleteOne({ _id: userId });
 
-      await firebaseAuth.deleteUser(userToChange.firebaseId)
+      await firebaseAuth.deleteUser(userToChange.firebaseId);
 
       resData = {
         data: true,

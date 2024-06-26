@@ -5,4 +5,5 @@ export const EXCEPTIONS = {
   NOT_AUTHORIZED: "User not authorized",
   SERVER_ERROR: "Unexpected Error",
   ONLY_ATHLETE: "Only athletes can access this feature",
+  VALIDATION_ERROR: "Validation Error",
 };

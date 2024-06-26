@@ -4,10 +4,28 @@ import { BlankEnv } from "hono/types";
 import { StatusCode } from "hono/utils/http-status";
 import { EXCEPTIONS } from "../static/exceptions";
 import { AppResponse } from "../@schemas/app";
+import { ZodError } from "zod";
+import { getZodErrorMessage } from "../helpers/getZodErrorMessage";
 
 export const onAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
   let message = EXCEPTIONS.SERVER_ERROR;
   let status: StatusCode = 500;
+
+  if (err instanceof ZodError) {
+    console.log("ZOD ERROR INSTANCE");
+    message = getZodErrorMessage({ error: err });
+    status = 422;
+    ctx.status(status);
+    const error: AppResponse = {
+      error: {
+        message: message,
+        _message: EXCEPTIONS.VALIDATION_ERROR,
+        _isAppError: true,
+      },
+      data: null,
+    };
+    return ctx.json(error, status);
+  }
 
   if (err instanceof HTTPException) {
     const httpError = err.getResponse();

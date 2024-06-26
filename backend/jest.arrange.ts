@@ -1,3 +1,4 @@
+import Sinon from "sinon";
 import { firebaseAuth } from "./src/lib/firebase";
 
 beforeAll(async () => {});
@@ -17,4 +18,6 @@ afterAll(async () => {
   }
 
   globalThis.TEST_GLOBALS.createdUsers = [];
+
+  Sinon.restore();
 });

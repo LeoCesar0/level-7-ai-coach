@@ -11,6 +11,7 @@ import { ISignUpRoute } from "../../src/routes/users/schemas/signUpRoute";
 import { IUpdateUserRoute } from "../../src/routes/users/schemas/updateUserRoute";
 import { IUser } from "../../src/routes/users/schemas/user";
 import { EXCEPTIONS } from "../../src/static/exceptions";
+import { stubGetUserFromToken } from "../helpers/stubGetUserFromToken";
 import { SeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";
 
@@ -25,13 +26,6 @@ describe("users and organizations integration suite", () => {
 
   let stub: sinon.SinonStub<any>;
 
-  const stubGetUserFromToken = async (resolves: IUser) => {
-    const module = (await import("../../src/services/getUserFromToken"))
-      .getUserFromToken;
-    stub = sinon.stub(module, "exec");
-    stub.resolves(resolves);
-  };
-
   beforeAll(async () => {
     await TestServer.connectTestServer();
     _seed = (await TestServer.seedTestServer())!;
@@ -41,7 +35,6 @@ describe("users and organizations integration suite", () => {
 
   afterAll(async () => {
     await TestServer.disconnectTestServer();
-    stub.restore();
   });
 
   afterEach(() => {
@@ -61,7 +54,7 @@ describe("users and organizations integration suite", () => {
     // ARRANGE
     // --------------------------
 
-    stubGetUserFromToken(_seed.admin);
+    stub = await stubGetUserFromToken(_seed.admin);
 
     const userOnCreate: ICreateUser = {
       active: true,
@@ -112,7 +105,7 @@ describe("users and organizations integration suite", () => {
   // LIST USER
   // --------------------------
   it("should list and find created user", async () => {
-    stubGetUserFromToken(_seed.admin);
+    stub = await stubGetUserFromToken(_seed.admin);
 
     const res = await honoApp.request("/api/users");
 
@@ -170,7 +163,7 @@ describe("users and organizations integration suite", () => {
       throw new Error("User not created");
     }
 
-    stubGetUserFromToken(_seed.admin);
+    stub = await stubGetUserFromToken(_seed.admin);
 
     const userOnCreate: ICreateUser = {
       active: true,
@@ -201,7 +194,7 @@ describe("users and organizations integration suite", () => {
   // --------------------------
   // UPDATE USER
   // --------------------------
-  describe("UPDATE route", () => {
+  describe("update route", () => {
     let _updatedUser: IUser | null = null;
     it("should not update user info, not the same user", async () => {
       if (!_createdUser) {
@@ -210,7 +203,7 @@ describe("users and organizations integration suite", () => {
       if (!_seed.normalUser) {
         throw new Error("Normal User not created");
       }
-      stubGetUserFromToken(_seed.normalUser);
+      stub = await stubGetUserFromToken(_seed.normalUser);
 
       const body: IUpdateUserRoute = {
         info: {
@@ -258,7 +251,7 @@ describe("users and organizations integration suite", () => {
       if (!_createdUser) {
         throw new Error("User not created");
       }
-      stubGetUserFromToken(_createdUser);
+      stub = await stubGetUserFromToken(_createdUser);
 
       const body: IUpdateUserRoute = {
         info: {
@@ -318,7 +311,7 @@ describe("users and organizations integration suite", () => {
       if (!_updatedUser) {
         throw new Error("User not updated 1st time");
       }
-      stubGetUserFromToken(_seed.admin);
+      stub = await stubGetUserFromToken(_seed.admin);
 
       const body: IUpdateUserRoute = {
         phone: "12345678915",

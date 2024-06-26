@@ -45,7 +45,7 @@ export class TestServer {
     if (this.testServer) {
       await this.disconnectTestServer();
     }
-
+    console.log("Connecting test server");
     this.testServer = await MongoMemoryServer.create();
 
     const uri = this.testServer.getUri();
@@ -59,6 +59,8 @@ export class TestServer {
       return;
     }
     if (this.testServer) {
+      console.log("Disconnecting test server");
+      await mongoose.connection.close();
       await mongoose.disconnect();
       await this.testServer.stop();
     }

@@ -9,7 +9,6 @@ import { zAthleteInfo } from "./athleteInfo";
 export type IUser = z.infer<typeof zUser> & {
   firebaseId: string;
 };
-
 export const zUser = zCreateUser.merge(zMongoDocument);
 
 const infoSchema = zodSchema(zAthleteInfo);

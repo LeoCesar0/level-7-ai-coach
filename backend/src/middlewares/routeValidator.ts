@@ -1,26 +1,21 @@
-import { ZodSchema, z } from "zod";
+import { z } from "zod";
 import { AppResponse } from "../@schemas/app";
 import { getZodErrorMessage } from "../helpers/getZodErrorMessage";
 import { zValidator } from "@hono/zod-validator";
+import { handleZodSafeError } from "../handlers/handleZodSafeError";
 
-export type IRouteValidator<T> = {
-  schema: ZodSchema<T>;
+export type IRouteValidator<T extends z.ZodType<any, z.ZodTypeDef, any>> = {
+  schema: T;
+  target?: Parameters<typeof zValidator>[0];
 };
 
-export const routeValidator = <T>({ schema }: IRouteValidator<T>) => {
-  return zValidator("json", schema, (result, ctx) => {
+export const routeValidator = <T extends z.ZodType<any, z.ZodTypeDef, any>>({
+  schema,
+  target = "json",
+}: IRouteValidator<T>) => {
+  return zValidator(target, schema, (result, ctx) => {
     if (!result.success) {
-      const message = getZodErrorMessage({ error: result.error });
-      const res: AppResponse<any> = {
-        data: null,
-        error: {
-          message: "Validation Error: " + message,
-          _message: message,
-          _isAppError: true,
-          _zodError: result.error,
-        },
-      };
-      return ctx.json(res, 422);
+      return handleZodSafeError({ ctx, result });
     }
   });
 };
