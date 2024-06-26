@@ -1,3 +1,18 @@
+// import { Context } from "hono";
+// import { IUser } from "./src/routes/users/schemas/user";
+
+// interface ExtendedContext extends Context {
+//   reqUser?: IUser | null | undefined;
+// }
+
+// declare module "hono" {
+//   interface Context {
+//     reqUser?: ExtendedContext["reqUser"];
+//   }
+// }
+
+// // --------------------------
+
 type User = {
   firebaseId: string;
   name: string;
@@ -9,7 +24,7 @@ type TestGlobalConfig = {
 };
 
 declare global {
-  var globalThis.TEST_GLOBALS: TestGlobalConfig;
+  var TEST_GLOBALS: TestGlobalConfig;
 }
 
 export {};

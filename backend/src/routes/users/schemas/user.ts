@@ -3,12 +3,16 @@ import { z } from "zod";
 import { zMongoDocument } from "../../../@schemas/mongoose";
 import { ROLES_LIST } from "../../../static/roles";
 import { zCreateUser } from "./createUser";
+import zodSchema from "@zodyac/zod-mongoose";
+import { zAthleteInfo } from "./athleteInfo";
 
 export type IUser = z.infer<typeof zUser> & {
   firebaseId: string;
 };
 
 export const zUser = zCreateUser.merge(zMongoDocument);
+
+const infoSchema = zodSchema(zAthleteInfo);
 
 export const userSchema = new Schema<IUser>(
   {
@@ -47,6 +51,7 @@ export const userSchema = new Schema<IUser>(
     phoneCode: {
       type: String,
     },
+    info: infoSchema,
   },
   { timestamps: true }
 );

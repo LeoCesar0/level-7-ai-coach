@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Context, Hono } from "hono";
 import { UserModel, IUser } from "./schemas/user";
 import { AppResponse } from "../../@schemas/app";
 import { routeValidator } from "../../middlewares/routeValidator";
@@ -7,6 +7,10 @@ import { firebaseAuth } from "../../lib/firebase";
 import { authValidator } from "../../middlewares/authValidator";
 import { createAppUser } from "../../services/createAppUser";
 import { zSignUp } from "./schemas/signUpRoute";
+import { zAthleteInfo } from "./schemas/athleteInfo";
+import { HTTPException } from "hono/http-exception";
+import z from "zod";
+import { updateUserInfoRoute } from "./schemas/updateInfoRoute";
 
 const userRoute = new Hono()
   // --------------------------
@@ -70,6 +74,52 @@ const userRoute = new Hono()
 
       resData = {
         data: createdUser,
+        error: null,
+      };
+
+      return ctx.json(resData, 200);
+    }
+  )
+  // --------------------------
+  // UPDATE ATHLETE USER
+  // --------------------------
+  .put(
+    "/info",
+    routeValidator({
+      schema: updateUserInfoRoute,
+    }),
+    authValidator({ permissionsTo: ["user"] }),
+    async (ctx) => {
+      const inputs = ctx.req.valid("json");
+      let resData: AppResponse<IUser>;
+
+      // @ts-ignore
+      const contextUser: IUser | undefined = ctx.get("reqUser");
+
+      if (!contextUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
+
+      if (contextUser.role !== "user") {
+        throw new HTTPException(400, { message: EXCEPTIONS.ONLY_ATHLETE });
+      }
+      const updatedUserDoc = await UserModel.findByIdAndUpdate(
+        inputs.userId,
+        {
+          info: inputs.info,
+        },
+        {
+          new: true,
+        }
+      );
+
+      if (!updatedUserDoc) {
+        throw new HTTPException(404, { message: "User not found" });
+      }
+      const updatedUser = updatedUserDoc.toObject();
+
+      resData = {
+        data: updatedUser,
         error: null,
       };
 

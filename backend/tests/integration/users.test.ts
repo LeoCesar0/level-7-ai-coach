@@ -5,8 +5,10 @@ import {
   Organization,
   OrganizationModel,
 } from "../../src/routes/organizations/schemas/organization";
+import { IAthleteInfo } from "../../src/routes/users/schemas/athleteInfo";
 import { ICreateUser } from "../../src/routes/users/schemas/createUser";
 import { ISignUpRoute } from "../../src/routes/users/schemas/signUpRoute";
+import { IUpdateUserInfoRoute } from "../../src/routes/users/schemas/updateInfoRoute";
 import { IUser } from "../../src/routes/users/schemas/user";
 import { EXCEPTIONS } from "../../src/static/exceptions";
 import { SeedResult, TestServer } from "../mongodb-memory-server";
@@ -195,5 +197,56 @@ describe("users and organizations integration suite", () => {
 
     expect(res.status).toBe(400);
     expect(json.error?.message).toBe(EXCEPTIONS.USER_ALREADY_EXISTS);
+  });
+  it("should update user athlete info", async () => {
+    if (!_createdUser) {
+      throw new Error("User not created");
+    }
+    stubGetUserFromToken(_createdUser);
+
+    const body: IUpdateUserInfoRoute = {
+      info: {
+        birthday: "1995-05-04",
+        athleteAsMain: true,
+        currentInjury: "Leg hurts",
+        nick: "Jonny",
+        gender: "Male",
+        q_mind_1: "I don't practice dosha, but i am interested",
+        pastInjury: "Broken leg",
+        mainWorkoutDescription: "Soccer player",
+        mainWorkoutDuration: "4 hours",
+        mainWorkoutInterval: "5 days of the week",
+        mainJob: "Soccer player",
+        shortTermGoals: "Become the main goalkeeper in the team",
+        longTermGoals: "Win a gold metal",
+        hobbyDescription: "Play video game with my son",
+        hobbyInterval: "Weekends",
+        hobbyDuration: "All day",
+        medicines: "alprazolam",
+        meditationPreference: "I am interested",
+        currentDietPlan: "Lowcarbs",
+      },
+      userId: _createdUser._id.toString(),
+    };
+
+    const res = await honoApp.request("/api/users/info", {
+      method: "PUT",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer any-token",
+      },
+    });
+
+    const json: AppResponse<IUser> = await res.json();
+
+    const user = json.data;
+
+    expect(res.status).toBe(200);
+    expect(user?._id).toBe(_createdUser._id.toString());
+    expect(user?.info).toBeTruthy();
+    expect(user?.info?.birthday).toBe(body.info.birthday);
+    expect(user?.info?.currentInjury).toBe(body.info.currentInjury);
+    expect(user?.info?.q_mind_1).toBe(body.info.q_mind_1);
   });
 });
