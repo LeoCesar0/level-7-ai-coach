@@ -2,14 +2,16 @@ import Sinon from "sinon";
 import { firebaseAuth } from "./src/lib/firebase";
 import { honoServer } from "./src";
 
-beforeAll(async () => {});
+beforeAll(async () => {
+  console.log("🧪 Starting tests!");
+});
 
 afterAll(async () => {
   // Your cleanup or finalization code here
-  console.log("Running after test setup!");
+  console.log("🧼 Cleaning up tests!");
 
   globalThis.TEST_GLOBALS.createdUsers.forEach((user) => {
-    console.log("Deleting test user", user);
+    // console.log("❌ Deleting test user", user);
   });
   const ids = globalThis.TEST_GLOBALS.createdUsers.map(
     (item) => item.firebaseId

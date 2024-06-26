@@ -24,7 +24,7 @@ const routes = honoApp
 
 export type ApiType = typeof routes;
 
-console.log(`Server is running on port ${port}`);
+console.log(`🚀 Server is running on port ${port}`);
 
 export const honoServer = serve({
   fetch: honoApp.fetch,
@@ -35,6 +35,7 @@ if (
   process.env.NODE_ENV === ENV.PRODUCTION ||
   process.env.NODE_ENV === ENV.DEVELOPMENT
 ) {
+  console.log(`🚀🖥️❗ Connected to MongoDB`);
   MongooseServer.connectServer();
 }
 

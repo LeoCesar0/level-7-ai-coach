@@ -3,7 +3,7 @@ const run = async () => {
 };
 
 run().then(() => {
-  console.log("☢️ Starting tests! ");
+  console.log("🚨 Setup test environment! ");
 });
 
 if (!globalThis.TEST_GLOBALS) {
