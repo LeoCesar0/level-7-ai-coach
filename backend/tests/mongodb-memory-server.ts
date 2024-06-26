@@ -51,7 +51,7 @@ export class TestServer {
     const uri = this.testServer.getUri();
 
     await mongoose.connect(uri);
-    console.log("💻 Connected to mongoDB test server");
+    console.log("💻 Connected to test server");
   };
 
   static disconnectTestServer = async () => {
@@ -59,7 +59,7 @@ export class TestServer {
       return;
     }
     if (this.testServer) {
-      console.log("💻 Disconnecting test server");
+      console.log("🔌 Disconnecting test server");
       await mongoose.disconnect();
       await this.testServer.stop();
     }

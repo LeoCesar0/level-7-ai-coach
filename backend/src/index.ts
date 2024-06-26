@@ -24,11 +24,13 @@ const routes = honoApp
 
 export type ApiType = typeof routes;
 
-console.log(`🚀 Server is running on port ${port}`);
-
 export const honoServer = serve({
   fetch: honoApp.fetch,
   port: port,
+});
+
+honoServer.on("listening", () => {
+  console.log(`🚀 Server is running on port ${port}`);
 });
 
 if (
