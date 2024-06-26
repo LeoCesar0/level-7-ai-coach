@@ -3,6 +3,7 @@ import { zId } from "@zodyac/zod-mongoose";
 import { zRole } from "../../../@schemas/roles";
 import { EXCEPTIONS } from "../../../static/exceptions";
 import { zAthleteInfo } from "./athleteInfo";
+import { zAddress } from "./address";
 
 export type ICreateUser = z.infer<typeof zCreateUser>;
 
@@ -21,13 +22,6 @@ export const zCreateUser = z.object({
   imageUrl: z.string().optional(),
   role: zRole.default("user"),
   organization: zId.describe("ObjectId:Organization"),
-  address: z
-    .object({
-      city: z.string(),
-      state: z.string(),
-      country: z.string(),
-      address: z.string(),
-    })
-    .optional(),
+  address: zAddress.optional(),
   info: zAthleteInfo.optional(),
 });

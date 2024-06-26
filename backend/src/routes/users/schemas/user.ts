@@ -5,6 +5,7 @@ import { ROLES_LIST } from "../../../static/roles";
 import { zCreateUser } from "./createUser";
 import zodSchema from "@zodyac/zod-mongoose";
 import { zAthleteInfo } from "./athleteInfo";
+import { zAddress } from "./address";
 
 export type IUser = z.infer<typeof zUser> & {
   firebaseId: string;
@@ -12,6 +13,8 @@ export type IUser = z.infer<typeof zUser> & {
 export const zUser = zCreateUser.merge(zMongoDocument);
 
 const infoSchema = zodSchema(zAthleteInfo);
+
+const addressSchema = zodSchema(zAddress);
 
 export const userSchema = new Schema<IUser>(
   {
@@ -51,6 +54,7 @@ export const userSchema = new Schema<IUser>(
       type: String,
     },
     info: infoSchema,
+    address: addressSchema,
   },
   { timestamps: true }
 );

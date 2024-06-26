@@ -1,30 +1,30 @@
 import { Schema, model } from "mongoose";
 import { z } from "zod";
-import { zId } from "@zodyac/zod-mongoose";
+import { zId, zodSchema } from "@zodyac/zod-mongoose";
 import { zMongoDocument } from "../../../@schemas/mongoose";
 import { EXCEPTIONS } from "../../../static/exceptions";
-
-export type CreateOrganization = z.infer<typeof zCreateOrganization>;
+import { zCreateOrganization } from "./createOrganization";
+import { slugify } from "../../../helpers/slugify";
 
 export type Organization = z.infer<typeof zOrganization>;
 
-export const zCreateOrganization = z.object({
-  name: z
-    .string()
-    .min(1, { message: EXCEPTIONS.FIELD_REQUIRED("name") })
-    .max(255),
-  active: z.boolean().default(true),
-  imageUrl: z.string().optional(),
-  users: z.array(zId.describe("ObjectId:User")),
-});
-
-export const zOrganization = zCreateOrganization.merge(zMongoDocument);
+export const zOrganization = zCreateOrganization
+  .merge(
+    z.object({
+      active: z.boolean().default(true),
+      slug: z.string(),
+    })
+  )
+  .merge(zMongoDocument);
 
 export const organizationSchema = new Schema<Organization>(
   {
     name: {
       type: String,
       required: true,
+    },
+    slug: {
+      type: String,
     },
     active: {
       type: Boolean,
@@ -43,6 +43,10 @@ export const organizationSchema = new Schema<Organization>(
   },
   { timestamps: true }
 );
+organizationSchema.pre("save", function (next) {
+  this.slug = slugify(this.name) || "";
+  next();
+});
 
 export const OrganizationModel = model<Organization>(
   "Organization",

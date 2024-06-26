@@ -86,7 +86,7 @@ describe("users and organizations integration suite", () => {
     const user = json.data;
 
     if (json.error) {
-      console.log("Create error", json.error);
+      console.log("❌ Create error", json.error);
     }
 
     // --------------------------

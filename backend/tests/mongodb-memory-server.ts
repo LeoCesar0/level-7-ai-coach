@@ -9,6 +9,7 @@ import {
 import { IUser } from "../src/routes/users/schemas/user";
 import { createAppUser } from "../src/services/createAppUser";
 import honoApp, { honoServer } from "../src";
+import { slugify } from "../src/helpers/slugify";
 
 type IConnectTestServer = {
   CONNECT_REAL_SERVER?: boolean;
@@ -82,6 +83,7 @@ export class TestServer {
     const organizationMaster = await OrganizationModel.create({
       name: "Organization Master Test",
       active: true,
+      slug: slugify("Organization Master Test"),
     });
 
     const admin = await createAppUser({
@@ -105,6 +107,7 @@ export class TestServer {
     const organization1 = await OrganizationModel.create({
       name: "Team Fire Test",
       active: true,
+      slug: slugify("Team Fire Test"),
     });
     const now = Date.now();
     const normalUser = await createAppUser({

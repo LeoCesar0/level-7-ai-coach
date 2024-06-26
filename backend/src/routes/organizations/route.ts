@@ -2,14 +2,19 @@ import { Hono } from "hono";
 import {
   OrganizationModel,
   Organization,
-  zCreateOrganization,
+  zOrganization,
 } from "./schemas/organization";
 import { AppResponse } from "../../@schemas/app";
 import { routeValidator } from "../../middlewares/routeValidator";
 import { authValidator } from "../../middlewares/authValidator";
 import { PaginationResult } from "../../@schemas/pagination";
 import { zListRouteQueryInput } from "../../@schemas/listRoute";
-import { zValidator } from "@hono/zod-validator";
+import {
+  CreateOrganization,
+  zCreateOrganization,
+} from "./schemas/createOrganization";
+import { z } from "zod";
+import { zStringNotEmpty } from "../../@schemas/primitives/stringNotEmpty";
 
 const organizationsRoute = new Hono()
   // --------------------------
@@ -58,18 +63,26 @@ const organizationsRoute = new Hono()
   // --------------------------
   // GET BY ID
   // --------------------------
-  .get("/:id", authValidator(), async (ctx) => {
-    const id = ctx.req.param("id");
+  .get(
+    "/:id",
+    routeValidator({
+      target: "param",
+      schema: z.object({ id: zStringNotEmpty }),
+    }),
+    authValidator({ permissionsTo: ["admin"] }),
+    async (ctx) => {
+      const id = ctx.req.param("id");
 
-    const item = await OrganizationModel.findById(id);
+      const item = await OrganizationModel.findById(id);
 
-    const resData: AppResponse<Organization> = {
-      data: item,
-      error: null,
-    };
+      const resData: AppResponse<Organization> = {
+        data: item,
+        error: null,
+      };
 
-    return ctx.json(resData);
-  })
+      return ctx.json(resData);
+    }
+  )
   // --------------------------
   // CREATE
   // --------------------------
@@ -79,8 +92,10 @@ const organizationsRoute = new Hono()
     authValidator({ permissionsTo: ["admin"] }),
     async (ctx) => {
       const input = ctx.req.valid("json");
-
-      const createdDoc = await OrganizationModel.create(input);
+      console.log("❗❗❗");
+      const createdDoc = await OrganizationModel.create<CreateOrganization>(
+        input
+      );
 
       const createdItem = createdDoc.toObject();
       const resData: AppResponse<Organization> = {
