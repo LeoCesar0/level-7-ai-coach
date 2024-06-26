@@ -28,11 +28,7 @@ describe("organizations integration suite", () => {
     }
   });
 
-  // test("prevent", () => {
-  //   expect(true).toBeTruthy();
-  // });
-
-  describe.skip("list", () => {
+  describe("list", () => {
     it("should list 2 organizations", async () => {
       stub = await stubGetUserFromToken(_seed.admin);
 
@@ -56,12 +52,6 @@ describe("organizations integration suite", () => {
 
       const json: AppResponse<PaginationResult<Organization>> =
         await res.json();
-
-      if (json.error) {
-        console.log("list error", json.error);
-      }
-
-      console.log("list", json);
 
       expect(res.status).toBe(200);
       expect(json.data?.list.length).toBe(2);

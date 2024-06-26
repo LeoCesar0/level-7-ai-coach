@@ -2,13 +2,9 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import userRoute from "./routes/users/route";
 import dotenv from "dotenv";
-import { HTTPException } from "hono/http-exception";
-import { AppResponse } from "./@schemas/app";
-import { StatusCode } from "hono/utils/http-status";
 import { ENV } from "./static/envs";
 import { MongooseServer } from "./lib/mongoose";
 import organizationsRoute from "./routes/organizations/route";
-import { EXCEPTIONS } from "./static/exceptions";
 import { onAppError } from "./handlers/onAppError";
 
 dotenv.config({ path: "../.env" });
@@ -30,7 +26,7 @@ export type ApiType = typeof routes;
 
 console.log(`Server is running on port ${port}`);
 
-serve({
+export const honoServer = serve({
   fetch: honoApp.fetch,
   port: port,
 });

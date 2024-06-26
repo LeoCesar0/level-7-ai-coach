@@ -1,5 +1,6 @@
 import Sinon from "sinon";
 import { firebaseAuth } from "./src/lib/firebase";
+import { honoServer } from "./src";
 
 beforeAll(async () => {});
 
@@ -20,4 +21,5 @@ afterAll(async () => {
   globalThis.TEST_GLOBALS.createdUsers = [];
 
   Sinon.restore();
+  honoServer.close();
 });

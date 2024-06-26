@@ -6,8 +6,9 @@ import {
   Organization,
   OrganizationModel,
 } from "../src/routes/organizations/schemas/organization";
-import { IUser, UserModel } from "../src/routes/users/schemas/user";
+import { IUser } from "../src/routes/users/schemas/user";
 import { createAppUser } from "../src/services/createAppUser";
+import honoApp, { honoServer } from "../src";
 
 type IConnectTestServer = {
   CONNECT_REAL_SERVER?: boolean;
@@ -45,7 +46,6 @@ export class TestServer {
     if (this.testServer) {
       await this.disconnectTestServer();
     }
-    console.log("Connecting test server");
     this.testServer = await MongoMemoryServer.create();
 
     const uri = this.testServer.getUri();
@@ -60,7 +60,6 @@ export class TestServer {
     }
     if (this.testServer) {
       console.log("Disconnecting test server");
-      await mongoose.connection.close();
       await mongoose.disconnect();
       await this.testServer.stop();
     }
