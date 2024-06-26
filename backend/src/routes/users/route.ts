@@ -94,12 +94,18 @@ const userRoute = new Hono()
       const inputs = ctx.req.valid("json");
       let resData: AppResponse<IUser>;
 
+      const userToChange = await UserModel.findById(userId);
+
+      if (!userToChange) {
+        throw new HTTPException(404, { message: "User not found" });
+      }
+
       // @ts-ignore
       const contextUser: IUser | undefined = ctx.get("reqUser");
 
       const isSameOrg =
         contextUser?.organization.toString() ===
-        inputs.organization?.toString();
+        userToChange.organization?.toString();
 
       if (!userId) {
         throw new HTTPException(400, { message: "User id is required" });
@@ -142,6 +148,49 @@ const userRoute = new Hono()
 
       resData = {
         data: updatedUser,
+        error: null,
+      };
+
+      return ctx.json(resData, 200);
+    }
+  )
+  .delete(
+    "/:userId",
+    authValidator({ permissionsTo: ["admin", "coach"] }),
+    async (ctx) => {
+      const userId = ctx.req.param("userId");
+      let resData: AppResponse<boolean>;
+
+      // @ts-ignore
+      const contextUser: IUser | undefined = ctx.get("reqUser");
+
+      const userToChange = await UserModel.findById(userId);
+
+      if (!userToChange) {
+        throw new HTTPException(404, { message: "User not found" });
+      }
+
+      const isSameOrg =
+        contextUser?.organization.toString() ===
+        userToChange.organization?.toString();
+
+      if (!userId) {
+        throw new HTTPException(400, { message: "User id is required" });
+      }
+
+      if (
+        !contextUser || // NO REQ USER
+        (contextUser.role === "coach" && !isSameOrg) // REQ USER IS COACH AND NOT THE SAME ORG
+      ) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
+
+      const result = await UserModel.deleteOne({ _id: userId });
+
+      await firebaseAuth.deleteUser(userToChange.firebaseId)
+
+      resData = {
+        data: true,
         error: null,
       };
 
