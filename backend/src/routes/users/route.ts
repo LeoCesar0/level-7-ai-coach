@@ -11,6 +11,7 @@ import { HTTPException } from "hono/http-exception";
 import z from "zod";
 import { updateUserRoute } from "./schemas/updateUserRoute";
 import cloneDeep from "lodash.clonedeep";
+import { OrganizationModel } from "../organizations/schemas/organization";
 
 const userRoute = new Hono()
   // --------------------------
@@ -146,6 +147,28 @@ const userRoute = new Hono()
       }
       const updatedUser = updatedUserDoc.toObject();
 
+      const prevOrg = userToChange.organization?.toString();
+      const newOrg = updatedUser.organization?.toString();
+      const changedOrg = newOrg && prevOrg !== newOrg;
+      if (changedOrg) {
+        await OrganizationModel.updateMany(
+          {
+            _id: prevOrg,
+          },
+          {
+            $pull: { users: userId },
+          }
+        );
+        await OrganizationModel.updateMany(
+          {
+            _id: newOrg,
+          },
+          {
+            $addToSet: { users: userId },
+          }
+        );
+      }
+
       resData = {
         data: updatedUser,
         error: null,
@@ -186,6 +209,17 @@ const userRoute = new Hono()
       }
 
       const result = await UserModel.deleteOne({ _id: userId });
+
+      if (userToChange.organization) {
+        await OrganizationModel.updateMany(
+          {
+            _id: userToChange.organization,
+          },
+          {
+            $pull: { users: userId },
+          }
+        );
+      }
 
       await firebaseAuth.deleteUser(userToChange.firebaseId);
 

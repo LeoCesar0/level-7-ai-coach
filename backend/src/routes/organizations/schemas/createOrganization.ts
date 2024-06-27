@@ -10,5 +10,4 @@ export const zCreateOrganization = z.object({
     .min(1, { message: EXCEPTIONS.FIELD_REQUIRED("name") })
     .max(255),
   imageUrl: z.string().optional(),
-  users: z.array(zId.describe("ObjectId:User")),
 });

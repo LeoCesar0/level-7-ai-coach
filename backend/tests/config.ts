@@ -1,3 +1,3 @@
 export const TEST_CONFIG = {
-  VALID_TOKEN: "123456789",
+  VALID_TOKEN: "validtoken123456789",
 };

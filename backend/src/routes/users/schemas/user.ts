@@ -6,6 +6,7 @@ import { zCreateUser } from "./createUser";
 import zodSchema from "@zodyac/zod-mongoose";
 import { zAthleteInfo } from "./athleteInfo";
 import { zAddress } from "./address";
+import { OrganizationModel } from "../../organizations/schemas/organization";
 
 export type IUser = z.infer<typeof zUser> & {
   firebaseId: string;
@@ -58,5 +59,15 @@ export const userSchema = new Schema<IUser>(
   },
   { timestamps: true }
 );
+
+// userSchema.pre("save", async function (next) {
+//   if (this.organization) {
+//     await OrganizationModel.updateMany(
+//       { _id: { $in: this.organization } },
+//       { $addToSet: { users: this._id } }
+//     );
+//   }
+//   next();
+// });
 
 export const UserModel = model<IUser>("User", userSchema);
