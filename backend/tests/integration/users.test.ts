@@ -9,7 +9,7 @@ import { IAthleteInfoInput } from "../../src/routes/users/schemas/athleteInfo";
 import { ICreateUser } from "../../src/routes/users/schemas/createUser";
 import { ISignUpRoute } from "../../src/routes/users/schemas/signUpRoute";
 import { IUpdateUserRoute } from "../../src/routes/users/schemas/updateUserRoute";
-import { IUser } from "../../src/routes/users/schemas/user";
+import { IUser, UserModel } from "../../src/routes/users/schemas/user";
 import { EXCEPTIONS } from "../../src/static/exceptions";
 import { stubGetUserFromToken } from "../helpers/stubGetUserFromToken";
 import { SeedResult, TestServer } from "../mongodb-memory-server";
@@ -194,7 +194,7 @@ describe("users and organizations integration suite", () => {
   // --------------------------
   // UPDATE USER
   // --------------------------
-  describe("update route", () => {
+  describe("update", () => {
     let _updatedUser: IUser | null = null;
     it("should not update user info, not the same user", async () => {
       if (!_createdUser) {
@@ -339,6 +339,42 @@ describe("users and organizations integration suite", () => {
       expect(user?.info).toBeTruthy();
       expect(user?.info?.birthday).toBe(_updatedUser.info?.birthday);
       expect(user?.name).toBe(_updatedUser.name);
+    });
+  });
+
+  describe("delete", () => {
+    it("should delete user", async () => {
+      if (!_createdUser) {
+        throw new Error("User not created");
+      }
+      stub = await stubGetUserFromToken(_seed.admin);
+
+      const found0 = await UserModel.findById(_createdUser._id);
+      expect(found0).toBeTruthy();
+      const foundOrg0 = await OrganizationModel.findOne({
+        users: { $in: [_createdUser._id] },
+      });
+      expect(foundOrg0).toBeTruthy();
+
+      const res = await honoApp.request(`/api/users/${_createdUser._id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer any-token",
+        },
+      });
+
+      const json: AppResponse<boolean> = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(json.data).toBe(true);
+
+      const found1 = await UserModel.findById(_createdUser._id);
+      expect(found1).toBeFalsy();
+      const foundOrg1 = await OrganizationModel.findOne({
+        users: { $in: [_createdUser._id] },
+      });
+      expect(foundOrg1).toBeFalsy();
     });
   });
 });

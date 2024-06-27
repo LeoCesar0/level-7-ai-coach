@@ -182,7 +182,11 @@ const organizationsRoute = new Hono()
     for (const user of usersToDelete) {
       try {
         await firebaseAuth.deleteUser(user.firebaseId);
-      } catch (err) {}
+      } catch (err) {
+        if (process.env.NODE_ENV !== "test") {
+          console.log("❌ Error deleting user from firebase", err);
+        }
+      }
     }
 
     const resData: AppResponse<boolean> = {

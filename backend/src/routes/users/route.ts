@@ -220,8 +220,13 @@ const userRoute = new Hono()
           }
         );
       }
-
-      await firebaseAuth.deleteUser(userToChange.firebaseId);
+      try {
+        await firebaseAuth.deleteUser(userToChange.firebaseId);
+      } catch (err) {
+        if (process.env.NODE_ENV !== "test") {
+          console.log("❌ Error deleting user from firebase", err);
+        }
+      }
 
       resData = {
         data: true,
