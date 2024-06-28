@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 // import { generateResponse } from "../utils/langchain.js";
-import { UserModel } from "../users/schemas/user.js";
+import { IUser, UserModel } from "../users/schemas/user.js";
 import { IMessage, MessageModel } from "./schemas/message.js";
 import { ChatModel, IChat } from "./schemas/chat.js";
 import { routeValidator } from "../../middlewares/routeValidator.js";
@@ -10,8 +10,59 @@ import { zCreateMessage } from "./schemas/createMessage.js";
 import { authValidator } from "../../middlewares/authValidator.js";
 import { z } from "zod";
 import { zStringNotEmpty } from "../../@schemas/primitives/stringNotEmpty.js";
+import { HTTPException } from "hono/http-exception";
+import { EXCEPTIONS } from "../../static/exceptions.js";
+import { openAiEmbeddings } from "../../lib/langchain/embeddings.js";
 
 export const chatRouter = new Hono()
+  .get(
+    "/",
+    authValidator({ permissionsTo: ["admin", "coach", "user"] }),
+    async (ctx) => {
+      // @ts-ignore
+      const reqUser = ctx.get("reqUser") as IUser;
+      let list: IChat[] = [];
+
+      if (reqUser.role === "admin") {
+        list = await ChatModel.find();
+      } else if (reqUser.role === "coach") {
+        list = await ChatModel.find({ organization: reqUser.organization });
+      } else if (reqUser.role === "user") {
+        list = await ChatModel.find({ user: reqUser._id });
+      }
+
+      const resData: AppResponse<IChat[]> = {
+        data: list,
+        error: null,
+      };
+
+      return ctx.json(resData, 200);
+    }
+  )
+  .get(
+    "/messages",
+    authValidator({ permissionsTo: ["admin", "coach", "user"] }),
+    async (ctx) => {
+      // @ts-ignore
+      const reqUser = ctx.get("reqUser") as IUser;
+      let list: IMessage[] = [];
+
+      if (reqUser.role === "admin") {
+        list = await MessageModel.find();
+      } else if (reqUser.role === "coach") {
+        list = await MessageModel.find({ organization: reqUser.organization });
+      } else if (reqUser.role === "user") {
+        list = await MessageModel.find({ user: reqUser._id });
+      }
+
+      const resData: AppResponse<IMessage[]> = {
+        data: list,
+        error: null,
+      };
+
+      return ctx.json(resData, 200);
+    }
+  )
   .post(
     "/",
     routeValidator({
@@ -37,7 +88,7 @@ export const chatRouter = new Hono()
     }
   )
   .post(
-    "/send",
+    "/messages",
     routeValidator({
       schema: zCreateMessage,
     }),
@@ -49,12 +100,14 @@ export const chatRouter = new Hono()
       // if (!user) {
       //   return c.json({ message: "User not found" }, 404);
       // }
+      const messageEmbedding = await openAiEmbeddings.embedDocuments([message]);
 
       const userMessageM = new MessageModel({
         user: userId,
         message,
         chat,
         role,
+        messageEmbedding,
       });
       const userMessageDoc = await userMessageM.save();
       const userMessage = userMessageDoc.toObject();

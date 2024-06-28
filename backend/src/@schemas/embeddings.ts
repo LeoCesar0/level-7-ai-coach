@@ -1,0 +1,1 @@
+export type EmbeddingData = number[][];
