@@ -1,7 +1,5 @@
-import { TestServer } from "../../tests/mongodb-memory-server";
 import { firebaseAuth } from "../lib/firebase";
 import { UserModel } from "../routes/users/schemas/user";
-import { ENV } from "../static/envs";
 
 export type IGetUserFromToken = {
   token: string;
