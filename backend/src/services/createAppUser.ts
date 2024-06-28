@@ -7,32 +7,35 @@ import { createFirebaseUser } from "./createFirebaseUser";
 export const createAppUser = async ({
   inputs,
   withFirebaseUser,
+  firebaseId,
 }: {
   inputs: ISignUpRoute;
   withFirebaseUser: boolean;
+  firebaseId?: string;
 }) => {
-  let uid = "TEST_FIREBASE_UID";
-  if (withFirebaseUser) {
+  let _firebaseId = firebaseId ?? "TEST_FIREBASE_UID";
+  if (withFirebaseUser && !firebaseId) {
     const createdFirebaseUser = await createFirebaseUser({
       inputs: inputs,
     });
-    uid = createdFirebaseUser.uid;
+    _firebaseId = createdFirebaseUser.uid;
   }
+  const isTestEnv = process.env.NODE_ENV === ENV.TEST;
 
-  if (!withFirebaseUser && process.env.NODE_ENV !== ENV.TEST) {
-    throw new Error("Firebase user is required");
+  if (!isTestEnv && !withFirebaseUser && !firebaseId) {
+    ("Create App User: Need to pass firebase uid when it's dev env and withFirebaseUser is not enabled");
   }
 
   const createdUserDoc = await UserModel.create({
     ...inputs.user,
-    firebaseId: uid,
+    firebaseId: _firebaseId,
   });
 
   const createdUser = createdUserDoc.toObject();
 
   await OrganizationModel.updateOne(
     { _id: createdUser.organization },
-    { $push: { users: createdUser._id } }
+    { $addToSet: { users: createdUser._id } }
   );
 
   return createdUser;
