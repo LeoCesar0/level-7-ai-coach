@@ -17,16 +17,29 @@ const userRoute = new Hono()
   // --------------------------
   // LIST USERS
   // --------------------------
-  .get("/", async (ctx) => {
-    const list = await UserModel.find();
+  .get(
+    "/",
+    authValidator({ permissionsTo: ["admin", "coach"] }),
+    async (ctx) => {
+      // @ts-ignore
+      const userReq = ctx.get("reqUser") as IUser;
 
-    const resData: AppResponse<IUser[]> = {
-      data: list,
-      error: null,
-    };
+      const isCoach = userReq.role === "coach";
 
-    return ctx.json(resData);
-  })
+      const list = isCoach
+        ? await UserModel.find({
+            organization: userReq.organization,
+          })
+        : await UserModel.find();
+
+      const resData: AppResponse<IUser[]> = {
+        data: list,
+        error: null,
+      };
+
+      return ctx.json(resData, 200);
+    }
+  )
   // --------------------------
   // GET USER BY ID
   // --------------------------
@@ -40,7 +53,7 @@ const userRoute = new Hono()
       error: null,
     };
 
-    return ctx.json(resData);
+    return ctx.json(resData, 200);
   })
   // --------------------------
   // CREATE USER
