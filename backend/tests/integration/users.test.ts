@@ -107,7 +107,12 @@ describe("users and organizations integration suite", () => {
   it("should list and find created user", async () => {
     stub = await stubGetUserFromToken(_seed.admin);
 
-    const res = await honoApp.request("/api/users");
+    const res = await honoApp.request("/api/users", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer 123",
+      },
+    });
 
     const json: AppResponse<IUser[]> = await res.json();
 
