@@ -6,6 +6,7 @@ import { ENV } from "./static/envs";
 import { MongooseServer } from "./lib/mongoose";
 import organizationsRoute from "./routes/organizations/route";
 import { onAppError } from "./handlers/onAppError";
+import { chatRouter } from "./routes/chat/route";
 
 dotenv.config({ path: "../.env" });
 
@@ -20,7 +21,8 @@ const honoApp = new Hono().basePath("/api").onError(onAppError);
 
 const routes = honoApp
   .route("/users", userRoute)
-  .route("/organizations", organizationsRoute);
+  .route("/organizations", organizationsRoute)
+  .route("/chat", chatRouter);
 
 export type ApiType = typeof routes;
 
@@ -37,7 +39,6 @@ if (
   process.env.NODE_ENV === ENV.PRODUCTION ||
   process.env.NODE_ENV === ENV.DEVELOPMENT
 ) {
-  console.log(`🚀🖥️❗ Connected to MongoDB`);
   MongooseServer.connectServer();
 }
 
