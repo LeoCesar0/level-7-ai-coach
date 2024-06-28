@@ -21,8 +21,6 @@ describe("test models suite", () => {
       const usersT0 = await UserModel.find();
       const orgsT0 = await OrganizationModel.find();
 
-      console.log("❗ usersT0 -->", usersT0);
-      console.log("❗ orgsT0 -->", orgsT0);
       expect(usersT0).toHaveLength(0);
       expect(orgsT0).toHaveLength(0);
       // --------------------------
