@@ -1,9 +1,9 @@
 import { Context } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
-import { TEST_CONFIG } from "../../tests/config";
 import { ENV } from "../static/envs";
 import { getUserFromToken } from "../services/getUserFromToken";
 import { Role } from "../@schemas/roles";
+import { IUser, UserModel } from "../routes/users/schemas/user";
 
 type IAuthValidator =
   | {
@@ -20,30 +20,40 @@ export const createVerifyAuthToken = ({
     token: string,
     ctx: Context
   ) => boolean | Promise<boolean> = async (token, ctx) => {
-    if (
-      process.env.NODE_ENV === ENV.TEST &&
-      token === TEST_CONFIG.VALID_TOKEN
-    ) {
-      return true;
-    }
+    try {
+      let user: IUser | null = null;
 
-    const user = await getUserFromToken.exec({ token });
+      if (
+        process.env.NODE_ENV === ENV.DEVELOPMENT ||
+        process.env.NODE_ENV === ENV.TEST
+      ) {
+        // IN DEV OR TEST ENVS, USER ID CAN BE USED AS TOKEN
+        user = (await UserModel.findById(token).catch((err) => {})) ?? null;
+      }
+      if (!user) {
+        user = await getUserFromToken.exec({ token });
+      }
 
-    if (user && !user.active) return false;
-
-    if (permissionsTo && user) {
-      const hasPermission = permissionsTo.includes(user.role);
-
-      if (!hasPermission) {
+      if (!user || (user && !user.active)) {
+        ctx.set("reqUser", null);
         return false;
       }
-    }
 
-    if (user) {
+      if (permissionsTo) {
+        const hasPermission = permissionsTo.includes(user.role);
+
+        if (!hasPermission) {
+          return false;
+        }
+      }
+
       ctx.set("reqUser", user);
-    }
 
-    return Boolean(user);
+      return Boolean(user);
+    } catch (err) {
+      ctx.set("reqUser", null);
+      return false;
+    }
   };
   return verifyAuthToken;
 };
