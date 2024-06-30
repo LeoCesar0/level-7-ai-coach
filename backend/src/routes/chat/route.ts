@@ -135,12 +135,10 @@ export const chatRouter = new Hono()
       console.log("❗ resChain -->", resChain);
 
       // const resChain = await chain.invoke({ input: message });
-
       // console.log("❗ resChain -->", resChain);
 
-      const chatHistory = await memory.chatHistory.getMessages();
-
-      console.log("❗ chatHistory -->", chatHistory);
+      // const chatHistory = await memory.chatHistory.getMessages();
+      // console.log("❗ chatHistory -->", chatHistory);
 
       // const newResponseMessage = new MessageModel({ userId, message: response });
       // await newResponseMessage.save();

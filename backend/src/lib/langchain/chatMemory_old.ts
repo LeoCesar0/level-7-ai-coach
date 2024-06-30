@@ -11,14 +11,7 @@ export type IGetChatMemory = {
   chatId: string;
 };
 
-const previousKnowledge = [
-  "You can a coach assistant helping an athlete to get better at their sport",
-  "Be funny and engaging. Help the athlete to overcome any mental and physical barriers",
-  "Ask the athlete about their goals and help them to achieve them",
-  "Be supportive and encouraging",
-];
-
-export const getChatMemory = ({ chatId }: IGetChatMemory) => {
+export const getChatMemoryFromBuffer = ({ chatId }: IGetChatMemory) => {
   const dbName = MongooseServer.dbName;
 
   //   const collection = client.db(dbName).collection("memory");
@@ -32,8 +25,6 @@ export const getChatMemory = ({ chatId }: IGetChatMemory) => {
     returnMessages: true,
     // memoryKey: "history",
   });
-
-  const knowledge = previousKnowledge.join("\n");
 
   const chain = new ConversationChain({
     llm: chatOpenAI,
