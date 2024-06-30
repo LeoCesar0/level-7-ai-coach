@@ -1,4 +1,4 @@
-import { CreateOrganization } from "../../src/routes/organizations/schemas/createOrganization";
+import { ICreateOrganization } from "../../src/routes/organizations/schemas/createOrganization";
 import { OrganizationModel } from "../../src/routes/organizations/schemas/organization";
 import { ICreateUser } from "../../src/routes/users/schemas/createUser";
 import { UserModel } from "../../src/routes/users/schemas/user";

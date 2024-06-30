@@ -2,12 +2,12 @@ import { Context } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
 import { ENV } from "../static/envs";
 import { getUserFromToken } from "../services/getUserFromToken";
-import { Role } from "../@schemas/roles";
+import { IRole } from "../@schemas/roles";
 import { IUser, UserModel } from "../routes/users/schemas/user";
 
 type IAuthValidator =
   | {
-      permissionsTo?: Role[];
+      permissionsTo?: IRole[];
     }
   | undefined;
 

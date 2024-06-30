@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { EXCEPTIONS } from "../../../static/exceptions";
-import { zId } from "@zodyac/zod-mongoose";
 
-export type CreateOrganization = z.infer<typeof zCreateOrganization>;
+export type ICreateOrganization = z.infer<typeof zCreateOrganization>;
 
 export const zCreateOrganization = z.object({
   name: z

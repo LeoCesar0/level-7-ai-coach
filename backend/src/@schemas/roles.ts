@@ -5,6 +5,6 @@ export const zRole = z.enum(["admin", "user", "coach"]);
 
 export const zChatRole = z.enum(["user", "system", "assistant"]);
 
-export type Role = z.infer<typeof zRole>;
+export type IRole = z.infer<typeof zRole>;
 
-export type ChatRole = z.infer<typeof zChatRole>;
+export type IChatRole = z.infer<typeof zChatRole>;

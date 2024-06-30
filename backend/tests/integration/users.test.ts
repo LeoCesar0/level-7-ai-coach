@@ -2,7 +2,7 @@ import honoApp from "../../src";
 import { AppResponse } from "../../src/@schemas/app";
 import { slugify } from "../../src/helpers/slugify";
 import {
-  Organization,
+  IOrganization,
   OrganizationModel,
 } from "../../src/routes/organizations/schemas/organization";
 import { IAthleteInfoInput } from "../../src/routes/users/schemas/athleteInfo";
@@ -12,17 +12,17 @@ import { IUpdateUserRoute } from "../../src/routes/users/schemas/updateUserRoute
 import { IUser, UserModel } from "../../src/routes/users/schemas/user";
 import { EXCEPTIONS } from "../../src/static/exceptions";
 import { stubGetUserFromToken } from "../helpers/stubGetUserFromToken";
-import { SeedResult, TestServer } from "../mongodb-memory-server";
+import { ISeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";
 
 describe("users and organizations integration suite", () => {
-  let _organization: Organization;
+  let _organization: IOrganization;
 
   let _createdUser: IUser | null = null;
   let _userName = "Xucrute " + Date.now();
   let _userEmail = slugify(_userName) + "@test.com";
 
-  let _seed: SeedResult;
+  let _seed: ISeedResult;
 
   let stub: sinon.SinonStub<any>;
 

@@ -1,4 +1,4 @@
-export type PaginationResult<T> = {
+export type IPaginationResult<T> = {
   list: T[];
   total: number;
   page: number;

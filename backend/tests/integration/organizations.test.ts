@@ -1,26 +1,26 @@
 import honoApp from "../../src";
 import { AppResponse } from "../../src/@schemas/app";
 import { IListRouteInput } from "../../src/@schemas/listRoute";
-import { PaginationResult } from "../../src/@schemas/pagination";
+import { IPaginationResult } from "../../src/@schemas/pagination";
 import { addToQuery } from "../../src/helpers/addToQuery";
 import { slugify } from "../../src/helpers/slugify";
-import { CreateOrganization } from "../../src/routes/organizations/schemas/createOrganization";
+import { ICreateOrganization } from "../../src/routes/organizations/schemas/createOrganization";
 import {
-  Organization,
+  IOrganization,
   OrganizationModel,
   zOrganization,
 } from "../../src/routes/organizations/schemas/organization";
 import { UserModel } from "../../src/routes/users/schemas/user";
 import { stubGetUserFromToken } from "../helpers/stubGetUserFromToken";
-import { SeedResult, TestServer } from "../mongodb-memory-server";
+import { ISeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";
 
 describe("organizations integration suite", () => {
-  let _seed: SeedResult;
+  let _seed: ISeedResult;
 
   let stub: sinon.SinonStub<any>;
 
-  let _createdOrg: Organization | null = null;
+  let _createdOrg: IOrganization | null = null;
 
   beforeAll(async () => {
     await TestServer.connectTestServer();
@@ -59,7 +59,7 @@ describe("organizations integration suite", () => {
         },
       });
 
-      const json: AppResponse<PaginationResult<Organization>> =
+      const json: AppResponse<IPaginationResult<IOrganization>> =
         await res.json();
 
       expect(res.status).toBe(200);
@@ -74,7 +74,7 @@ describe("organizations integration suite", () => {
 
       stub = await stubGetUserFromToken(_seed.admin);
 
-      const body: CreateOrganization = {
+      const body: ICreateOrganization = {
         name: "Organization test - " + Date.now(),
       };
 
@@ -91,7 +91,7 @@ describe("organizations integration suite", () => {
         },
       });
 
-      const json: AppResponse<Organization> = await res.json();
+      const json: AppResponse<IOrganization> = await res.json();
 
       const org = json.data;
 
@@ -123,7 +123,7 @@ describe("organizations integration suite", () => {
       }
       stub = await stubGetUserFromToken(_seed.admin);
 
-      const body: Partial<Organization> = {
+      const body: Partial<IOrganization> = {
         name: "New org name " + Date.now(),
       };
 
@@ -143,7 +143,7 @@ describe("organizations integration suite", () => {
         }
       );
 
-      const json: AppResponse<Organization> = await res.json();
+      const json: AppResponse<IOrganization> = await res.json();
 
       const org = json.data;
 

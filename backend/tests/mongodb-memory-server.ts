@@ -3,21 +3,20 @@ import mongoose from "mongoose";
 import { ENV } from "../src/static/envs";
 import { MongooseServer } from "../src/lib/mongoose";
 import {
-  Organization,
+  IOrganization,
   OrganizationModel,
 } from "../src/routes/organizations/schemas/organization";
 import { IUser } from "../src/routes/users/schemas/user";
 import { createAppUser } from "../src/services/createAppUser";
-import honoApp, { honoServer } from "../src";
 import { slugify } from "../src/helpers/slugify";
 
 type IConnectTestServer = {
   CONNECT_REAL_SERVER?: boolean;
 };
 
-export type SeedResult = {
-  organizationMaster: Organization;
-  organization1: Organization;
+export type ISeedResult = {
+  organizationMaster: IOrganization;
+  organization1: IOrganization;
   admin: IUser;
   normalUser: IUser;
   coachUser: IUser;
@@ -137,7 +136,7 @@ export class TestServer {
       withFirebaseUser: false,
     });
 
-    const result: SeedResult = {
+    const result: ISeedResult = {
       organizationMaster: organizationMaster.toObject(),
       organization1: organization1.toObject(),
       admin: admin,

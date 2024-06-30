@@ -1,10 +1,10 @@
-import { ChatRole, Role } from "../@schemas/roles";
+import { IChatRole, IRole } from "../@schemas/roles";
 
 export const ROLE = {
   ADMIN: "admin",
   USER: "user",
   COACH: "coach",
-} as const
+} as const;
 
 export const CHAT_ROLE = {
   USER: "user",
@@ -12,8 +12,8 @@ export const CHAT_ROLE = {
   ASSISTANT: "assistant",
 } as const;
 
-export const ROLES_LIST: Role[] = Object.values(ROLE) as Role[];
+export const ROLES_LIST: IRole[] = Object.values(ROLE) as IRole[];
 
-export const CHAT_ROLES_LIST: ChatRole[] = Object.values(
+export const CHAT_ROLES_LIST: IChatRole[] = Object.values(
   CHAT_ROLE
-) as ChatRole[];
+) as IChatRole[];

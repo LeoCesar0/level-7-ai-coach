@@ -1,16 +1,16 @@
 import { Hono } from "hono";
 import {
   OrganizationModel,
-  Organization,
+  IOrganization,
   zOrganization,
 } from "./schemas/organization";
 import { AppResponse } from "../../@schemas/app";
 import { routeValidator } from "../../middlewares/routeValidator";
 import { authValidator } from "../../middlewares/authValidator";
-import { PaginationResult } from "../../@schemas/pagination";
+import { IPaginationResult } from "../../@schemas/pagination";
 import { zListRouteQueryInput } from "../../@schemas/listRoute";
 import {
-  CreateOrganization,
+  ICreateOrganization,
   zCreateOrganization,
 } from "./schemas/createOrganization";
 import { z } from "zod";
@@ -38,7 +38,7 @@ const organizationsRoute = new Hono()
 
       const limit = query.limit;
       const page = query.page;
-      const sortBy = (query.sortBy as keyof Organization) ?? "createdAt";
+      const sortBy = (query.sortBy as keyof IOrganization) ?? "createdAt";
       const sortOrder = query.sortOrder ?? "desc";
 
       const list = await OrganizationModel.find()
@@ -46,7 +46,7 @@ const organizationsRoute = new Hono()
         .skip((page - 1) * limit)
         .limit(limit);
 
-      const resData: AppResponse<PaginationResult<Organization>> = {
+      const resData: AppResponse<IPaginationResult<IOrganization>> = {
         data: {
           list: list,
           total: list.length,
@@ -79,7 +79,7 @@ const organizationsRoute = new Hono()
 
       const item = await OrganizationModel.findById(id);
 
-      const resData: AppResponse<Organization> = {
+      const resData: AppResponse<IOrganization> = {
         data: item,
         error: null,
       };
@@ -96,12 +96,12 @@ const organizationsRoute = new Hono()
     authValidator({ permissionsTo: ["admin"] }),
     async (ctx) => {
       const input = ctx.req.valid("json");
-      const createdDoc = await OrganizationModel.create<CreateOrganization>(
+      const createdDoc = await OrganizationModel.create<ICreateOrganization>(
         input
       );
 
       const createdItem = createdDoc.toObject();
-      const resData: AppResponse<Organization> = {
+      const resData: AppResponse<IOrganization> = {
         data: createdItem,
         error: null,
       };
@@ -154,7 +154,7 @@ const organizationsRoute = new Hono()
       }
 
       const updatedItem = updatedDoc.toObject();
-      const resData: AppResponse<Organization> = {
+      const resData: AppResponse<IOrganization> = {
         data: updatedItem,
         error: null,
       };

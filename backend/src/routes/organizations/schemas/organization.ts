@@ -7,7 +7,7 @@ import { zCreateOrganization } from "./createOrganization";
 import { slugify } from "../../../helpers/slugify";
 import { UserModel } from "../../users/schemas/user";
 
-export type Organization = z.infer<typeof zOrganization>;
+export type IOrganization = z.infer<typeof zOrganization>;
 
 export const zOrganization = zCreateOrganization
   .merge(
@@ -19,7 +19,7 @@ export const zOrganization = zCreateOrganization
   )
   .merge(zMongoDocument);
 
-export const organizationSchema = new Schema<Organization>(
+export const organizationSchema = new Schema<IOrganization>(
   {
     name: {
       type: String,
@@ -91,7 +91,7 @@ organizationSchema.pre("updateOne", async function (next) {
 // MODEL
 // --------------------------
 
-export const OrganizationModel = model<Organization>(
+export const OrganizationModel = model<IOrganization>(
   "Organization",
   organizationSchema
 );
