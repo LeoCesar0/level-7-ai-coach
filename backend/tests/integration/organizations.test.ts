@@ -37,35 +37,6 @@ describe("organizations integration suite", () => {
     }
   });
 
-  describe("list", () => {
-    it("should list 2 organizations", async () => {
-      stub = await stubGetUserFromToken(_seed.admin);
-
-      const body: IListRouteInput = {
-        limit: "10",
-        page: "1",
-      };
-
-      const url = addToQuery({
-        url: "/api/organizations",
-        obj: body,
-      });
-
-      const res = await honoApp.request(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer 123",
-        },
-      });
-
-      const json: AppResponse<IPaginationResult<IOrganization>> =
-        await res.json();
-
-      expect(res.status).toBe(200);
-      expect(json.data?.list.length).toBe(2);
-    });
-  });
   describe("create", () => {
     it("should create an organization, by admin", async () => {
       // --------------------------

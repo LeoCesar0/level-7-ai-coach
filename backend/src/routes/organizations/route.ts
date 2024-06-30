@@ -17,51 +17,34 @@ import { z } from "zod";
 import { zStringNotEmpty } from "../../@schemas/primitives/stringNotEmpty";
 import { HTTPException } from "hono/http-exception";
 import { EXCEPTIONS } from "../../static/exceptions";
-import { UserModel } from "../users/schemas/user";
+import { IUser, UserModel } from "../users/schemas/user";
 import { firebaseAuth } from "../../lib/firebase";
+import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
+import { zValidator } from "@hono/zod-validator";
 
 const organizationsRoute = new Hono()
   // --------------------------
   // LIST
   // --------------------------
-  .get(
-    "/",
-    authValidator({ permissionsTo: ["admin"] }),
+  .post(
+    "/list",
+    authValidator({ permissionsTo: ["admin", "user", "coach"] }),
     routeValidator({
       schema: zListRouteQueryInput,
-      target: "query",
+      target: "json",
     }),
     async (ctx) => {
-      const query = ctx.req.valid("query");
+      const body = ctx.req.valid("json");
+      // @ts-ignore
+      const reqUser: IUser = ctx.get("reqUser");
 
-      // const parsed = zListRouteQueryParsed.parse(query);
+      const resData = await handlePaginationRoute<IOrganization>({
+        model: OrganizationModel,
+        body,
+        reqUser,
+      });
 
-      const limit = query.limit;
-      const page = query.page;
-      const sortBy = (query.sortBy as keyof IOrganization) ?? "createdAt";
-      const sortOrder = query.sortOrder ?? "desc";
-
-      const list = await OrganizationModel.find()
-        .sort({ createdAt: sortOrder })
-        .skip((page - 1) * limit)
-        .limit(limit);
-
-      const resData: AppResponse<IPaginationResult<IOrganization>> = {
-        data: {
-          list: list,
-          total: list.length,
-          page: page,
-          limit: limit,
-          totalPages: 1,
-          hasNextPage: false,
-          hasPrevPage: false,
-          nextPage: null,
-          prevPage: null,
-        },
-        error: null,
-      };
-
-      return ctx.json(resData);
+      return ctx.json(resData, 200);
     }
   )
   // --------------------------

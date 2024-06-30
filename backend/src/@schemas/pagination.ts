@@ -1,6 +1,6 @@
 export type IPaginationResult<T> = {
   list: T[];
-  total: number;
+  totalItems: number;
   page: number;
   limit: number;
   totalPages: number;

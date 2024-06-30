@@ -1,11 +1,14 @@
 import { z } from "zod";
 
+export const zFilters = z.record(z.string(), z.any()).optional();
+
 export const zListRouteQueryInput = z
   .object({
     page: z.string().optional(),
     limit: z.string().optional(),
     sortBy: z.string().optional(),
     sortOrder: z.enum(["asc", "ascending", "desc", "descending"]).optional(),
+    filters: zFilters,
   })
   .transform((val, ctx) => {
     const page = val.page ? Number(val.page) : undefined;
@@ -17,17 +20,19 @@ export const zListRouteQueryInput = z
     return z
       .object({
         page: z.number().min(1).default(1),
-        limit: z.number().min(5).default(10),
+        limit: z.number().min(1).default(10),
         sortBy: z.string().optional(),
         sortOrder: z
           .enum(["asc", "ascending", "desc", "descending"])
           .optional(),
+        filters: zFilters,
       })
       .parse({
         page,
         limit,
         sortBy,
         sortOrder,
+        filters: val.filters,
       });
   });
 

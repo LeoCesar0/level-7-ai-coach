@@ -1,11 +1,9 @@
 import { Schema, model } from "mongoose";
 import { z } from "zod";
-import { zId, zodSchema } from "@zodyac/zod-mongoose";
+import { zId } from "@zodyac/zod-mongoose";
 import { zMongoDocument } from "../../../@schemas/mongoose";
-import { EXCEPTIONS } from "../../../static/exceptions";
 import { zCreateOrganization } from "./createOrganization";
 import { slugify } from "../../../helpers/slugify";
-import { UserModel } from "../../users/schemas/user";
 
 export type IOrganization = z.infer<typeof zOrganization>;
 
