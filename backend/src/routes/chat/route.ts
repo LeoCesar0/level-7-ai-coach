@@ -13,6 +13,9 @@ import { zStringNotEmpty } from "../../@schemas/primitives/stringNotEmpty.js";
 import { HTTPException } from "hono/http-exception";
 import { EXCEPTIONS } from "../../static/exceptions.js";
 import { openAiEmbeddings } from "../../lib/langchain/embeddings.js";
+import { getChatMemory } from "../../lib/langchain/chatMemory.js";
+import { zValidator } from "@hono/zod-validator";
+import { AnyArray } from "mongoose";
 
 export const chatRouter = new Hono()
   .get(
@@ -92,31 +95,58 @@ export const chatRouter = new Hono()
     routeValidator({
       schema: zCreateMessage,
     }),
+    zValidator("query", z.object({ first: z.boolean().optional() })),
     authValidator(),
     async (c) => {
       const { user: userId, message, chat, role } = c.req.valid("json");
+      const { first } = c.req.valid("query");
+
+      // const firstMessagePromp = first
 
       // const user = await UserModel.findById(userId);
       // if (!user) {
       //   return c.json({ message: "User not found" }, 404);
       // }
-      const messageEmbedding = await openAiEmbeddings.embedDocuments([message]);
+      // const messageEmbedding = await openAiEmbeddings.embedDocuments([message]);
 
       const userMessageM = new MessageModel({
         user: userId,
         message,
         chat,
         role,
-        messageEmbedding,
+        // messageEmbedding,
       });
       const userMessageDoc = await userMessageM.save();
       const userMessage = userMessageDoc.toObject();
 
+      const { chain, chainWithHistory, memory } = getChatMemory({
+        chatId: chat.toString(),
+      });
+
+      const resChain = await chainWithHistory.invoke(
+        { question: message },
+        {
+          configurable: {
+            sessionId: chat.toString(),
+          },
+        }
+      );
+
+      console.log("❗ resChain -->", resChain);
+
+      // const resChain = await chain.invoke({ input: message });
+
+      // console.log("❗ resChain -->", resChain);
+
+      const chatHistory = await memory.chatHistory.getMessages();
+
+      console.log("❗ chatHistory -->", chatHistory);
+
       // const newResponseMessage = new MessageModel({ userId, message: response });
       // await newResponseMessage.save();
 
-      const resData: AppResponse<IMessage> = {
-        data: userMessage,
+      const resData: AppResponse<any> = {
+        data: resChain,
         error: null,
       };
 

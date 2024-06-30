@@ -6,7 +6,6 @@ import { zCreateUser } from "./createUser";
 import zodSchema from "@zodyac/zod-mongoose";
 import { zAthleteInfo } from "./athleteInfo";
 import { zAddress } from "./address";
-import { OrganizationModel } from "../../organizations/schemas/organization";
 
 export type IUser = z.infer<typeof zUser> & {
   firebaseId: string;

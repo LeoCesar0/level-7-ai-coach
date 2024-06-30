@@ -8,6 +8,7 @@ const env = process.env.NODE_ENV || ENV.DEVELOPMENT;
 
 export class MongooseServer {
   static connection: Mongoose.Connection | undefined;
+  static dbName: string = env;
 
   static connectServer = async () => {
     if (this.connection) {
@@ -44,7 +45,8 @@ export class MongooseServer {
     const [p1] = connectionString.split("mongodb.net/");
     connectionString = p1 + "mongodb.net/";
 
-    connectionString = connectionString + `${env}`;
+    connectionString = connectionString + this.dbName; // DB NAME
+
     const complement = process.env.MONGO_DB_CONNECTION_STRING_COMPLEMENT || "";
     connectionString = connectionString + complement;
     return connectionString;
