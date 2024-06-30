@@ -1,6 +1,6 @@
 import honoApp from "../../src";
 import { AppResponse } from "../../src/@schemas/app";
-import { IListRouteInput } from "../../src/@schemas/listRoute";
+import { IPaginationBody } from "../../src/@schemas/listRoute";
 import { IPaginationResult } from "../../src/@schemas/pagination";
 import { addToQuery } from "../../src/helpers/addToQuery";
 import { slugify } from "../../src/helpers/slugify";

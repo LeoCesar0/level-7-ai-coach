@@ -1,6 +1,6 @@
 import honoApp from "../../src";
 import { AppResponse } from "../../src/@schemas/app";
-import { IListRouteInput } from "../../src/@schemas/listRoute";
+import { IPaginationBody } from "../../src/@schemas/listRoute";
 import { IPaginationResult } from "../../src/@schemas/pagination";
 import { ICreateOrganization } from "../../src/routes/organizations/schemas/createOrganization";
 import {
@@ -40,9 +40,9 @@ describe("pagination integration suite", () => {
       active: false,
     });
 
-    const body: IListRouteInput = {
-      limit: "100",
-      page: "1",
+    const body: IPaginationBody = {
+      limit: 100,
+      page: 1,
     };
 
     // --------------------------
@@ -73,9 +73,9 @@ describe("pagination integration suite", () => {
 
     stub = await stubGetUserFromToken(_seed.admin);
 
-    const body: IListRouteInput = {
-      limit: "10",
-      page: "1",
+    const body: IPaginationBody = {
+      limit: 10,
+      page: 1,
     };
 
     const res = await honoApp.request("/api/organizations/list", {
@@ -133,9 +133,9 @@ describe("pagination integration suite", () => {
 
     stub = await stubGetUserFromToken(_seed.admin);
 
-    const body: IListRouteInput = {
-      limit: "4",
-      page: "2",
+    const body: IPaginationBody = {
+      limit: 4,
+      page: 2,
       sortBy: "createdAt",
       sortOrder: "desc",
     };

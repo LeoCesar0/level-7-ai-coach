@@ -1,11 +1,11 @@
 import { Model } from "mongoose";
 import { AppResponse } from "../@schemas/app";
-import { IListRouteOutput } from "../@schemas/listRoute";
+import { IPaginationBodyOutput } from "../@schemas/listRoute";
 import { IPaginationResult } from "../@schemas/pagination";
 import { IUser } from "../routes/users/schemas/user";
 
 export type IHandlePaginationRoute<T> = {
-  body: IListRouteOutput;
+  body: IPaginationBodyOutput;
   model: Model<T>;
   reqUser: IUser;
 };

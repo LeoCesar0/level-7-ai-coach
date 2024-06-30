@@ -1,11 +1,11 @@
 import honoApp from "../../src";
 import { AppResponse } from "../../src/@schemas/app";
+import { IPaginationResult } from "../../src/@schemas/pagination";
 import { slugify } from "../../src/helpers/slugify";
 import {
   IOrganization,
   OrganizationModel,
 } from "../../src/routes/organizations/schemas/organization";
-import { IAthleteInfoInput } from "../../src/routes/users/schemas/athleteInfo";
 import { ICreateUser } from "../../src/routes/users/schemas/createUser";
 import { ISignUpRoute } from "../../src/routes/users/schemas/signUpRoute";
 import { IUpdateUserRoute } from "../../src/routes/users/schemas/updateUserRoute";
@@ -107,16 +107,20 @@ describe("users and organizations integration suite", () => {
   it("should list and find created user", async () => {
     stub = await stubGetUserFromToken(_seed.admin);
 
-    const res = await honoApp.request("/api/users", {
+    const res = await honoApp.request("/api/users/list", {
+      method: "POST",
+      body: JSON.stringify({}),
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer 123",
       },
     });
 
-    const json: AppResponse<IUser[]> = await res.json();
+    const json: AppResponse<IPaginationResult<IUser>> = await res.json();
 
-    const found = json.data?.find((item) => item._id === _createdUser?._id);
+    const found = json.data?.list.find(
+      (item) => item._id === _createdUser?._id
+    );
 
     expect(res.status).toBe(200);
     expect(found).toBeTruthy();

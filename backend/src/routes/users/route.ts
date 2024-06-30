@@ -12,30 +12,30 @@ import z from "zod";
 import { updateUserRoute } from "./schemas/updateUserRoute";
 import cloneDeep from "lodash.clonedeep";
 import { OrganizationModel } from "../organizations/schemas/organization";
+import { zListRouteQueryInput } from "../../@schemas/listRoute";
+import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 
 const userRoute = new Hono()
   // --------------------------
-  // LIST USERS
+  // LIST
   // --------------------------
-  .get(
-    "/",
-    authValidator({ permissionsTo: ["admin", "coach"] }),
+  .post(
+    "/list",
+    authValidator({ permissionsTo: ["admin"] }),
+    routeValidator({
+      schema: zListRouteQueryInput,
+      target: "json",
+    }),
     async (ctx) => {
+      const body = ctx.req.valid("json");
       // @ts-ignore
-      const userReq = ctx.get("reqUser") as IUser;
+      const reqUser: IUser = ctx.get("reqUser");
 
-      const isCoach = userReq.role === "coach";
-
-      const list = isCoach
-        ? await UserModel.find({
-            organization: userReq.organization,
-          })
-        : await UserModel.find();
-
-      const resData: AppResponse<IUser[]> = {
-        data: list,
-        error: null,
-      };
+      const resData = await handlePaginationRoute<IUser>({
+        model: UserModel,
+        body,
+        reqUser,
+      });
 
       return ctx.json(resData, 200);
     }
