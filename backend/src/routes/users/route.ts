@@ -71,15 +71,40 @@ const userRoute = new Hono()
         .catch((err) => {});
 
       if (firebaseUserExists) {
-        resData = {
-          data: null,
-          error: {
-            _isAppError: true,
-            message: EXCEPTIONS.USER_ALREADY_EXISTS,
-          },
-        };
-        return ctx.json(resData, 400);
+        const userInDb = await UserModel.find({ email: inputs.user.email });
+        if (userInDb) {
+          // --------------------------
+          // USER ALREADY EXISTS IN FIREBASE AND MONGODB
+          // --------------------------
+          resData = {
+            data: null,
+            error: {
+              _isAppError: true,
+              message: EXCEPTIONS.USER_EMAIL_ALREADY_REGISTERED,
+            },
+          };
+          return ctx.json(resData, 400);
+        } else {
+          // --------------------------
+          // USER EXISTS ONLY IN FIREBASE, CREATING NEW USER IN MONGO DB
+          // --------------------------
+          const createdUser = await createAppUser({
+            inputs: inputs,
+            withFirebaseUser: false,
+            firebaseId: firebaseUserExists.uid,
+          });
+
+          resData = {
+            data: createdUser,
+            error: null,
+          };
+
+          return ctx.json(resData, 200);
+        }
       }
+      // --------------------------
+      // USER DOES NOT EXIST YET
+      // --------------------------
 
       const createdUser = await createAppUser({
         inputs: inputs,
