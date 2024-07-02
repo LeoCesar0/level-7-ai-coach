@@ -50,7 +50,6 @@ const run = async () => {
     });
   }
   console.log("firebaseAdmin", firebaseAdmin);
-  const adminToken = await firebaseAuth.createCustomToken(firebaseAdmin.uid);
   const admin = await createAppUser({
     inputs: {
       password: process.env.DEV_PASSWORD!,
@@ -62,7 +61,6 @@ const run = async () => {
         organization: organizationMaster._id,
       },
     },
-    withFirebaseUser: false,
     firebaseId: firebaseAdmin.uid,
   });
 
@@ -86,7 +84,6 @@ const run = async () => {
       email: normalUserEmail,
     });
   }
-  const userToken = await firebaseAuth.createCustomToken(firebaseUser.uid);
 
   const normalUser = await createAppUser({
     inputs: {
@@ -99,7 +96,6 @@ const run = async () => {
         organization: organization1._id,
       },
     },
-    withFirebaseUser: false,
     firebaseId: firebaseUser.uid,
   });
   // --------------------------
@@ -117,7 +113,6 @@ const run = async () => {
       email: coachUserEmail,
     });
   }
-  const coachToken = await firebaseAuth.createCustomToken(firebaseCoach.uid);
   const coachUser = await createAppUser({
     inputs: {
       password: process.env.DEV_PASSWORD!,
@@ -129,9 +124,10 @@ const run = async () => {
         organization: organization1._id,
       },
     },
-    withFirebaseUser: false,
     firebaseId: firebaseCoach.uid,
   });
+
+  console.log("❗ admin -->", admin);
 
   //   const result: SeedResult = {
   //     organizationMaster: organizationMaster.toObject(),
@@ -143,12 +139,6 @@ const run = async () => {
   //     normalUserTestToken: this.normalUserTestToken,
   //     coachUserTestToken: this.normalUserTestToken,
   //   };
-
-  console.log("user token --> ", userToken);
-  console.log("--------------------");
-  console.log("coach token --> ", coachToken);
-  console.log("--------------------");
-  console.log("admin token --> ", adminToken);
 
   console.log("Finish seed");
   await MongooseServer.disconnectServer();

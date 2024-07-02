@@ -96,7 +96,6 @@ export class TestServer {
           organization: organizationMaster._id,
         },
       },
-      withFirebaseUser: false,
     });
 
     // --------------------------
@@ -120,7 +119,6 @@ export class TestServer {
           organization: organization1._id,
         },
       },
-      withFirebaseUser: false,
     });
     const coachUser = await createAppUser({
       inputs: {
@@ -133,7 +131,6 @@ export class TestServer {
           organization: organization1._id,
         },
       },
-      withFirebaseUser: false,
     });
 
     const result: ISeedResult = {

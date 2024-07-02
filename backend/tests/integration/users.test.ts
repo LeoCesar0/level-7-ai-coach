@@ -87,7 +87,7 @@ describe("users and organizations integration suite", () => {
       const user = json.data;
 
       if (json.error) {
-        console.log("❌ Create error", json.error);
+        console.log("❌ Create user error", json.error);
       }
 
       // --------------------------
@@ -157,7 +157,9 @@ describe("users and organizations integration suite", () => {
       const json: AppResponse<IUser> = await res.json();
 
       expect(res.status).toBe(400);
-      expect(json.error?.message).toBe(EXCEPTIONS.USER_ALREADY_EXISTS);
+      expect(json.error?.message).toBe(
+        EXCEPTIONS.USER_EMAIL_ALREADY_REGISTERED
+      );
     });
   });
 

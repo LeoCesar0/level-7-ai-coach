@@ -66,41 +66,43 @@ const userRoute = new Hono()
       const inputs = ctx.req.valid("json");
       let resData: AppResponse<IUser>;
 
-      const firebaseUserExists = await firebaseAuth
+      const userInFirebase = await firebaseAuth
         .getUserByEmail(inputs.user.email)
         .catch((err) => {});
 
-      if (firebaseUserExists) {
-        const userInDb = await UserModel.find({ email: inputs.user.email });
-        if (userInDb) {
-          // --------------------------
-          // USER ALREADY EXISTS IN FIREBASE AND MONGODB
-          // --------------------------
-          resData = {
-            data: null,
-            error: {
-              _isAppError: true,
-              message: EXCEPTIONS.USER_EMAIL_ALREADY_REGISTERED,
-            },
-          };
-          return ctx.json(resData, 400);
-        } else {
-          // --------------------------
-          // USER EXISTS ONLY IN FIREBASE, CREATING NEW USER IN MONGO DB
-          // --------------------------
-          const createdUser = await createAppUser({
-            inputs: inputs,
-            withFirebaseUser: false,
-            firebaseId: firebaseUserExists.uid,
-          });
+      const userInMongoDb = await UserModel.findOne({
+        email: inputs.user.email,
+      });
 
-          resData = {
-            data: createdUser,
-            error: null,
-          };
+      if (userInMongoDb) {
+        // --------------------------
+        // USER ALREADY EXISTS IN FIREBASE AND MONGODB
+        // --------------------------
+        resData = {
+          data: null,
+          error: {
+            _isAppError: true,
+            message: EXCEPTIONS.USER_EMAIL_ALREADY_REGISTERED,
+          },
+        };
+        return ctx.json(resData, 400);
+      }
 
-          return ctx.json(resData, 200);
-        }
+      if (userInFirebase) {
+        // --------------------------
+        // USER EXISTS ONLY IN FIREBASE, CREATING NEW USER IN MONGO DB
+        // --------------------------
+        const createdUser = await createAppUser({
+          inputs: inputs,
+          firebaseId: userInFirebase.uid,
+        });
+
+        resData = {
+          data: createdUser,
+          error: null,
+        };
+
+        return ctx.json(resData, 200);
       }
       // --------------------------
       // USER DOES NOT EXIST YET
@@ -108,7 +110,6 @@ const userRoute = new Hono()
 
       const createdUser = await createAppUser({
         inputs: inputs,
-        withFirebaseUser: true,
       });
 
       resData = {
