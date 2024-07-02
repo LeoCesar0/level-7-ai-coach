@@ -83,6 +83,7 @@ const userRoute = new Hono()
           error: {
             _isAppError: true,
             message: EXCEPTIONS.USER_EMAIL_ALREADY_REGISTERED,
+            _data: userInMongoDb,
           },
         };
         return ctx.json(resData, 400);

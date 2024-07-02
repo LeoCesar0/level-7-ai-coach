@@ -6,6 +6,7 @@ export type AppError = {
   message: string;
   code?: string | undefined;
   _message?: string | undefined;
+  _data?: any;
 };
 
 export type AppResponse<T = any> = {
