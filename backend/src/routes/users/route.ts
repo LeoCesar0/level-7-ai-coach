@@ -66,6 +66,21 @@ const userRoute = new Hono()
       const inputs = ctx.req.valid("json");
       let resData: AppResponse<IUser>;
 
+      const orgExists = await OrganizationModel.exists({
+        _id: inputs.user.organization,
+      });
+
+      if (!orgExists) {
+        resData = {
+          data: null,
+          error: {
+            _isAppError: true,
+            message: EXCEPTIONS.ORGANIZATION_NOT_EXISTS,
+          },
+        };
+        return ctx.json(resData, 400);
+      }
+
       const userInFirebase = await firebaseAuth
         .getUserByEmail(inputs.user.email)
         .catch((err) => {});

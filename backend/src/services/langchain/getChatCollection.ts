@@ -1,5 +1,5 @@
-import { mongoDBClient } from "../mongodb";
-import { MongooseServer } from "../mongoose";
+import { mongoDBClient } from "../../lib/mongodb";
+import { MongooseServer } from "../../lib/mongoose";
 
 export const getChatCollection = () => {
   const dbName = MongooseServer.dbName;

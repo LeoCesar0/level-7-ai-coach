@@ -1,4 +1,5 @@
 import { ChatOpenAI } from "@langchain/openai";
+import { CHAT_MODEL } from "./@static";
 
 const apiKey = process.env.OPENAI_API_KEY;
 
@@ -7,7 +8,7 @@ if (!apiKey) {
 }
 
 export const chatOpenAI = new ChatOpenAI({
-  model: "gpt-3.5-turbo",
+  model: CHAT_MODEL,
   temperature: 0,
   apiKey,
 })

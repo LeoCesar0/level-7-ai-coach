@@ -11,6 +11,8 @@ export const onAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
   let message = EXCEPTIONS.SERVER_ERROR;
   let status: StatusCode = 500;
 
+  console.log("❗ app err -->", err);
+
   if (err instanceof ZodError) {
     console.log("ZOD ERROR INSTANCE");
     message = getZodErrorMessage({ error: err });
