@@ -9,6 +9,12 @@ import { MongooseServer } from "../src/lib/mongoose";
 import { UserRecord } from "firebase-admin/auth";
 import { MessageModel } from "../src/routes/chat/schemas/message";
 import { ChatModel } from "../src/routes/chat/schemas/chat";
+import { getCollection } from "../src/services/mongodb/getCollection";
+import {
+  HISTORY_COLLECTION,
+  MEMORY_COLLECTION,
+} from "../src/lib/langchain/@static";
+import { mongoDBClient } from "../src/lib/mongodb";
 
 dotenv.config({ path: "../.env" });
 
@@ -28,6 +34,11 @@ const run = async () => {
   await UserModel.deleteMany();
   await MessageModel.deleteMany();
   await ChatModel.deleteMany();
+
+  const historyCol = getCollection({ name: HISTORY_COLLECTION });
+  await historyCol.deleteMany();
+  const memoryCol = getCollection({ name: MEMORY_COLLECTION });
+  await memoryCol.deleteMany();
 
   // --------------------------
   // ADMIN
@@ -142,6 +153,7 @@ const run = async () => {
 
   console.log("Finish seed");
   await MongooseServer.disconnectServer();
+  await mongoDBClient.close()
 };
 
 await run();
