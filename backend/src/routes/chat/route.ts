@@ -10,9 +10,14 @@ import { authValidator } from "../../middlewares/authValidator.js";
 import { z } from "zod";
 import { zStringNotEmpty } from "../../@schemas/primitives/stringNotEmpty.js";
 import { HTTPException } from "hono/http-exception";
-import { getChatMemory } from "../../services/langchain/chatMemory.js";
-import { historyVectorStore } from "../../lib/langchain/vectorStore.js";
+import { getChatChain } from "../../services/langchain/getChatChain.js";
+import { memoryVectorStore } from "../../lib/langchain/memoryVectorStore.js";
 import { createDocuments } from "../../services/langchain/createDocuments.js";
+import { getChatChainV2 } from "../../services/langchain/getChatChainV2.js";
+import { mongoDBClient } from "../../lib/mongodb.js";
+import { getCollection } from "../../services/mongodb/getCollection.js";
+import { ICreateMemoryMessage, IMemoryMessage } from "../../@schemas/memory.js";
+import { formatDocumentsAsString } from "langchain/util/document";
 
 export const chatRouter = new Hono()
   .get(
@@ -94,86 +99,100 @@ export const chatRouter = new Hono()
     }),
     authValidator(),
     async (c) => {
-      const { user: userId, message, chat, role } = c.req.valid("json");
+      const { user: userId, message, chat: chatId, role } = c.req.valid("json");
 
-      console.log("❗ enter chat route");
+      const userNow = new Date().toISOString();
 
       const userExists = await UserModel.exists({ _id: userId });
 
       if (!userExists) {
         throw new HTTPException(404, { message: "User not found" });
       }
-      const chatExists = await ChatModel.exists({ _id: chat });
+      const chatExists = await ChatModel.exists({ _id: chatId });
       if (!chatExists) {
         throw new HTTPException(404, { message: "Chat not found" });
       }
 
-      // const firstMessagePromp = first
+      // const userMessageM = new MessageModel({
+      //   user: userId,
+      //   message,
+      //   chat: chatId,
+      //   role,
+      //   // messageEmbedding,
+      // });
+      // const userMessageDoc = await userMessageM.save();
+      // const userMessage = userMessageDoc.toObject();
 
-      // const user = await UserModel.findById(userId);
-      // if (!user) {
-      //   return c.json({ message: "User not found" }, 404);
-      // }
-      // const messageEmbedding = await openAiEmbeddings.embedDocuments([message]);
+      // --------------------------
+      // V1
+      // --------------------------
 
-      const userMessageM = new MessageModel({
-        user: userId,
+      const { chain } = await getChatChain({
+        chatId: chatId.toString(),
+        userId: userId.toString(),
         message,
-        chat,
-        role,
-        // messageEmbedding,
-      });
-      const userMessageDoc = await userMessageM.save();
-      const userMessage = userMessageDoc.toObject();
-
-      const { chain, chainWithHistory } = getChatMemory({
-        chatId: chat.toString(),
       });
 
-      const resChain = await chainWithHistory.invoke(
-        { question: message },
+      const response = await chain.invoke(
+        {
+          question: message,
+        },
         {
           configurable: {
-            sessionId: chat.toString(),
+            sessionId: chatId.toString(),
           },
         }
       );
 
-      const chatHistory = await chainWithHistory.getMessageHistory();
-      const chatHistoryMessages = await chatHistory.getMessages();
+      console.log("❗ response -->", response);
 
-      const chatHistoryMessagesAsString = chatHistoryMessages.map((item) => {
-        const messageType = item._getType();
-        return `${messageType}: ${item.content}`;
-      });
+      const aiAnswer = response.toDict().data.content;
 
-      const metaData = chatHistoryMessages.map((item) => {
-        return {
-          user_id: userId.toString(),
-          type: item._getType(),
-        };
-      });
+      console.log("❗ resMessage -->", aiAnswer);
+      // --------------------------
+      // V2
+      // --------------------------
 
-      // const historyEmbedding = await createEmbeddings({
-      //   messages: chatHistoryMessagesAsString,
+      // const { chain, currentHistory } = await getChatChainV2({
+      //   chatId: chatId.toString(),
+      //   userId: userId.toString(),
+      //   message,
       // });
 
-      console.log(
-        "❗ chatHistoryMessagesAsString -->",
-        chatHistoryMessagesAsString
-      );
-      // console.log("❗ historyEmbedding -->", historyEmbedding[0]);
+      // const response = await chain.invoke({
+      //   input: message,
+      // });
+
+      // const messages = [message, response.answer];
+
+      // --------------------------
+      // V2 END
+      // --------------------------
+
+      const aiNow = new Date().toISOString();
+      const messages = [message, aiAnswer];
+
+      const metaData: ICreateMemoryMessage[] = [
+        {
+          type: "human",
+          user_id: userId.toString(),
+          chat_id: chatId.toString(),
+          created_at: userNow,
+        },
+        {
+          type: "ai",
+          user_id: userId.toString(),
+          chat_id: chatId.toString(),
+          created_at: aiNow,
+        },
+      ];
 
       const documents = await createDocuments({
-        messages: chatHistoryMessagesAsString,
+        messages: messages,
         metadatas: metaData,
       });
 
-      console.log("❗ documents -->", documents);
-
-      const resultDocs = await historyVectorStore.addDocuments(documents);
-
-      console.log("❗ resultDocs -->", resultDocs);
+      await memoryVectorStore.addDocuments(documents);
 
       // await ChatModel.updateOne(
       //   {
@@ -195,7 +214,9 @@ export const chatRouter = new Hono()
       // await newResponseMessage.save();
 
       const resData: AppResponse<any> = {
-        data: resChain,
+        data: {
+          response,
+        },
         error: null,
       };
 
@@ -209,47 +230,32 @@ export const chatRouter = new Hono()
     }),
     authValidator(),
     async (c) => {
-      const { user: userId, message, chat, role } = c.req.valid("json");
+      const { user: userId, message, chat: chatId, role } = c.req.valid("json");
 
       console.log("❗ enter chat route");
+      // const collection = getCollection({ name: "history" });
+      // await collection.deleteMany();
+      // const collection2 = getCollection({ name: "memory" });
+      // await collection2.deleteMany();
+      // return c.json({ message: "done" }, 200);
 
       const userExists = await UserModel.exists({ _id: userId });
 
       if (!userExists) {
         throw new HTTPException(404, { message: "User not found" });
       }
-      const chatExists = await ChatModel.exists({ _id: chat });
+      const chatExists = await ChatModel.exists({ _id: chatId });
       if (!chatExists) {
         throw new HTTPException(404, { message: "Chat not found" });
       }
 
-      // const retriever = vectorStore.asRetriever({
-      //   filter: {
-      //     preFilter:{
-
-      //     }
-      //   }
-      // });
-
-      const retriever = historyVectorStore.asRetriever({
-        filter: {
-          preFilter: {
-            user_id: {
-              $eq: userId.toString(),
-            },
-          },
-        },
+      const { chain } = await getChatChainV2({
+        chatId: chatId.toString(),
+        userId: userId.toString(),
+        message,
       });
 
-      const result = await retriever.invoke(message, {});
-
-      // const result = vectorStore.similaritySearchWithScore(message, 10, {
-      //   preFilter: {
-      //     user_id: {
-      //       $eq: userId.toString(),
-      //     },
-      //   },
-      // });
+      const result = await chain.invoke({ input: message });
 
       console.log("❗ result -->", result);
 

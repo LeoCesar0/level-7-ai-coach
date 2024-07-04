@@ -95,15 +95,15 @@
 
 //   Question: {question}`);
 // const model = new ChatOpenAI({});
-// const chain = RunnableSequence.from([
-//   {
-//     context: retriever.pipe(formatDocumentsAsString),
-//     question: new RunnablePassthrough(),
-//   },
-//   prompt,
-//   model,
-//   new StringOutputParser(),
-// ]);
+// // const chain = RunnableSequence.from([
+// //   {
+// //     context: retriever.pipe(formatDocumentsAsString),
+// //     question: new RunnablePassthrough(),
+// //   },
+// //   prompt,
+// //   model,
+// //   new StringOutputParser(),
+// // ]);
 
 // // Prompt the LLM
 // const question = "How can I secure my MongoDB Atlas cluster?";
