@@ -16,11 +16,12 @@ export const zCreateAssessment = zAthleteInfoItem
   .merge(zCreateAssessmentAIAnswer)
   .merge(
     z.object({
-      userId: zId,
+      user: zId,
+      chat: zId,
     })
   );
 
 export const zCreateAssessmentRoute = z.object({
-  userId: zId,
+  user: zId,
   entries: z.array(zCreateAssessment),
 });

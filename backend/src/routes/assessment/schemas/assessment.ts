@@ -14,9 +14,14 @@ export const athleteEntry = new Schema<IAssessment>(
       type: String,
       required: true,
     },
-    userId: {
+    user: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      required: true,
+    },
+    chat: {
+      type: Schema.Types.ObjectId,
+      ref: "Chat",
       required: true,
     },
     section: {

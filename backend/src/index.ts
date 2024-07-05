@@ -7,6 +7,7 @@ import { MongooseServer } from "./lib/mongoose";
 import organizationsRoute from "./routes/organizations/route";
 import { onAppError } from "./handlers/onAppError";
 import { chatRouter } from "./routes/chat/route";
+import assessmentRoute from "./routes/assessment/route";
 
 dotenv.config({ path: "../.env" });
 
@@ -22,7 +23,8 @@ const honoApp = new Hono().basePath("/api").onError(onAppError);
 const routes = honoApp
   .route("/users", userRoute)
   .route("/organizations", organizationsRoute)
-  .route("/chat", chatRouter);
+  .route("/chat", chatRouter)
+  .route("/assessment", assessmentRoute);
 
 export type ApiType = typeof routes;
 
