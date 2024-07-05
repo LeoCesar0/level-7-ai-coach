@@ -12,6 +12,7 @@ import { ISeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";
 
 describe("pagination integration suite", () => {
+  console.log("🔻 Enter PAGINATION integration suite  -->");
   let _seed: ISeedResult;
   let stub: sinon.SinonStub<any>;
 

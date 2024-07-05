@@ -13,13 +13,18 @@ import {
 import { ICreateUser } from "../../src/routes/users/schemas/createUser";
 import { ISignUpRoute } from "../../src/routes/users/schemas/signUpRoute";
 import { IUpdateUserRoute } from "../../src/routes/users/schemas/updateUserRoute";
-import { IUser, UserModel } from "../../src/routes/users/schemas/user";
+import {
+  IUser,
+  IUserFull,
+  UserModel,
+} from "../../src/routes/users/schemas/user";
 import { EXCEPTIONS } from "../../src/static/exceptions";
 import { stubGetUserFromToken } from "../helpers/stubGetUserFromToken";
 import { ISeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";
 
-describe("users and organizations integration suite", () => {
+describe("users integration suite", () => {
+  console.log("🔻 Enter USERS integration suite  -->");
   let _organization: IOrganization;
 
   let _createdUser: IUser | null = null;
@@ -183,7 +188,7 @@ describe("users and organizations integration suite", () => {
         },
       });
 
-      const json: AppResponse<IPaginationResult<IUser>> = await res.json();
+      const json: AppResponse<IPaginationResult<IUserFull>> = await res.json();
 
       const found = json.data?.list.find(
         (item) => item._id === _createdUser?._id
@@ -202,10 +207,21 @@ describe("users and organizations integration suite", () => {
       if (!_createdUser) {
         throw new Error("User not created");
       }
+      stub = await stubGetUserFromToken(_createdUser);
 
-      const res = await honoApp.request(`/api/users/${_createdUser._id}`);
+      const res = await honoApp.request(`/api/users/${_createdUser._id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer any-token",
+        },
+      });
 
-      const json: AppResponse<IUser> = await res.json();
+      const json: AppResponse<IUserFull> = await res.json();
+
+      if (json.error) {
+        console.log("❗ get user error -->", json.error);
+      }
 
       const user = json.data;
 
@@ -259,7 +275,7 @@ describe("users and organizations integration suite", () => {
         }
       );
 
-      const json: AppResponse<IUser> = await res.json();
+      const json: AppResponse<IUserFull> = await res.json();
 
       expect(res.status).toBe(401);
       expect(json.error?.message).toBe(EXCEPTIONS.NOT_AUTHORIZED);
@@ -300,10 +316,11 @@ describe("users and organizations integration suite", () => {
         }
       );
 
-      const json: AppResponse<IUser> = await res.json();
+      const json: AppResponse<IUserFull> = await res.json();
 
       const user = json.data;
 
+      // @ts-ignore
       _updatedUser = user;
 
       expect(res.status).toBe(200);
@@ -357,7 +374,7 @@ describe("users and organizations integration suite", () => {
         }
       );
 
-      const json: AppResponse<IUser> = await res.json();
+      const json: AppResponse<IUserFull> = await res.json();
 
       const user = json.data;
 

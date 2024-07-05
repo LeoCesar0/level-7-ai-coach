@@ -16,6 +16,7 @@ import { ISeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";
 
 describe("organizations integration suite", () => {
+  console.log("🔻 Enter ORGANIZATIONS integration suite  -->");
   let _seed: ISeedResult;
 
   let stub: sinon.SinonStub<any>;
