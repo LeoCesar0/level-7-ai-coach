@@ -4,15 +4,12 @@ import { zMongoDocument } from "../../../@schemas/mongoose";
 import { ROLES_LIST } from "../../../static/roles";
 import { zCreateUser } from "./createUser";
 import zodSchema from "@zodyac/zod-mongoose";
-import { zAthleteInfo } from "./athleteInfo";
 import { zAddress } from "./address";
 
 export type IUser = z.infer<typeof zUser> & {
   firebaseId: string;
 };
 export const zUser = zCreateUser.merge(zMongoDocument);
-
-const infoSchema = zodSchema(zAthleteInfo);
 
 const addressSchema = zodSchema(zAddress);
 
@@ -53,7 +50,18 @@ export const userSchema = new Schema<IUser>(
     phoneCode: {
       type: String,
     },
-    info: infoSchema,
+    athleteInfo: {
+      type: Object,
+    },
+    birthday: {
+      type: Date,
+    },
+    sport: {
+      type: String,
+    },
+    experience: {
+      type: String,
+    },
     address: addressSchema,
   },
   { timestamps: true }

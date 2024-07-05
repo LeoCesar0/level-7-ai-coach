@@ -4,6 +4,7 @@ import { zRole } from "../../../@schemas/roles";
 import { EXCEPTIONS } from "../../../static/exceptions";
 import { zAthleteInfo } from "./athleteInfo";
 import { zAddress } from "./address";
+import { zIsoDate } from "../../../@schemas/primitives/isoDate";
 
 export type ICreateUser = z.infer<typeof zCreateUser>;
 
@@ -23,5 +24,8 @@ export const zCreateUser = z.object({
   role: zRole.default("user"),
   organization: zId.describe("ObjectId:Organization"),
   address: zAddress.optional(),
-  info: zAthleteInfo.optional(),
+  birthday: z.date().optional(),
+  sport: z.string().optional(),
+  experience: z.string().optional(),
+  athleteInfo: zAthleteInfo.optional(),
 });
