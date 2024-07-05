@@ -2,6 +2,7 @@ import honoApp from "../../src";
 import { AppResponse } from "../../src/@schemas/app";
 import { IPaginationResult } from "../../src/@schemas/pagination";
 import { slugify } from "../../src/helpers/slugify";
+import { ArchetypeModel } from "../../src/routes/archetype/schemas/archetype";
 import {
   ASSESSMENT_QUESTION,
   zAssessmentSection,
@@ -196,6 +197,7 @@ describe("users integration suite", () => {
 
       expect(res.status).toBe(200);
       expect(found).toBeTruthy();
+      expect(found?.organization.name).toBeTruthy();
     });
   });
 
@@ -230,6 +232,7 @@ describe("users integration suite", () => {
       expect(user?.firebaseId).toBe(_createdUser.firebaseId);
       expect(user?._id).toBe(_createdUser._id);
       expect(user?.organization).toBeTruthy();
+      expect(user?.organization.name).toBeTruthy();
     });
   });
 
@@ -281,11 +284,17 @@ describe("users integration suite", () => {
       expect(json.error?.message).toBe(EXCEPTIONS.NOT_AUTHORIZED);
     });
 
-    it("should update user athlete info and name", async () => {
+    it("should update user athlete info, name, birthday and archetype", async () => {
       if (!_createdUser) {
         throw new Error("User not created");
       }
       stub = await stubGetUserFromToken(_createdUser);
+      const archetypeName = "A brand new Arch";
+      const archetype = await ArchetypeModel.create({
+        description: "desc",
+        name: archetypeName,
+        slug: "arch-name",
+      });
 
       const body: IUpdateUserRoute = {
         name: "updated name",
@@ -302,6 +311,7 @@ describe("users integration suite", () => {
             section: zAssessmentSection.enum.goals,
           },
         },
+        archetype: archetype._id,
       };
 
       const res = await honoApp.request(
@@ -333,6 +343,8 @@ describe("users integration suite", () => {
       expect(user?.name).toBe(body.name);
       expect(user?.email).toBeTruthy();
       expect(user?.phone).toBeFalsy();
+      expect(user?.organization.name).toBeTruthy();
+      expect(user?.archetype.name).toBe(archetypeName);
     });
 
     it("should update user phone, and athlete info, updated by admin", async () => {
@@ -383,6 +395,8 @@ describe("users integration suite", () => {
       expect(user?._id).toBe(_updatedUser._id.toString());
       expect(user?.name).toBe(_updatedUser.name);
       expect(user?.athleteInfo).toBeTruthy();
+      expect(user?.organization.name).toBeTruthy();
+      expect(user?.archetype.name).toBeTruthy();
 
       // UPDATED
       expect(user?.athleteInfo?.goals_goalsAchieved?.answer).toBe(newAnswer);
