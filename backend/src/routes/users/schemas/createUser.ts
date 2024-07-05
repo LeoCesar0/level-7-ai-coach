@@ -23,6 +23,7 @@ export const zCreateUser = z.object({
   imageUrl: z.string().optional(),
   role: zRole.default("user"),
   organization: zId.describe("ObjectId:Organization"),
+  archetype: zId.describe("ObjectId:Archetype").optional(),
   address: zAddress.optional(),
   birthday: zIsoDate.optional(),
   sport: z.string().optional(),

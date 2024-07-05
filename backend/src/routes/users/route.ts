@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { UserModel, IUser } from "./schemas/user";
+import { UserModel, IUser, IUserFull } from "./schemas/user";
 import { AppResponse } from "../../@schemas/app";
 import { routeValidator } from "../../middlewares/routeValidator";
 import { EXCEPTIONS } from "../../static/exceptions";
@@ -8,7 +8,6 @@ import { authValidator } from "../../middlewares/authValidator";
 import { createAppUser } from "../../services/createAppUser";
 import { zSignUp } from "./schemas/signUpRoute";
 import { HTTPException } from "hono/http-exception";
-import z from "zod";
 import { updateUserRoute } from "./schemas/updateUserRoute";
 import cloneDeep from "lodash.clonedeep";
 import { OrganizationModel } from "../organizations/schemas/organization";
@@ -21,7 +20,7 @@ const userRoute = new Hono()
   // --------------------------
   .post(
     "/list",
-    authValidator({ permissionsTo: ["admin"] }),
+    authValidator({ permissionsTo: ["admin", "coach"] }),
     routeValidator({
       schema: zListRouteQueryInput,
       target: "json",
@@ -35,6 +34,8 @@ const userRoute = new Hono()
         model: UserModel,
         body,
         reqUser,
+        modelHasActive: true,
+        populates: ["organization", "archetype"],
       });
 
       return ctx.json(resData, 200);
@@ -43,31 +44,53 @@ const userRoute = new Hono()
   // --------------------------
   // GET USER BY ID
   // --------------------------
-  .get("/:id", async (ctx) => {
-    const id = ctx.req.param("id");
+  .get(
+    "/:id",
+    authValidator({ permissionsTo: ["admin", "coach", "user"] }),
+    async (ctx) => {
+      const id = ctx.req.param("id");
 
-    const user = await UserModel.findById(id);
+      // @ts-ignore
+      const reqUser: IUser = ctx.get("reqUser");
 
-    const resData: AppResponse<IUser> = {
-      data: user,
-      error: null,
-    };
+      const user: IUserFull = (await UserModel.findById(id)
+        .populate("archetype")
+        .populate("organization")) as unknown as IUserFull;
 
-    return ctx.json(resData, 200);
-  })
+      if (user && !user.active && reqUser.role === "user") {
+        throw new HTTPException(401, { message: EXCEPTIONS.USER_NOT_ACTIVE });
+      }
+
+      const resData: AppResponse<IUserFull> = {
+        data: user,
+        error: null,
+      };
+
+      return ctx.json(resData, 200);
+    }
+  )
   // --------------------------
   // CREATE USER
   // --------------------------
   .post(
     "/",
     routeValidator({ schema: zSignUp }),
-    authValidator({ permissionsTo: ["admin"] }),
+    authValidator({ permissionsTo: ["admin", "coach"] }),
     async (ctx) => {
       const inputs = ctx.req.valid("json");
       let resData: AppResponse<IUser>;
 
+      // @ts-ignore
+      const reqUser: IUser = ctx.get("reqUser");
+
+      const userValues = cloneDeep(inputs.user);
+
+      if (reqUser.role !== "admin") {
+        userValues.organization = reqUser.organization;
+      }
+
       const orgExists = await OrganizationModel.exists({
-        _id: inputs.user.organization,
+        _id: userValues.organization,
       });
 
       if (!orgExists) {
@@ -82,11 +105,11 @@ const userRoute = new Hono()
       }
 
       const userInFirebase = await firebaseAuth
-        .getUserByEmail(inputs.user.email)
+        .getUserByEmail(userValues.email)
         .catch((err) => {});
 
       const userInMongoDb = await UserModel.findOne({
-        email: inputs.user.email,
+        email: userValues.email,
       });
 
       if (userInMongoDb) {
@@ -109,7 +132,10 @@ const userRoute = new Hono()
         // USER EXISTS ONLY IN FIREBASE, CREATING NEW USER IN MONGO DB
         // --------------------------
         const createdUser = await createAppUser({
-          inputs: inputs,
+          inputs: {
+            ...inputs,
+            user: userValues,
+          },
           firebaseId: userInFirebase.uid,
         });
 
@@ -125,7 +151,10 @@ const userRoute = new Hono()
       // --------------------------
 
       const createdUser = await createAppUser({
-        inputs: inputs,
+        inputs: {
+          ...inputs,
+          user: userValues,
+        },
       });
 
       resData = {
@@ -140,15 +169,17 @@ const userRoute = new Hono()
   // UPDATE USER
   // --------------------------
   .put(
-    "/:userId",
+    "/:id",
     routeValidator({
       schema: updateUserRoute,
     }),
     authValidator({ permissionsTo: ["user", "admin", "coach"] }),
     async (ctx) => {
-      const userId = ctx.req.param("userId");
+      const userId = ctx.req.param("id");
       const inputs = ctx.req.valid("json");
-      let resData: AppResponse<IUser>;
+      let resData: AppResponse<IUserFull>;
+
+      const userValues = cloneDeep(inputs);
 
       const userToChange = await UserModel.findById(userId);
 
@@ -157,10 +188,10 @@ const userRoute = new Hono()
       }
 
       // @ts-ignore
-      const contextUser: IUser | undefined = ctx.get("reqUser");
+      const reqUser: IUser | undefined = ctx.get("reqUser");
 
       const isSameOrg =
-        contextUser?.organization.toString() ===
+        reqUser?.organization.toString() ===
         userToChange.organization?.toString();
 
       if (!userId) {
@@ -168,14 +199,14 @@ const userRoute = new Hono()
       }
 
       if (
-        !contextUser || // NO REQ USER
-        (contextUser.role === "user" && contextUser._id !== userId) || // REQ USER IS USER AND NOT THE SAME USER
-        (contextUser.role === "coach" && !isSameOrg) // REQ USER IS COACH AND NOT THE SAME ORG
+        !reqUser || // NO REQ USER
+        (reqUser.role === "user" && reqUser._id !== userId) || // REQ USER IS USER AND NOT THE SAME USER
+        (reqUser.role === "coach" && !isSameOrg) // REQ USER IS COACH AND NOT THE SAME ORG
       ) {
         throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
       }
-      const infoKey: keyof typeof inputs = "athleteInfo";
-      const infoObject = Object.entries(inputs[infoKey] || {}).reduce(
+      const infoKey: keyof typeof userValues = "athleteInfo";
+      const infoObject = Object.entries(userValues[infoKey] || {}).reduce(
         (acc, [key, value]) => {
           acc[`${infoKey}.${key}`] = value;
           return acc;
@@ -183,7 +214,7 @@ const userRoute = new Hono()
         {} as Record<string, any>
       );
 
-      let values: typeof inputs = cloneDeep(inputs);
+      let values: typeof userValues = cloneDeep(userValues);
       delete values.athleteInfo;
 
       const updatedUserDoc = await UserModel.findByIdAndUpdate(
@@ -195,12 +226,12 @@ const userRoute = new Hono()
         {
           new: true,
         }
-      ).populate("athleteInfo");
+      );
 
       if (!updatedUserDoc) {
         throw new HTTPException(404, { message: "User not found" });
       }
-      const updatedUser = updatedUserDoc.toObject();
+      let updatedUser = updatedUserDoc.toObject();
 
       const prevOrg = userToChange.organization?.toString();
       const newOrg = updatedUser.organization?.toString();
@@ -224,8 +255,13 @@ const userRoute = new Hono()
         );
       }
 
+      const finalRes: IUserFull = (await UserModel.findById(userId).populate([
+        "organization",
+        "archetype",
+      ])) as unknown as IUserFull;
+
       resData = {
-        data: updatedUser,
+        data: finalRes,
         error: null,
       };
 
@@ -233,10 +269,10 @@ const userRoute = new Hono()
     }
   )
   .delete(
-    "/:userId",
+    "/:id",
     authValidator({ permissionsTo: ["admin", "coach"] }),
     async (ctx) => {
-      const userId = ctx.req.param("userId");
+      const userId = ctx.req.param("id");
       let resData: AppResponse<boolean>;
 
       // @ts-ignore

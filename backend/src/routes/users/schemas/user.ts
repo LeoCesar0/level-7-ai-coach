@@ -6,12 +6,26 @@ import { zCreateUser } from "./createUser";
 import zodSchema from "@zodyac/zod-mongoose";
 import { zAddress } from "./address";
 import { zAthleteInfoItem } from "./athleteInfo";
+import { zArchetype } from "../../archetype/schemas/archetype";
+import { zOrganization } from "../../organizations/schemas/organization";
 
 export type IUser = z.infer<typeof zUser> & {
   firebaseId: string;
 };
 
+export type IUserFull = z.infer<typeof zUserFull>;
+
 export const zUser = zCreateUser.merge(zMongoDocument);
+
+export const zUserFull = zUser
+  .omit({ organization: true, archetype: true })
+  .merge(
+    z.object({
+      firebaseId: z.string(),
+      archetype: zArchetype,
+      organization: zOrganization,
+    })
+  );
 
 const addressSchema = zodSchema(zAddress);
 
@@ -45,6 +59,10 @@ export const userSchema = new Schema<IUser>(
       type: Schema.Types.ObjectId,
       required: true,
       ref: "Organization",
+    },
+    archetype: {
+      type: Schema.Types.ObjectId,
+      ref: "Archetype",
     },
     phone: {
       type: String,
