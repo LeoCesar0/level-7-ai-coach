@@ -7,7 +7,6 @@ import {
 import { AppResponse } from "../../@schemas/app";
 import { routeValidator } from "../../middlewares/routeValidator";
 import { authValidator } from "../../middlewares/authValidator";
-import { IPaginationResult } from "../../@schemas/pagination";
 import { zListRouteQueryInput } from "../../@schemas/listRoute";
 import {
   ICreateOrganization,
@@ -21,6 +20,7 @@ import { IUser, UserModel } from "../users/schemas/user";
 import { firebaseAuth } from "../../lib/firebase";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { zValidator } from "@hono/zod-validator";
+
 
 const organizationsRoute = new Hono()
   // --------------------------
@@ -42,6 +42,7 @@ const organizationsRoute = new Hono()
         model: OrganizationModel,
         body,
         reqUser,
+        modelHasActive: true
       });
 
       return ctx.json(resData, 200);

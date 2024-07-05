@@ -144,11 +144,8 @@ export const chatRouter = new Hono()
         }
       );
 
-      console.log("❗ response -->", response);
-
       const aiAnswer = response.toDict().data.content;
 
-      console.log("❗ resMessage -->", aiAnswer);
       // --------------------------
       // V2
       // --------------------------
