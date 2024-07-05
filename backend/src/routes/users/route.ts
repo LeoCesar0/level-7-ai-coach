@@ -174,17 +174,17 @@ const userRoute = new Hono()
       ) {
         throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
       }
-
-      const infoObject = Object.entries(inputs.info || {}).reduce(
+      const infoKey: keyof typeof inputs = "athleteInfo";
+      const infoObject = Object.entries(inputs[infoKey] || {}).reduce(
         (acc, [key, value]) => {
-          acc[`info.${key}`] = value;
+          acc[`${infoKey}.${key}`] = value;
           return acc;
         },
         {} as Record<string, any>
       );
 
       let values: typeof inputs = cloneDeep(inputs);
-      delete values.info;
+      delete values.athleteInfo;
 
       const updatedUserDoc = await UserModel.findByIdAndUpdate(
         userId,
@@ -195,7 +195,7 @@ const userRoute = new Hono()
         {
           new: true,
         }
-      );
+      ).populate("athleteInfo");
 
       if (!updatedUserDoc) {
         throw new HTTPException(404, { message: "User not found" });

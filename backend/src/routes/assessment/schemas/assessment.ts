@@ -10,8 +10,13 @@ export const zAssessment = zCreateAssessment.merge(zMongoDocument);
 
 export const athleteEntry = new Schema<IAssessment>(
   {
-    question: {
+    key: {
       type: String,
+      required: true,
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     section: {
@@ -22,17 +27,8 @@ export const athleteEntry = new Schema<IAssessment>(
       type: String,
       required: true,
     },
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
     value: {
       type: Number,
-      required: true,
-    },
-    key: {
-      type: String,
       required: true,
     },
   },

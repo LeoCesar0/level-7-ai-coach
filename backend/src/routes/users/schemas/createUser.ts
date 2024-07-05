@@ -24,7 +24,7 @@ export const zCreateUser = z.object({
   role: zRole.default("user"),
   organization: zId.describe("ObjectId:Organization"),
   address: zAddress.optional(),
-  birthday: z.date().optional(),
+  birthday: zIsoDate.optional(),
   sport: z.string().optional(),
   experience: z.string().optional(),
   athleteInfo: zAthleteInfo.optional(),

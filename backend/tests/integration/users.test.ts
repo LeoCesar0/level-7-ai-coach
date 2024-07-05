@@ -3,6 +3,10 @@ import { AppResponse } from "../../src/@schemas/app";
 import { IPaginationResult } from "../../src/@schemas/pagination";
 import { slugify } from "../../src/helpers/slugify";
 import {
+  ASSESSMENT_QUESTION,
+  zAssessmentSection,
+} from "../../src/routes/assessment/schemas/enums";
+import {
   IOrganization,
   OrganizationModel,
 } from "../../src/routes/organizations/schemas/organization";
@@ -218,6 +222,7 @@ describe("users and organizations integration suite", () => {
     // UPDATE USER
     // --------------------------
     let _updatedUser: IUser | null = null;
+
     it("should not update user info, not the same user", async () => {
       if (!_createdUser) {
         throw new Error("User not created");
@@ -228,26 +233,17 @@ describe("users and organizations integration suite", () => {
       stub = await stubGetUserFromToken(_seed.normalUser);
 
       const body: IUpdateUserRoute = {
-        info: {
-          birthday: "1995-05-04",
-          athleteAsMain: true,
-          currentInjury: "Leg hurts",
-          nick: "Jonny",
-          gender: "Male",
-          q_mind_1: "I don't practice dosha, but i am interested",
-          pastInjury: "Broken leg",
-          mainWorkoutDescription: "Soccer player",
-          mainWorkoutDuration: "4 hours",
-          mainWorkoutInterval: "5 days of the week",
-          mainJob: "Soccer player",
-          shortTermGoals: "Become the main goalkeeper in the team",
-          longTermGoals: "Win a gold metal",
-          hobbyDescription: "Play video game with my son",
-          hobbyInterval: "Weekends",
-          hobbyDuration: "All day",
-          medicines: "alprazolam",
-          meditationPreference: "I am interested",
-          currentDietPlan: "Lowcarbs",
+        athleteInfo: {
+          effort_goals: {
+            answer: "Become the best!",
+            question: ASSESSMENT_QUESTION["effort_goals"],
+            section: zAssessmentSection.enum.effort,
+          },
+          goals_goalsAchieved: {
+            answer: "Win a gold medal",
+            question: ASSESSMENT_QUESTION["goals_goalsAchieved"],
+            section: zAssessmentSection.enum.goals,
+          },
         },
       };
 
@@ -276,28 +272,20 @@ describe("users and organizations integration suite", () => {
       stub = await stubGetUserFromToken(_createdUser);
 
       const body: IUpdateUserRoute = {
-        info: {
-          birthday: "1995-05-04",
-          athleteAsMain: true,
-          currentInjury: "Leg hurts",
-          nick: "Jonny",
-          gender: "Male",
-          q_mind_1: "I don't practice dosha, but i am interested",
-          pastInjury: "Broken leg",
-          mainWorkoutDescription: "Soccer player",
-          mainWorkoutDuration: "4 hours",
-          mainWorkoutInterval: "5 days of the week",
-          mainJob: "Soccer player",
-          shortTermGoals: "Become the main goalkeeper in the team",
-          longTermGoals: "Win a gold metal",
-          hobbyDescription: "Play video game with my son",
-          hobbyInterval: "Weekends",
-          hobbyDuration: "All day",
-          medicines: "alprazolam",
-          meditationPreference: "I am interested",
-          currentDietPlan: "Lowcarbs",
+        name: "updated name",
+        birthday: new Date("1990-01-01").toISOString(),
+        athleteInfo: {
+          effort_goals: {
+            answer: "Become the best!",
+            question: ASSESSMENT_QUESTION["effort_goals"],
+            section: zAssessmentSection.enum.effort,
+          },
+          goals_goalsAchieved: {
+            answer: "Win a gold medal",
+            question: ASSESSMENT_QUESTION["goals_goalsAchieved"],
+            section: zAssessmentSection.enum.goals,
+          },
         },
-        name: "Jonny 123",
       };
 
       const res = await honoApp.request(
@@ -320,23 +308,41 @@ describe("users and organizations integration suite", () => {
 
       expect(res.status).toBe(200);
       expect(user?._id).toBe(_createdUser._id.toString());
-      expect(user?.info).toBeTruthy();
-      expect(user?.info?.birthday).toBe(body.info?.birthday);
-      expect(user?.info?.currentInjury).toBe(body.info?.currentInjury);
-      expect(user?.info?.q_mind_1).toBe(body.info?.q_mind_1);
-      expect(user?.info?.disabilities.length).toBeFalsy();
+      expect(user?.athleteInfo).toBeTruthy();
+      expect(user?.birthday).toBeTruthy();
+      expect(user?.birthday).toBe(body.birthday);
+
+      expect(user?.athleteInfo).toEqual(body.athleteInfo);
       expect(user?.name).toBe(body.name);
       expect(user?.email).toBeTruthy();
       expect(user?.phone).toBeFalsy();
     });
-    it("should update user email, updated by admin", async () => {
+
+    it("should update user phone, and athlete info, updated by admin", async () => {
       if (!_updatedUser) {
         throw new Error("User not updated 1st time");
       }
       stub = await stubGetUserFromToken(_seed.admin);
 
+      const newAnswer = "Win a Silver medal (CHANGED)";
+
       const body: IUpdateUserRoute = {
         phone: "12345678915",
+        athleteInfo: {
+          // effort_goals DID NOT TOUCH
+          goals_goalsAchieved: {
+            // UPDATED
+            answer: newAnswer,
+            question: ASSESSMENT_QUESTION["goals_goalsAchieved"],
+            section: zAssessmentSection.enum.goals,
+          },
+          physical_injuriesAndHealthIssues: {
+            // ADDED
+            answer: "None",
+            question: ASSESSMENT_QUESTION["physical_injuriesAndHealthIssues"],
+            section: zAssessmentSection.enum.physical,
+          },
+        },
       };
 
       const res = await honoApp.request(
@@ -358,9 +364,21 @@ describe("users and organizations integration suite", () => {
       expect(res.status).toBe(200);
       expect(user?.phone).toBe(body.phone);
       expect(user?._id).toBe(_updatedUser._id.toString());
-      expect(user?.info).toBeTruthy();
-      expect(user?.info?.birthday).toBe(_updatedUser.info?.birthday);
       expect(user?.name).toBe(_updatedUser.name);
+      expect(user?.athleteInfo).toBeTruthy();
+
+      // UPDATED
+      expect(user?.athleteInfo?.goals_goalsAchieved?.answer).toBe(newAnswer);
+
+      // ADDED
+      expect(user?.athleteInfo?.physical_injuriesAndHealthIssues).toEqual(
+        body.athleteInfo?.physical_injuriesAndHealthIssues
+      );
+
+      // DID NOT TOUCH
+      expect(user?.athleteInfo?.effort_goals).toEqual(
+        _updatedUser.athleteInfo?.effort_goals
+      );
     });
   });
 

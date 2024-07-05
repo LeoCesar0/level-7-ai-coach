@@ -4,11 +4,9 @@ import {
   zAssessmentSection,
 } from "../../assessment/schemas/enums";
 
-export type IAthleteInfoInput = z.input<typeof zAthleteInfo>;
-export type IAthleteInfoOutput = z.output<typeof zAthleteInfo>;
+export type IAthleteInfo = z.output<typeof zAthleteInfo>;
 
 export const zAthleteInfoItem = z.object({
-  key: zAssessmentKey,
   section: zAssessmentSection,
   question: z.string(),
   answer: z.string().or(z.number()),
