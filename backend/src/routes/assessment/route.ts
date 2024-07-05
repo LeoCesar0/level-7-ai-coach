@@ -3,15 +3,11 @@ import { AppResponse } from "../../@schemas/app";
 import { routeValidator } from "../../middlewares/routeValidator";
 import { authValidator } from "../../middlewares/authValidator";
 import { AssessmentModel, IAssessment } from "./schemas/assessment";
-import {
-  ICreateAssessment,
-  zCreateAssessmentRoute,
-} from "./schemas/createAssessment";
 import { z } from "zod";
 import { ChatModel } from "../chat/schemas/chat";
 import { HTTPException } from "hono/http-exception";
-import { getChatHistory } from "../../services/langchain/getChatHistory";
 import { getChatAssessment } from "../../services/langchain/getChatAssessment";
+import { ICreateAssessment } from "./schemas/createAssessment";
 
 const assessmentRoute = new Hono()
   // --------------------------
@@ -38,17 +34,24 @@ const assessmentRoute = new Hono()
       }
       const userId = findChat.user.toString();
 
-      // const entries: ICreateAssessment[] = [];
-
-      const result = await getChatAssessment({
+      const { entries } = await getChatAssessment({
         chatId,
         userId,
         userPreviousData: [],
       });
 
-      // const result = await AssessmentModel.insertMany(entries);
+      let _entries: ICreateAssessment[] = entries.map((item) => {
+        return {
+          ...item,
+          user: userId,
+          chat: chatId,
+          journal: undefined,
+        };
+      });
 
-      const resData: AppResponse<any> = {
+      const result = await AssessmentModel.insertMany(_entries);
+
+      const resData: AppResponse<IAssessment[]> = {
         data: result,
         error: null,
       };

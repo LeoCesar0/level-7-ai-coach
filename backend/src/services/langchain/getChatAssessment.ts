@@ -2,7 +2,7 @@
 import { getChatHistory } from "./getChatHistory";
 import { IAssessment } from "../../routes/assessment/schemas/assessment";
 import {
-  ICreateAssessment,
+  zAssessmentAIResponse,
   zCreateAssessment,
 } from "../../routes/assessment/schemas/createAssessment";
 import { StructuredOutputParser } from "langchain/output_parsers";
@@ -10,10 +10,12 @@ import { z } from "zod";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { chatOpenAI } from "../../lib/langchain/chatOpenAi";
+import { getAssessmentTopicsText } from "../../routes/assessment/schemas/enums";
 
 export type IGetChatAssessment = {
   chatId: string;
   userId: string;
+  userArchetype?: string;
   userPreviousData: IAssessment[];
 };
 
@@ -25,7 +27,8 @@ const athleteArchetype =
 export const getChatAssessment = async ({
   chatId,
   userId,
-  userPreviousData,
+  userPreviousData, // TODO
+  userArchetype = athleteArchetype,
 }: IGetChatAssessment) => {
   const chatHistory = getChatHistory({ chatId });
 
@@ -38,32 +41,35 @@ export const getChatAssessment = async ({
     })
     .join("\n");
 
-  console.log("❗ messages -->", messages);
-
   const parser = StructuredOutputParser.fromZodSchema(
-    z.array(zCreateAssessment)
+    z.array(zAssessmentAIResponse)
   );
 
+  const assessmentTopicsExplanation = getAssessmentTopicsText();
+
+  const templateString = [
+    assessmentInstructions,
+    assessmentTopicsExplanation,
+    `Athlete Archetype: '''${athleteArchetype}'''`,
+    "{format_instructions}",
+    "{history}",
+  ];
+
   const chain = RunnableSequence.from([
-    PromptTemplate.fromTemplate(
-      `${assessmentInstructions}.\nuser:${userId};chat:${chatId}\n{format_instructions}\n{history}`
-    ),
+    PromptTemplate.fromTemplate(templateString.join("\n")),
     chatOpenAI,
-    parser,
   ]);
 
   const instructions = parser.getFormatInstructions();
 
-  console.log("❗ instructions -->", instructions);
-
-  const result = await chain.invoke({
+  const chainResult = await chain.invoke({
     history: messages,
     format_instructions: instructions,
   });
 
-  console.log("❗ result -->", result);
+  const stringRes = chainResult.toDict().data.content;
 
-  //   let result: IAssessment[] = [];
+  const entries = await parser.parse(stringRes);
 
-  return { result, messages };
+  return { entries, messages };
 };

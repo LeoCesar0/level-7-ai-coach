@@ -2,7 +2,6 @@ import { Schema, model } from "mongoose";
 import { z } from "zod";
 import { zMongoDocument } from "../../../@schemas/mongoose";
 import { zCreateAssessment } from "./createAssessment";
-import zodSchema from "@zodyac/zod-mongoose";
 
 export type IAssessment = z.infer<typeof zAssessment>;
 
@@ -22,7 +21,10 @@ export const athleteEntry = new Schema<IAssessment>(
     chat: {
       type: Schema.Types.ObjectId,
       ref: "Chat",
-      required: true,
+    },
+    journal: {
+      type: Schema.Types.ObjectId,
+      ref: "Journal",
     },
     section: {
       type: String,
@@ -40,4 +42,4 @@ export const athleteEntry = new Schema<IAssessment>(
   { timestamps: true }
 );
 
-export const AssessmentModel = model<IAssessment>("User", athleteEntry);
+export const AssessmentModel = model<IAssessment>("Assessment", athleteEntry);

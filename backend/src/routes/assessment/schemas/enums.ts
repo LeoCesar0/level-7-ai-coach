@@ -143,3 +143,16 @@ export const ASSESSMENT_TOPIC: Record<IAssessmentKey, string> = {
   others_personalLifeBalance: "Effectiveness and sustainability",
   others_activitiesOutsideTraining: "Diversity and impact on well-being",
 };
+
+export const getAssessmentTopicsText = () => {
+  const text = Object.entries(ASSESSMENT_TOPIC)
+    .map(([key, value]) => {
+      return `${key}: ${value}`;
+    })
+    .join("\n");
+  const explanation = `Here is a brief explanation of each topic you should evaluate the athlete\n'''${text}'''`;
+  return {
+    text,
+    explanation,
+  };
+};
