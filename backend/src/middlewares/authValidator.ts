@@ -34,7 +34,7 @@ export const createVerifyAuthToken = ({
         user = await getUserFromToken.exec({ token });
       }
 
-      if (!user || (user && !user.active)) {
+      if (!user || (user && !user.active && user.role !== "admin")) {
         ctx.set("reqUser", null);
         return false;
       }
