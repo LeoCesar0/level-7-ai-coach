@@ -8,12 +8,16 @@ export type IHandlePaginationRoute<T> = {
   body: IPaginationBodyOutput;
   model: Model<T>;
   reqUser: IUser;
+  modelHasActive: boolean;
+  populates?: string[];
 };
 
 export const handlePaginationRoute = async <T>({
   body,
   model,
   reqUser,
+  modelHasActive,
+  populates,
 }: IHandlePaginationRoute<T>) => {
   const limit = body.limit;
   const page = body.page;
@@ -28,8 +32,14 @@ export const handlePaginationRoute = async <T>({
 
   const getBaseQuery = () => {
     let res = model.find();
-    if (reqUser.role !== "admin") {
+    if (reqUser.role !== "admin" && modelHasActive) {
       res = res.where("active").equals(true);
+    }
+    if (populates) {
+      res.populate(populates)
+      // populates.forEach((item) => {
+      //   res.populate(item);
+      // });
     }
     return res;
   };
