@@ -32,7 +32,6 @@ export const getChatChainV2 = async ({
   message,
   userId,
 }: IGetChatChainV2) => {
-  console.log("❗ getChatMemory");
 
   const inputKey = "input";
   const currentHistoryKey = "chat_history";
@@ -65,7 +64,6 @@ export const getChatChainV2 = async ({
     return `${item.type} at ${item.created_at}: ${item.text}`;
   });
 
-  console.log("❗ currentHistory -->", currentHistory);
 
   // const prevSessionsRetriever = getUserRetriever({
   //   chatId,

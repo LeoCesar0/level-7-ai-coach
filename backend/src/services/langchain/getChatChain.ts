@@ -52,7 +52,6 @@ export const getChatChain = async ({
 
   const relevantContextString = formatDocumentsAsString(relevantContext);
 
-  console.log("❗ relevantContextString -->", relevantContextString);
 
   const prompt = ChatPromptTemplate.fromMessages([
     ["system", agentTemplate],
