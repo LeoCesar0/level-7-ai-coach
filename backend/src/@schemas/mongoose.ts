@@ -10,7 +10,7 @@ export const zMongoDocument = z.object({
 
 export type IMongoDocument = {
   _id: string;
-  __v: number;
+  __v?: number;
   createdAt: string;
   updatedAt: string;
 };
