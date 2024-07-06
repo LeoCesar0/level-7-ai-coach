@@ -265,28 +265,12 @@ export const chatRouter = new Hono()
 
       const chatHistory = getChatHistory({ chatId });
 
-      // const baseMessages = await chatHistory.getMessages();
+      const baseMessages = await chatHistory.getMessages();
 
-      // const messages = baseMessages.map((item) => item.toDict());
-      // console.log("❗ messages -->", messages);
+      const messages = baseMessages.map((item) => item.toDict());
 
-      // const historyCol = getCollection({ name: HISTORY_COLLECTION });
-      // const historyData = await historyCol.find().toArray()
-
-      const memoryCol = getCollection({ name: MEMORY_COLLECTION });
-      const memoryData = await memoryCol.find().toArray();
-
-      const file = await writeFile(
-        "test.json",
-        JSON.stringify(memoryData),
-        "utf-8"
-      );
-
-      // StoredMessage[]
-      const resData: AppResponse<any> = {
-        data: {
-          memoryData,
-        },
+      const resData: AppResponse<StoredMessage[]> = {
+        data: messages,
         error: null,
       };
 
