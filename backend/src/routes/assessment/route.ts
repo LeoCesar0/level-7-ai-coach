@@ -4,10 +4,11 @@ import { routeValidator } from "../../middlewares/routeValidator";
 import { authValidator } from "../../middlewares/authValidator";
 import { AssessmentModel, IAssessment } from "./schemas/assessment";
 import { z } from "zod";
-import { ChatModel } from "../chat/schemas/chat";
+import { ChatModel, IChatFull } from "../chat/schemas/chat";
 import { HTTPException } from "hono/http-exception";
 import { getChatAssessment } from "../../services/langchain/getChatAssessment";
 import { ICreateAssessment } from "./schemas/createAssessment";
+import { IUserFull, UserModel } from "../users/schemas/user";
 
 const assessmentRoute = new Hono()
   // --------------------------
@@ -27,17 +28,24 @@ const assessmentRoute = new Hono()
       // @ts-ignore
       const reqUser: IUser = ctx.get("reqUser");
 
-      const findChat = await ChatModel.findById(chatId);
+      const findChat = await ChatModel.findById(chatId)
 
       if (!findChat) {
-        throw new HTTPException(400, { message: "Chat id not found" });
+        throw new HTTPException(404, { message: "Chat not found" });
       }
+
       const userId = findChat.user.toString();
+
+      const user = await UserModel.findById<IUserFull>(userId).populate('archetype')
+
+      if (!user) {
+        throw new HTTPException(404, { message: "User not found" });
+      }
 
       const { entries } = await getChatAssessment({
         chatId,
-        userId,
         userPreviousData: [],
+        userArchetype: user.archetype
       });
 
       let _entries: ICreateAssessment[] = entries.map((item) => {

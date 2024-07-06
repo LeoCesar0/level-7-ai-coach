@@ -3,15 +3,16 @@ import { z } from "zod";
 import { zCreateChat } from "./createChat";
 import { zMongoDocument } from "../../../@schemas/mongoose";
 import { zEmbedding } from "../../../@schemas/embeddings";
+import { IUser } from "../../users/schemas/user";
+import { Timestamp } from "mongodb";
 
-export const zChatSchema = zCreateChat.merge(zMongoDocument).merge(
-  z.object({
-    embedding: zEmbedding.optional(),
-    messages: z.array(z.string()).optional(),
-  })
-);
+export const zChatSchema = zCreateChat.merge(zMongoDocument);
 
 export type IChat = z.infer<typeof zChatSchema>;
+
+export type IChatFull = Omit<IChat, "user"> & {
+  user: IUser;
+};
 
 const chatSchema = new mongoose.Schema<IChat>(
   {
@@ -19,12 +20,6 @@ const chatSchema = new mongoose.Schema<IChat>(
     date: {
       type: Date,
       required: true,
-    },
-    messages: {
-      type: Array(String),
-    },
-    embedding: {
-      type: Array(Array(Number)),
     },
   },
   {
