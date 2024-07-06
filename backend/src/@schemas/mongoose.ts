@@ -8,9 +8,12 @@ export const zMongoDocument = z.object({
   updatedAt: z.string(),
 });
 
-export type IMongoDocument = {
-  _id: string;
-  __v?: number;
-  createdAt: string;
-  updatedAt: string;
-};
+export type IMongoDocument = z.infer<typeof zMongoDocument>
+
+
+// export type IMongoDocument = {
+//   _id: string;
+//   __v?: number;
+//   createdAt: string;
+//   updatedAt: string;
+// };

@@ -9,6 +9,7 @@ import { zIsoDate } from "../../../@schemas/primitives/isoDate";
 export type ICreateUser = z.infer<typeof zCreateUser>;
 
 export const zCreateUser = z.object({
+  _id: z.string().optional(),
   name: z
     .string()
     .min(1, { message: EXCEPTIONS.FIELD_REQUIRED("name") })

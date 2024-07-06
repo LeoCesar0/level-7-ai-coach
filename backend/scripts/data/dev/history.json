@@ -1,0 +1,187 @@
+{
+  "sessionId": "6688328be148f57d2ae36e1c",
+  "messages": [
+    {
+      "type": "human",
+      "data": {
+        "content": "Hello!",
+        "additional_kwargs": {},
+        "response_metadata": {}
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "Hello! How are you feeling today? How have things been since we last talked?",
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "additional_kwargs": { "function_call": null, "tool_calls": null },
+        "id": "chatcmpl-9hhNljm1H1xgjcjy6wsFS8P2HyndN",
+        "response_metadata": {
+          "tokenUsage": {
+            "completionTokens": { "$numberInt": "17" },
+            "promptTokens": { "$numberInt": "317" },
+            "totalTokens": { "$numberInt": "334" }
+          },
+          "finish_reason": "stop"
+        }
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "I am feeling good, i think I have some improvements, specially my mental health",
+        "additional_kwargs": {},
+        "response_metadata": {}
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "That's great to hear that you're feeling good and noticing improvements, especially in your mental health. Can you share what changes or practices have been most helpful to you in this area?",
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "additional_kwargs": { "function_call": null, "tool_calls": null },
+        "id": "chatcmpl-9hhOOIMw6jJF4JeOmXN21QqC64pvl",
+        "response_metadata": {
+          "tokenUsage": {
+            "completionTokens": { "$numberInt": "37" },
+            "promptTokens": { "$numberInt": "358" },
+            "totalTokens": { "$numberInt": "395" }
+          },
+          "finish_reason": "stop"
+        }
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "I've been practing some breathing before the games. It helped me stay calm. But last game I got really injuried and that suchs",
+        "additional_kwargs": {},
+        "response_metadata": {}
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "I'm glad to hear that practicing breathing techniques has been helpful for you in staying calm before games. I'm sorry to hear about your injury in the last game. How are you feeling emotionally about the injury?",
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "additional_kwargs": { "function_call": null, "tool_calls": null },
+        "id": "chatcmpl-9hhPG3TR1oO39VJu8fCUjXMoEkFbC",
+        "response_metadata": {
+          "tokenUsage": {
+            "completionTokens": { "$numberInt": "42" },
+            "promptTokens": { "$numberInt": "433" },
+            "totalTokens": { "$numberInt": "475" }
+          },
+          "finish_reason": "stop"
+        }
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "I think my mental about it is ok. I just feel physical pain. So my coach let me take it in the previous training",
+        "additional_kwargs": {},
+        "response_metadata": {}
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "It's good to hear that you're managing your emotions well regarding the injury. It's important to listen to your body and give it the rest it needs to heal. How are you coping with the physical pain? Have you been able to find ways to manage it effectively?",
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "additional_kwargs": { "function_call": null, "tool_calls": null },
+        "id": "chatcmpl-9hhQCnP1LrR5pXMxRkwcF6WLMBqQK",
+        "response_metadata": {
+          "tokenUsage": {
+            "completionTokens": { "$numberInt": "55" },
+            "promptTokens": { "$numberInt": "509" },
+            "totalTokens": { "$numberInt": "564" }
+          },
+          "finish_reason": "stop"
+        }
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "I am taking some medicines. But also I like to drink some beer to get over it hahaha. What do you think ?",
+        "additional_kwargs": {},
+        "response_metadata": {}
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "I understand that turning to alcohol to cope with pain or discomfort may seem like a solution, but it's important to remember that alcohol can have negative effects on your recovery and overall well-being. It's best to consult with a medical professional about the best ways to manage your pain and to avoid relying on alcohol as a coping mechanism. Is there anything else you'd like to discuss or any other ways I can support you during this time?",
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "additional_kwargs": { "function_call": null, "tool_calls": null },
+        "id": "chatcmpl-9hhRUq2ZpvJ7rlaRiQwzC8QHPcFGq",
+        "response_metadata": {
+          "tokenUsage": {
+            "completionTokens": { "$numberInt": "87" },
+            "promptTokens": { "$numberInt": "598" },
+            "totalTokens": { "$numberInt": "685" }
+          },
+          "finish_reason": "stop"
+        }
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "Yes! Because of our sections, I thought about my attitudes with some teammates and... things got a lot better. I feel we can understand each other better now. That also affects our gameplay",
+        "additional_kwargs": {},
+        "response_metadata": {}
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "That's wonderful to hear that your improved attitudes towards your teammates have positively impacted your relationships and gameplay. Building strong, supportive relationships with your teammates can enhance team cohesion and performance on the field. How have you been working on improving these relationships, and what specific changes have you noticed in your interactions with your teammates?",
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "additional_kwargs": { "function_call": null, "tool_calls": null },
+        "id": "chatcmpl-9hhTkN4HRnBUx2QmRqfuSOrqWG4Us",
+        "response_metadata": {
+          "tokenUsage": {
+            "completionTokens": { "$numberInt": "62" },
+            "promptTokens": { "$numberInt": "731" },
+            "totalTokens": { "$numberInt": "793" }
+          },
+          "finish_reason": "stop"
+        }
+      }
+    },
+    {
+      "type": "human",
+      "data": {
+        "content": "Respect, team role and self awareness within the game. I feel everything flows better now",
+        "additional_kwargs": {},
+        "response_metadata": {}
+      }
+    },
+    {
+      "type": "ai",
+      "data": {
+        "content": "It's great to hear that you've been focusing on respect, understanding your team role, and increasing self-awareness within the game. These are essential elements for building strong teamwork and improving performance. Keep nurturing these qualities, as they will not only benefit you on the field but also in other aspects of your life. Is there anything specific you'd like to work on or any challenges you're currently facing that you'd like support with?",
+        "tool_calls": [],
+        "invalid_tool_calls": [],
+        "additional_kwargs": { "function_call": null, "tool_calls": null },
+        "id": "chatcmpl-9hhVKWxZ0FOYeNbRjwWSfu1HGcPNV",
+        "response_metadata": {
+          "tokenUsage": {
+            "completionTokens": { "$numberInt": "87" },
+            "promptTokens": { "$numberInt": "819" },
+            "totalTokens": { "$numberInt": "906" }
+          },
+          "finish_reason": "stop"
+        }
+      }
+    }
+  ]
+}

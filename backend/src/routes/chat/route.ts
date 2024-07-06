@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import { IUser, UserModel } from "../users/schemas/user.js";
-import { IMessage, MessageModel } from "./schemas/message.js";
 import { ChatModel, IChat } from "./schemas/chat.js";
 import { routeValidator } from "../../middlewares/routeValidator.js";
 import { zCreateChat } from "./schemas/createChat.js";
@@ -16,8 +15,15 @@ import { createDocuments } from "../../services/langchain/createDocuments.js";
 import { getChatChainV2 } from "../../services/langchain/getChatChainV2.js";
 import { mongoDBClient } from "../../lib/mongodb.js";
 import { getCollection } from "../../services/mongodb/getCollection.js";
-import { ICreateMemoryMessage, IMemoryMessage } from "../../@schemas/memory.js";
+import { ICreateMemoryMessage } from "../../@schemas/memory.js";
 import { formatDocumentsAsString } from "langchain/util/document";
+import { getChatHistory } from "../../services/langchain/getChatHistory.js";
+import { StoredMessage } from "@langchain/core/messages";
+import {
+  HISTORY_COLLECTION,
+  MEMORY_COLLECTION,
+} from "../../lib/langchain/@static.js";
+import { writeFile } from "fs/promises";
 
 export const chatRouter = new Hono()
   .get(
@@ -37,30 +43,6 @@ export const chatRouter = new Hono()
       }
 
       const resData: AppResponse<IChat[]> = {
-        data: list,
-        error: null,
-      };
-
-      return ctx.json(resData, 200);
-    }
-  )
-  .get(
-    "/messages",
-    authValidator({ permissionsTo: ["admin", "coach", "user"] }),
-    async (ctx) => {
-      // @ts-ignore
-      const reqUser = ctx.get("reqUser") as IUser;
-      let list: IMessage[] = [];
-
-      if (reqUser.role === "admin") {
-        list = await MessageModel.find();
-      } else if (reqUser.role === "coach") {
-        list = await MessageModel.find({ organization: reqUser.organization });
-      } else if (reqUser.role === "user") {
-        list = await MessageModel.find({ user: reqUser._id });
-      }
-
-      const resData: AppResponse<IMessage[]> = {
         data: list,
         error: null,
       };
@@ -268,24 +250,43 @@ export const chatRouter = new Hono()
     "/history",
     routeValidator({
       schema: z.object({
-        userId: zStringNotEmpty,
-        chatId: zStringNotEmpty,
+        chat: zStringNotEmpty,
       }),
       target: "query",
     }),
     authValidator(),
     async (c) => {
-      const { userId, chatId } = c.req.valid("query");
+      const { chat: chatId } = c.req.valid("query");
 
-      const messages = await MessageModel.find({
-        user: userId,
-        chat: chatId,
-      }).sort({
-        createdAt: -1,
-      });
+      const exists = await ChatModel.findById(chatId);
+      if (!exists) {
+        throw new HTTPException(404, { message: "Chat not found" });
+      }
 
-      const resData: AppResponse<IMessage[]> = {
-        data: messages,
+      const chatHistory = getChatHistory({ chatId });
+
+      // const baseMessages = await chatHistory.getMessages();
+
+      // const messages = baseMessages.map((item) => item.toDict());
+      // console.log("❗ messages -->", messages);
+
+      // const historyCol = getCollection({ name: HISTORY_COLLECTION });
+      // const historyData = await historyCol.find().toArray()
+
+      const memoryCol = getCollection({ name: MEMORY_COLLECTION });
+      const memoryData = await memoryCol.find().toArray();
+
+      const file = await writeFile(
+        "test.json",
+        JSON.stringify(memoryData),
+        "utf-8"
+      );
+
+      // StoredMessage[]
+      const resData: AppResponse<any> = {
+        data: {
+          memoryData,
+        },
         error: null,
       };
 
