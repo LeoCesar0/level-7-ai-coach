@@ -10,6 +10,7 @@ import { chatRouter } from "./routes/chat/route";
 import assessmentRoute from "./routes/assessment/route";
 import archetypeRoute from "./routes/archetype/route";
 import { playgroundRoute } from "./routes/playground/route";
+import cron from "node-cron";
 
 dotenv.config({ path: "../.env" });
 
@@ -49,3 +50,13 @@ if (
 }
 
 export default honoApp;
+
+// --------------------------
+// SCHEDULES
+// --------------------------
+
+if (process.env.NODE_ENV !== ENV.TEST) {
+  cron.schedule("*/1 * * * *", () => {
+    console.log("Running a task every minute");
+  });
+}
