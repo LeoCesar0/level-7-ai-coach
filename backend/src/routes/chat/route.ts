@@ -64,13 +64,11 @@ export const chatRouter = new Hono()
       const chatsToClose = await ChatModel.find({
         user: userId,
         $or: [
-          { closed: { $exists: false } }, // `isComputed` does not exist
-          { closed: { $eq: false } }, // `isComputed` is explicitly `false`
-          { closed: { $eq: null } }, // `isComputed` is `null`
+          { closed: { $exists: false } }, // `closed` does not exist
+          { closed: { $eq: false } }, // `closed` is explicitly `false`
+          { closed: { $eq: null } }, // `closed` is `null`
         ],
       });
-
-      console.log("❗ chatsToClose -->", chatsToClose);
 
       return await handleDBSession(async (session) => {
         const newChat = await ChatModel.create(
@@ -84,8 +82,6 @@ export const chatRouter = new Hono()
         );
         const chat = newChat[0].toObject();
 
-        console.log("❗ chat -->", chat);
-
         const resData: AppResponse<IChat> = {
           data: chat,
           error: null,
@@ -95,7 +91,6 @@ export const chatRouter = new Hono()
 
         try {
           for (const item of chatsToClose) {
-            console.log("❗ item -->", item);
             const promise = processChatAssessment({
               chatId: item._id,
               user: user,
@@ -105,9 +100,7 @@ export const chatRouter = new Hono()
           }
 
           await Promise.all(promises);
-        } catch (err) {
-          console.log("❗ loop chats to close ERR -->", err);
-        }
+        } catch (err) {}
 
         return ctx.json(resData, 200);
       });

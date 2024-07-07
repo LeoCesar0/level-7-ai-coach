@@ -19,50 +19,41 @@ export const processChatAssessment = async ({
   session,
 }: IProcessChatAssessment) => {
   const userId = user._id.toString();
-  // const session = await mongoose.startSession();
-  try {
-    // session.startTransaction();
-    const { entries } = await getChatAssessment({
-      chatId: chatId.toString(),
-      userPreviousData: [],
-      user,
-    });
 
-    let _entries: ICreateAssessment[] = entries.map((item) => {
-      return {
-        ...item,
-        user: userId,
-        chat: chatId,
-        journal: undefined,
-      };
-    });
+  const { entries } = await getChatAssessment({
+    chatId: chatId.toString(),
+    userPreviousData: [],
+    user,
+  });
 
-    await AssessmentModel.deleteMany(
-      {
-        chat: chatId.toString(),
-        journal: undefined,
-      },
-      { session }
-    );
-
-    const result = await AssessmentModel.insertMany(_entries, { session });
-
-    const updatedChat = await ChatModel.findByIdAndUpdate(
-      chatId.toString(),
-      { assessed: true, closed: true },
-      { session, new: true }
-    );
-
-    // await session.endSession();
+  let _entries: ICreateAssessment[] = entries.map((item) => {
     return {
-      assessment: result,
-      chat: updatedChat,
+      ...item,
+      user: userId,
+      chat: chatId,
+      journal: undefined,
     };
-  } catch (err) {
-    console.log("❗ processChatAssessment ERR -->", err);
-    // await session.abortTransaction();
-    // await session.endSession();
+  });
 
-    throw err;
-  }
+  await AssessmentModel.deleteMany(
+    {
+      chat: chatId.toString(),
+      journal: undefined,
+    },
+    { session }
+  );
+
+  const result = await AssessmentModel.insertMany(_entries, { session });
+
+  const updatedChat = await ChatModel.findByIdAndUpdate(
+    chatId.toString(),
+    { assessed: true, closed: true },
+    { session, new: true }
+  );
+
+  // await session.endSession();
+  return {
+    assessment: result,
+    chat: updatedChat,
+  };
 };

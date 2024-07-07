@@ -27,6 +27,9 @@ const chatSchema = new mongoose.Schema<IChat>(
     closed: {
       type: Boolean,
     },
+    assessed: {
+      type: Boolean,
+    },
   },
   {
     timestamps: true,

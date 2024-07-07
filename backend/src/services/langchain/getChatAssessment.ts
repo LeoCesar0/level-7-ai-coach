@@ -34,6 +34,10 @@ export const getChatAssessment = async ({
 
   const history = await chatHistory.getMessages(); // message type: BaseMessage[]
 
+  if (history.length < 6) {
+    throw new Error("Not enough messages to assess");
+  }
+
   const messages = history
     .map((item) => {
       const type = item._getType();
@@ -75,5 +79,5 @@ export const getChatAssessment = async ({
 
   const entries = await parser.parse(stringRes);
 
-  return { entries, messages };
+  return { entries, messages, history };
 };
