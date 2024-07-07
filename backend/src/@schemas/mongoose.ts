@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const zMongoDocument = z.object({
   _id: zId,
-  __v: z.number().optional(),
+  __v: z.number().nullish(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

@@ -22,8 +22,8 @@ export const zAssessmentAIResponse = zAthleteInfoItem
 export const zCreateAssessment = zAssessmentAIResponse.merge(
   z.object({
     user: zId,
-    chat: zId.optional(),
-    journal: zId.optional(),
+    chat: zId.nullish(),
+    journal: zId.nullish(),
   })
 );
 

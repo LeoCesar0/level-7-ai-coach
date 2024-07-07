@@ -4,7 +4,10 @@ import { zRole } from "../../../@schemas/roles";
 import { EXCEPTIONS } from "../../../static/exceptions";
 import { zAthleteInfo } from "./athleteInfo";
 import { zAddress } from "./address";
-import { zIsoDate } from "../../../@schemas/primitives/isoDate";
+import {
+  zIsoDate,
+  zIsoDateOptional,
+} from "../../../@schemas/primitives/isoDate";
 
 export type ICreateUser = z.infer<typeof zCreateUser>;
 
@@ -18,16 +21,16 @@ export const zCreateUser = z.object({
     .string()
     .min(1, { message: EXCEPTIONS.FIELD_REQUIRED("email") })
     .email(),
-  phone: z.string().optional(),
-  phoneCode: z.string().optional(),
+  phone: z.string().nullish(),
+  phoneCode: z.string().nullish(),
   active: z.boolean().default(true),
-  imageUrl: z.string().optional(),
+  imageUrl: z.string().nullish(),
   role: zRole.default("user"),
   organization: zId.describe("ObjectId:Organization"),
-  archetype: zId.describe("ObjectId:Archetype").optional(),
-  address: zAddress.optional(),
-  birthday: zIsoDate.optional(),
-  sport: z.string().optional(),
-  experience: z.string().optional(),
-  athleteInfo: zAthleteInfo.optional(),
+  archetype: zId.describe("ObjectId:Archetype").nullish(),
+  address: zAddress.nullish(),
+  birthday: zIsoDateOptional.nullish(),
+  sport: z.string().nullish(),
+  experience: z.string().nullish(),
+  athleteInfo: zAthleteInfo.nullish(),
 });

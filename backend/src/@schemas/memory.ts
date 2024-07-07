@@ -16,8 +16,8 @@ export const zMemoryMessage = z.object({
   user_id: z.string(),
   chat_id: z.string(),
   created_at: z.string(),
-  embedding: zEmbedding.optional(),
-  loc: z.any().optional(),
+  embedding: zEmbedding.nullish(),
+  loc: z.any().nullish(),
   type: z.enum(["function", "human", "ai", "generic", "system", "tool"]),
   text: z.string(),
 });
