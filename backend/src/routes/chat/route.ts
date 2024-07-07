@@ -15,6 +15,11 @@ import { createDocuments } from "../../services/langchain/createDocuments.js";
 import { ICreateMemoryMessage } from "../../@schemas/memory.js";
 import { getChatHistory } from "../../services/langchain/getChatHistory.js";
 import { StoredMessage } from "@langchain/core/messages";
+import { EXCEPTIONS } from "../../static/exceptions.js";
+import { processChatAssessment } from "../../services/processChatAssessment.js";
+import { getUserFull } from "../../services/getUserFull.js";
+import mongoose, { Mongoose } from "mongoose";
+import { handleDBSession } from "../../handlers/handleDBSession.js";
 
 export const chatRouter = new Hono()
   .get(
@@ -48,21 +53,64 @@ export const chatRouter = new Hono()
     }),
     authValidator(),
     async (ctx) => {
-      const { date, user } = ctx.req.valid("json");
+      const { date, user: userId } = ctx.req.valid("json");
 
-      const newChat = new ChatModel({
-        user: user,
-        date: date,
+      const user = await getUserFull({ userId });
+
+      if (!user) {
+        throw new HTTPException(404, { message: "User not found" });
+      }
+
+      const chatsToClose = await ChatModel.find({
+        user: userId,
+        $or: [
+          { closed: { $exists: false } }, // `isComputed` does not exist
+          { closed: { $eq: false } }, // `isComputed` is explicitly `false`
+          { closed: { $eq: null } }, // `isComputed` is `null`
+        ],
       });
-      const chatDoc = await newChat.save();
-      const chat = chatDoc.toObject();
 
-      const resData: AppResponse<IChat> = {
-        data: chat,
-        error: null,
-      };
+      console.log("❗ chatsToClose -->", chatsToClose);
 
-      return ctx.json(resData, 200);
+      return await handleDBSession(async (session) => {
+        const newChat = await ChatModel.create(
+          [
+            {
+              user: userId,
+              date: date,
+            },
+          ],
+          { session }
+        );
+        const chat = newChat[0].toObject();
+
+        console.log("❗ chat -->", chat);
+
+        const resData: AppResponse<IChat> = {
+          data: chat,
+          error: null,
+        };
+
+        const promises: Promise<any>[] = [];
+
+        try {
+          for (const item of chatsToClose) {
+            console.log("❗ item -->", item);
+            const promise = processChatAssessment({
+              chatId: item._id,
+              user: user,
+              session,
+            });
+            promises.push(promise);
+          }
+
+          await Promise.all(promises);
+        } catch (err) {
+          console.log("❗ loop chats to close ERR -->", err);
+        }
+
+        return ctx.json(resData, 200);
+      });
     }
   )
   .post(
@@ -71,8 +119,15 @@ export const chatRouter = new Hono()
       schema: zCreateMessage,
     }),
     authValidator(),
-    async (c) => {
-      const { user: userId, message, chat: chatId, role } = c.req.valid("json");
+    async (ctx) => {
+      const {
+        user: userId,
+        message,
+        chat: chatId,
+        role,
+      } = ctx.req.valid("json");
+
+      let resData: AppResponse<any>;
 
       const userNow = new Date().toISOString();
 
@@ -81,9 +136,21 @@ export const chatRouter = new Hono()
       if (!userExists) {
         throw new HTTPException(404, { message: "User not found" });
       }
-      const chatExists = await ChatModel.exists({ _id: chatId });
-      if (!chatExists) {
+      const foundChat = await ChatModel.findById(chatId.toString());
+      if (!foundChat) {
         throw new HTTPException(404, { message: "Chat not found" });
+      }
+
+      if (foundChat.closed) {
+        resData = {
+          data: null,
+          error: {
+            message: EXCEPTIONS.CHAT_CLOSED,
+            _isAppError: true,
+            _message: "Closed chat",
+          },
+        };
+        return ctx.json(resData, 400);
       }
 
       // --------------------------
@@ -154,14 +221,14 @@ export const chatRouter = new Hono()
 
       await memoryVectorStore.addDocuments(documents);
 
-      const resData: AppResponse<any> = {
+      resData = {
         data: {
           response,
         },
         error: null,
       };
 
-      return c.json(resData, 200);
+      return ctx.json(resData, 200);
     }
   )
   .get(

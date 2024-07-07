@@ -2,69 +2,69 @@ import { Hono } from "hono";
 import { AppResponse } from "../../@schemas/app";
 import { routeValidator } from "../../middlewares/routeValidator";
 import { authValidator } from "../../middlewares/authValidator";
-import { AssessmentModel, IAssessment } from "./schemas/assessment";
+import { IAssessment } from "./schemas/assessment";
 import { z } from "zod";
-import { ChatModel, IChatFull } from "../chat/schemas/chat";
+import { ChatModel, IChat } from "../chat/schemas/chat";
 import { HTTPException } from "hono/http-exception";
-import { getChatAssessment } from "../../services/langchain/getChatAssessment";
-import { ICreateAssessment } from "./schemas/createAssessment";
 import { IUserFull, UserModel } from "../users/schemas/user";
+import { processChatAssessment } from "../../services/processChatAssessment";
+import { USER_POPULATES } from "../../static/populates";
+import { handleDBSession } from "../../handlers/handleDBSession";
 
 const assessmentRoute = new Hono()
   // --------------------------
   // create
   // --------------------------
   .post(
-    "/chat",
+    "/chat/:chatId",
     authValidator({ permissionsTo: ["user", "coach", "admin"] }),
     routeValidator({
       schema: z.object({
-        chat: z.string(),
+        chatId: z.string(),
       }),
-      target: "json",
+      target: "query",
     }),
     async (ctx) => {
-      const { chat: chatId } = ctx.req.valid("json");
+      const { chatId } = ctx.req.valid("query");
       // @ts-ignore
       const reqUser: IUser = ctx.get("reqUser");
 
-      const findChat = await ChatModel.findById(chatId)
+      const foundChat = await ChatModel.findById(chatId);
 
-      if (!findChat) {
+      if (!foundChat) {
         throw new HTTPException(404, { message: "Chat not found" });
       }
 
-      const userId = findChat.user.toString();
+      if (!foundChat.closed) {
+        throw new HTTPException(404, { message: "Chat is not finished yet" });
+      }
 
-      const user = await UserModel.findById<IUserFull>(userId).populate('archetype')
+      const userId = foundChat.user.toString();
+
+      const user = await UserModel.findById<IUserFull>(userId).populate(
+        USER_POPULATES
+      );
 
       if (!user) {
         throw new HTTPException(404, { message: "User not found" });
       }
+      handleDBSession(async (session) => {
+        const result = await processChatAssessment({
+          chatId,
+          user,
+          session,
+        });
 
-      const { entries } = await getChatAssessment({
-        chatId,
-        userPreviousData: [],
-        user
-      });
-
-      let _entries: ICreateAssessment[] = entries.map((item) => {
-        return {
-          ...item,
-          user: userId,
-          chat: chatId,
-          journal: undefined,
+        const resData: AppResponse<{
+          assessment: IAssessment[];
+          chat: IChat | null;
+        }> = {
+          data: result,
+          error: null,
         };
+
+        return ctx.json(resData, 200);
       });
-
-      const result = await AssessmentModel.insertMany(_entries);
-
-      const resData: AppResponse<IAssessment[]> = {
-        data: result,
-        error: null,
-      };
-
-      return ctx.json(resData, 200);
     }
   );
 // .post(

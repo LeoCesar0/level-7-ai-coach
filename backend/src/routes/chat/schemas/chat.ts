@@ -2,11 +2,14 @@ import mongoose from "mongoose";
 import { z } from "zod";
 import { zCreateChat } from "./createChat";
 import { zMongoDocument } from "../../../@schemas/mongoose";
-import { zEmbedding } from "../../../@schemas/embeddings";
 import { IUser } from "../../users/schemas/user";
-import { Timestamp } from "mongodb";
 
-export const zChatSchema = zCreateChat.merge(zMongoDocument);
+export const zChatSchema = zCreateChat.merge(zMongoDocument).merge(
+  z.object({
+    closed: z.boolean().optional(),
+    assessed: z.boolean().optional(),
+  })
+);
 
 export type IChat = z.infer<typeof zChatSchema>;
 
@@ -20,6 +23,9 @@ const chatSchema = new mongoose.Schema<IChat>(
     date: {
       type: Date,
       required: true,
+    },
+    closed: {
+      type: Boolean,
     },
   },
   {
