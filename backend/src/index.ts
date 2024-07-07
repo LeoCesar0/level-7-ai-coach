@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import { ENV } from "./static/envs";
 import { MongooseServer } from "./lib/mongoose";
 import organizationsRoute from "./routes/organizations/route";
-import { onAppError } from "./handlers/onAppError";
+import { handleAppError } from "./handlers/handleAppError";
 import { chatRouter } from "./routes/chat/route";
 import assessmentRoute from "./routes/assessment/route";
 import archetypeRoute from "./routes/archetype/route";
@@ -21,7 +21,7 @@ if (!process.env.MONGO_DB_CONNECTION_STRING) {
   process.exit(1);
 }
 
-const honoApp = new Hono().basePath("/api").onError(onAppError);
+const honoApp = new Hono().basePath("/api").onError(handleAppError);
 
 const routes = honoApp
   .route("/users", userRoute)

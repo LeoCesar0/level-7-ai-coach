@@ -7,7 +7,7 @@ import { AppResponse } from "../@schemas/app";
 import { ZodError } from "zod";
 import { getZodErrorMessage } from "../helpers/getZodErrorMessage";
 
-export const onAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
+export const handleAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
   let message = EXCEPTIONS.SERVER_ERROR;
   let status: StatusCode = 500;
 
