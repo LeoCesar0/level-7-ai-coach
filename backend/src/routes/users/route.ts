@@ -13,6 +13,8 @@ import cloneDeep from "lodash.clonedeep";
 import { OrganizationModel } from "../organizations/schemas/organization";
 import { zListRouteQueryInput } from "../../@schemas/listRoute";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
+import { USER_POPULATES } from "../../static/populates";
+import { getUserFull } from "../../services/getUserFull";
 
 const userRoute = new Hono()
   // --------------------------
@@ -35,7 +37,7 @@ const userRoute = new Hono()
         body,
         reqUser,
         modelHasActive: true,
-        populates: ["organization", "archetype"],
+        populates: USER_POPULATES,
       });
 
       return ctx.json(resData, 200);
@@ -48,14 +50,16 @@ const userRoute = new Hono()
     "/:id",
     authValidator({ permissionsTo: ["admin", "coach", "user"] }),
     async (ctx) => {
-      const id = ctx.req.param("id");
+      const userId = ctx.req.param("id");
 
       // @ts-ignore
       const reqUser: IUser = ctx.get("reqUser");
 
-      const user: IUserFull = (await UserModel.findById(id)
-        .populate("archetype")
-        .populate("organization")) as unknown as IUserFull;
+      const user = await getUserFull({ userId: userId });
+
+      if (!user) {
+        throw new HTTPException(404, { message: "User not found" });
+      }
 
       if (user && !user.active && reqUser.role === "user") {
         throw new HTTPException(401, { message: EXCEPTIONS.USER_NOT_ACTIVE });
@@ -255,10 +259,7 @@ const userRoute = new Hono()
         );
       }
 
-      const finalRes: IUserFull = (await UserModel.findById(userId).populate([
-        "organization",
-        "archetype",
-      ])) as unknown as IUserFull;
+      const finalRes = await getUserFull({ userId });
 
       resData = {
         data: finalRes,

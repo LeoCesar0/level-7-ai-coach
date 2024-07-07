@@ -9,7 +9,7 @@ export type IHandlePaginationRoute<T> = {
   model: Model<T>;
   reqUser: IUser;
   modelHasActive: boolean;
-  populates?: string[];
+  populates?: (keyof T extends string ? keyof T : never)[];
 };
 
 export const handlePaginationRoute = async <T>({
@@ -36,10 +36,7 @@ export const handlePaginationRoute = async <T>({
       res = res.where("active").equals(true);
     }
     if (populates) {
-      res.populate(populates)
-      // populates.forEach((item) => {
-      //   res.populate(item);
-      // });
+      res.populate(populates);
     }
     return res;
   };

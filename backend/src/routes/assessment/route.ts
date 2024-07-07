@@ -45,7 +45,7 @@ const assessmentRoute = new Hono()
       const { entries } = await getChatAssessment({
         chatId,
         userPreviousData: [],
-        userArchetype: user.archetype
+        user
       });
 
       let _entries: ICreateAssessment[] = entries.map((item) => {

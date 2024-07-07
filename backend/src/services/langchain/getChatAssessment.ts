@@ -13,10 +13,11 @@ import { PromptTemplate } from "@langchain/core/prompts";
 import { chatOpenAI } from "../../lib/langchain/chatOpenAi";
 import { getAssessmentTopicsText } from "../../routes/assessment/schemas/enums";
 import { IArchetype } from "../../routes/archetype/schemas/archetype";
+import { IUserFull } from "../../routes/users/schemas/user";
 
 export type IGetChatAssessment = {
   chatId: string;
-  userArchetype?: IArchetype;
+  user: IUserFull;
   userPreviousData: IAssessment[];
 };
 
@@ -25,9 +26,11 @@ const assessmentInstructions = `Your goal is to evaluate the following athlete c
 export const getChatAssessment = async ({
   chatId,
   userPreviousData, // TODO
-  userArchetype,
+  user,
 }: IGetChatAssessment) => {
   const chatHistory = getChatHistory({ chatId });
+
+  const userArchetype = user.archetype;
 
   const history = await chatHistory.getMessages(); // message type: BaseMessage[]
 
