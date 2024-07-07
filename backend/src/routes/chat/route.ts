@@ -12,18 +12,9 @@ import { HTTPException } from "hono/http-exception";
 import { getChatChain } from "../../services/langchain/getChatChain.js";
 import { memoryVectorStore } from "../../lib/langchain/memoryVectorStore.js";
 import { createDocuments } from "../../services/langchain/createDocuments.js";
-import { getChatChainV2 } from "../../services/langchain/getChatChainV2.js";
-import { mongoDBClient } from "../../lib/mongodb.js";
-import { getCollection } from "../../services/mongodb/getCollection.js";
 import { ICreateMemoryMessage } from "../../@schemas/memory.js";
-import { formatDocumentsAsString } from "langchain/util/document";
 import { getChatHistory } from "../../services/langchain/getChatHistory.js";
 import { StoredMessage } from "@langchain/core/messages";
-import {
-  HISTORY_COLLECTION,
-  MEMORY_COLLECTION,
-} from "../../lib/langchain/@static.js";
-import { writeFile } from "fs/promises";
 
 export const chatRouter = new Hono()
   .get(
@@ -95,16 +86,6 @@ export const chatRouter = new Hono()
         throw new HTTPException(404, { message: "Chat not found" });
       }
 
-      // const userMessageM = new MessageModel({
-      //   user: userId,
-      //   message,
-      //   chat: chatId,
-      //   role,
-      //   // messageEmbedding,
-      // });
-      // const userMessageDoc = await userMessageM.save();
-      // const userMessage = userMessageDoc.toObject();
-
       // --------------------------
       // V1
       // --------------------------
@@ -173,73 +154,10 @@ export const chatRouter = new Hono()
 
       await memoryVectorStore.addDocuments(documents);
 
-      // await ChatModel.updateOne(
-      //   {
-      //     _id: chat,
-      //   },
-      //   {
-      //     embedding: historyEmbedding,
-      //     messages: chatHistoryMessagesAsString,
-      //   }
-      // );
-
-      // const resChain = await chain.invoke({ input: message });
-      // console.log("❗ resChain -->", resChain);
-
-      // const chatHistory = await memory.chatHistory.getMessages();
-      // console.log("❗ chatHistory -->", chatHistory);
-
-      // const newResponseMessage = new MessageModel({ userId, message: response });
-      // await newResponseMessage.save();
-
       const resData: AppResponse<any> = {
         data: {
           response,
         },
-        error: null,
-      };
-
-      return c.json(resData, 200);
-    }
-  )
-  .post(
-    "/test",
-    routeValidator({
-      schema: zCreateMessage,
-    }),
-    authValidator(),
-    async (c) => {
-      const { user: userId, message, chat: chatId, role } = c.req.valid("json");
-
-      console.log("❗ enter chat route");
-      // const collection = getCollection({ name: "history" });
-      // await collection.deleteMany();
-      // const collection2 = getCollection({ name: "memory" });
-      // await collection2.deleteMany();
-      // return c.json({ message: "done" }, 200);
-
-      const userExists = await UserModel.exists({ _id: userId });
-
-      if (!userExists) {
-        throw new HTTPException(404, { message: "User not found" });
-      }
-      const chatExists = await ChatModel.exists({ _id: chatId });
-      if (!chatExists) {
-        throw new HTTPException(404, { message: "Chat not found" });
-      }
-
-      const { chain } = await getChatChainV2({
-        chatId: chatId.toString(),
-        userId: userId.toString(),
-        message,
-      });
-
-      const result = await chain.invoke({ input: message });
-
-      console.log("❗ result -->", result);
-
-      const resData: AppResponse<any> = {
-        data: result,
         error: null,
       };
 

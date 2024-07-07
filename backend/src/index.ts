@@ -9,6 +9,7 @@ import { onAppError } from "./handlers/onAppError";
 import { chatRouter } from "./routes/chat/route";
 import assessmentRoute from "./routes/assessment/route";
 import archetypeRoute from "./routes/archetype/route";
+import { playgroundRoute } from "./routes/playground/route";
 
 dotenv.config({ path: "../.env" });
 
@@ -26,7 +27,8 @@ const routes = honoApp
   .route("/organizations", organizationsRoute)
   .route("/chats", chatRouter)
   .route("/assessments", assessmentRoute)
-  .route("/archetypes", archetypeRoute);
+  .route("/archetypes", archetypeRoute)
+  .route("/playground", playgroundRoute);
 
 export type ApiType = typeof routes;
 
