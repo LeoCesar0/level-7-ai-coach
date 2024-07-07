@@ -13,6 +13,7 @@ export const zOrganization = zCreateOrganization
       active: z.boolean().default(true),
       slug: z.string(),
       users: z.array(zId.describe("ObjectId:User")),
+      adminOrganization: z.boolean().optional(),
     })
   )
   .merge(zMongoDocument);
@@ -29,6 +30,9 @@ export const organizationSchema = new Schema<IOrganization>(
     active: {
       type: Boolean,
       default: true,
+    },
+    adminOrganization: {
+      type: Boolean,
     },
     imageUrl: {
       type: String,

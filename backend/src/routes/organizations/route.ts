@@ -21,7 +21,6 @@ import { firebaseAuth } from "../../lib/firebase";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { zValidator } from "@hono/zod-validator";
 
-
 const organizationsRoute = new Hono()
   // --------------------------
   // LIST
@@ -42,7 +41,7 @@ const organizationsRoute = new Hono()
         model: OrganizationModel,
         body,
         reqUser,
-        modelHasActive: true
+        modelHasActive: true,
       });
 
       return ctx.json(resData, 200);
@@ -155,15 +154,41 @@ const organizationsRoute = new Hono()
       });
     }
 
+    const orgToDelete = await OrganizationModel.findById<
+      Omit<IOrganization, "users"> & { users: IUser[] }
+    >(orgId).populate("users");
+
+    if (!orgToDelete) {
+      throw new HTTPException(404, {
+        message: "Organization not found",
+      });
+    }
+
+    const orgIsAdmin = orgToDelete.adminOrganization;
+
+    if (orgIsAdmin) {
+      const resData: AppResponse<boolean> = {
+        data: null,
+        error: {
+          message: "Cannot delete admin organization",
+          _isAppError: true,
+        },
+      };
+      return ctx.json(resData, 403);
+    }
+
+    const usersOnOrg = orgToDelete.users.filter(
+      (user) => user.role !== "admin"
+    );
+
     await OrganizationModel.deleteOne({
       _id: orgId,
     });
-    const usersToDelete = await UserModel.find({ organization: orgId });
     await UserModel.deleteMany({
       organization: orgId,
     });
 
-    for (const user of usersToDelete) {
+    for (const user of usersOnOrg) {
       try {
         await firebaseAuth.deleteUser(user.firebaseId);
       } catch (err) {

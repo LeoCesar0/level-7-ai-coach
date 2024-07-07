@@ -88,6 +88,78 @@ describe("organizations integration suite", () => {
     });
   });
 
+  describe("get", () => {
+    it("should NOT get organization by id, normal user should not access", async () => {
+      if (!_createdOrg) {
+        throw new Error("Organization not created");
+      }
+      stub = await stubGetUserFromToken(_seed.normalUser);
+
+      // --------------------------
+      // ACT
+      // --------------------------
+
+      const res = await honoApp.request(
+        "/api/organizations/" + _createdOrg._id,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer 123",
+          },
+        }
+      );
+
+      const json: AppResponse<IOrganization> = await res.json();
+
+      const org = json.data;
+
+      // --------------------------
+      // ASSERT
+      // --------------------------
+
+      expect(res.status).toBe(401);
+      expect(org).toBeFalsy();
+    });
+    it("should get organization by id", async () => {
+      if (!_createdOrg) {
+        throw new Error("Organization not created");
+      }
+      stub = await stubGetUserFromToken(_seed.admin);
+
+      // --------------------------
+      // ACT
+      // --------------------------
+
+      const res = await honoApp.request(
+        "/api/organizations/" + _createdOrg._id,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer 123",
+          },
+        }
+      );
+
+      const json: AppResponse<IOrganization> = await res.json();
+
+      const org = json.data;
+
+      if (json.error) {
+        console.log("❌ Get error", json.error);
+      }
+
+      // --------------------------
+      // ASSERT
+      // --------------------------
+
+      expect(res.status).toBe(200);
+      expect(org).toBeTruthy();
+      expect(org?.name).toBe(_createdOrg.name);
+    });
+  });
+
   describe("update", () => {
     it("should update org", async () => {
       if (!_createdOrg) {
@@ -138,6 +210,26 @@ describe("organizations integration suite", () => {
     });
   });
   describe("delete", () => {
+    it("should NOT delete organization admin", async () => {
+      stub = await stubGetUserFromToken(_seed.admin);
+
+      const res = await honoApp.request(
+        "/api/organizations/" + _seed.organizationMaster._id,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer 123",
+          },
+        }
+      );
+
+      const json: AppResponse<boolean> = await res.json();
+
+      expect(res.status).toBe(403);
+      expect(json.error).toBeTruthy();
+      expect(json.data).toBeFalsy();
+    });
+
     it("should correctly delete organization and its users", async () => {
       if (!_createdOrg) {
         throw new Error("Organization not created");

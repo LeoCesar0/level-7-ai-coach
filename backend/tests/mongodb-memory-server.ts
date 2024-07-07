@@ -83,6 +83,7 @@ export class TestServer {
       name: "Organization Master Test",
       active: true,
       slug: slugify("Organization Master Test"),
+      adminOrganization: true
     });
 
     const admin = await createAppUser({
