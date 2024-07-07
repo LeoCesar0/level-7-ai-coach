@@ -184,7 +184,7 @@ describe("pagination integration suite", () => {
     expect(getNum(list[2].name)).toBe(1);
     expect(getNum(list[3].name)).toBe(0);
   });
-  it("should not list disabled organization, if user request", async () => {
+  it("should NOT list disabled organization, if user request", async () => {
     // --------------------------
     // ARRANGE
     // --------------------------
@@ -203,7 +203,7 @@ describe("pagination integration suite", () => {
     expect(res.status).toBe(200);
     expect(foundDisabled).toBeFalsy();
   });
-  it("should not list disabled organization, if user request", async () => {
+  it("should list disabled organization, if user request", async () => {
     // --------------------------
     // ARRANGE
     // --------------------------
