@@ -11,7 +11,24 @@ export const onAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
   let message = EXCEPTIONS.SERVER_ERROR;
   let status: StatusCode = 500;
 
+  // @ts-ignore
+  const forbiddenUser = ctx.get("forbiddenUser");
+
   console.log("❗ app err -->", err);
+
+  if (forbiddenUser) {
+    status = 403;
+    message = EXCEPTIONS.FORBIDDEN;
+    const error: AppResponse = {
+      error: {
+        message: message,
+        _message: EXCEPTIONS.FORBIDDEN,
+        _isAppError: true,
+      },
+      data: null,
+    };
+    return ctx.json(error, status);
+  }
 
   if (err instanceof ZodError) {
     console.log("ZOD ERROR INSTANCE");

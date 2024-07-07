@@ -118,7 +118,7 @@ describe("organizations integration suite", () => {
       // ASSERT
       // --------------------------
 
-      expect(res.status).toBe(401);
+      expect(res.status).toBe(403);
       expect(org).toBeFalsy();
     });
     it("should get organization by id", async () => {
