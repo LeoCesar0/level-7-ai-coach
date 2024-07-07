@@ -112,6 +112,7 @@ const run = async () => {
     active: true,
     slug: slugify("Organization Master Dev"),
     _id: "6689cd9863d2aa5bbcffc9ef",
+    adminOrganization: true,
   });
   const adminEmail = "dev_admin_lvl7@level7.com";
   const adminName = "Admin dev";
