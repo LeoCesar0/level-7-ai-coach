@@ -9,6 +9,7 @@ import { zCreateArchetype } from "./schemas/createArchetype";
 import { zListRouteQueryInput } from "../../@schemas/listRoute";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { slugify } from "../../helpers/slugify";
+import { EXCEPTIONS } from "../../static/exceptions";
 
 const archetypeRoute = new Hono()
   // --------------------------
@@ -25,13 +26,29 @@ const archetypeRoute = new Hono()
       const { description, name } = ctx.req.valid("json");
       // @ts-ignore
 
+      const slug = slugify(name);
+
+      let resData: AppResponse<IArchetype>;
+
+      const exists = await ArchetypeModel.findOne({ slug });
+      if (exists) {
+        resData = {
+          data: null,
+          error: {
+            message: EXCEPTIONS.ITEM_EXISTS("Archetype"),
+            _isAppError: true,
+          },
+        };
+        return ctx.json(resData, 400);
+      }
+
       const result = await ArchetypeModel.create({
         description,
         name,
-        slug: slugify(name),
+        slug: slug,
       });
 
-      const resData: AppResponse<IArchetype> = {
+      resData = {
         data: result,
         error: null,
       };
@@ -90,11 +107,17 @@ const archetypeRoute = new Hono()
       const values = ctx.req.valid("json");
       // @ts-ignore
 
-      const result = await ArchetypeModel.findByIdAndUpdate(id, {
-        name: values.name,
-        description: values.description,
-        slug: slugify(values.name),
-      });
+      const result = await ArchetypeModel.findByIdAndUpdate(
+        id,
+        {
+          name: values.name,
+          description: values.description,
+          slug: slugify(values.name),
+        },
+        {
+          new: true,
+        }
+      );
 
       if (!result) {
         throw new HTTPException(404, { message: "Archetype not found" });

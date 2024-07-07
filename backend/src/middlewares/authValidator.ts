@@ -43,6 +43,8 @@ export const createVerifyAuthToken = ({
         const hasPermission = permissionsTo.includes(user.role);
 
         if (!hasPermission) {
+          // Set status to 403
+          ctx.set("forbiddenUser", true);
           return false;
         }
       }

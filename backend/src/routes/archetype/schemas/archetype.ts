@@ -3,7 +3,7 @@ import { z } from "zod";
 import { zMongoDocument } from "../../../@schemas/mongoose";
 import { zCreateArchetype } from "./createArchetype";
 
-export type IArchetype = z.infer<typeof zCreateArchetype>;
+export type IArchetype = z.infer<typeof zArchetype>;
 
 export const zArchetype = zCreateArchetype.merge(zMongoDocument);
 
