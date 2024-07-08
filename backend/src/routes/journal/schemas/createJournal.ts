@@ -9,3 +9,5 @@ export const zCreateJournal = z.object({
   date: zIsoDate.optional(),
   draft: z.boolean().optional(),
 });
+
+export type ICreateJournal = z.infer<typeof zCreateJournal>;
