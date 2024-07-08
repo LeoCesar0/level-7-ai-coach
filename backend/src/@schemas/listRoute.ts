@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const zFilters = z.record(z.string(), z.any()).nullish();
+export const zFilters = z.record(z.string(), z.any())
 
 export const zListRouteQueryInput = z
   .object({
@@ -8,7 +8,7 @@ export const zListRouteQueryInput = z
     limit: z.number().min(1).default(10),
     sortBy: z.string().nullish(),
     sortOrder: z.enum(["asc", "ascending", "desc", "descending"]).nullish(),
-    filters: zFilters,
+    filters: zFilters.nullish(),
   })
   .default({
     limit: 10,

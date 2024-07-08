@@ -1,4 +1,4 @@
-import { Model } from "mongoose";
+import { FilterQuery, Model } from "mongoose";
 import { AppResponse } from "../@schemas/app";
 import { IPaginationBodyOutput } from "../@schemas/listRoute";
 import { IPaginationResult } from "../@schemas/pagination";
@@ -29,9 +29,9 @@ export const handlePaginationRoute = async <T>({
   if (!sortObj["createdAt"]) {
     sortObj["createdAt"] = "desc";
   }
-
   const getBaseQuery = () => {
-    let res = model.find();
+    const filters: FilterQuery<T> = body.filters ?? {};
+    let res = model.find({ ...filters });
     if (reqUser.role !== "admin" && modelHasActive) {
       res = res.where("active").equals(true);
     }

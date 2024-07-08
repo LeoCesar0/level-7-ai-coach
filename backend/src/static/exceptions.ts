@@ -2,6 +2,7 @@ export const EXCEPTIONS = {
   REQUIRED: "This field is required",
   FIELD_REQUIRED: (field: string) => `${field} is required`,
   ITEM_EXISTS: (name: string) => `${name} already exists`,
+  ITEM_NOT_FOUND: (name: string) => `${name} not found`,
   USER_EMAIL_ALREADY_REGISTERED: "User with given email already exists",
   ORGANIZATION_NOT_EXISTS: "Organization not found",
   NOT_AUTHORIZED: "User not authorized",

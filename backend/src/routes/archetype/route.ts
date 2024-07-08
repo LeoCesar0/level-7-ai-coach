@@ -99,7 +99,7 @@ const archetypeRoute = new Hono()
       target: "param",
     }),
     routeValidator({
-      schema: zCreateArchetype,
+      schema: zCreateArchetype.partial(),
       target: "json",
     }),
     async (ctx) => {
@@ -107,12 +107,14 @@ const archetypeRoute = new Hono()
       const values = ctx.req.valid("json");
       // @ts-ignore
 
+      if (values.name) {
+        values.slug = slugify(values.name);
+      }
+
       const result = await ArchetypeModel.findByIdAndUpdate(
         id,
         {
-          name: values.name,
-          description: values.description,
-          slug: slugify(values.name),
+          ...values,
         },
         {
           new: true,

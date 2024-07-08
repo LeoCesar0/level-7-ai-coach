@@ -11,6 +11,7 @@ import assessmentRoute from "./routes/assessment/route";
 import archetypeRoute from "./routes/archetype/route";
 import { playgroundRoute } from "./routes/playground/route";
 import cron from "node-cron";
+import { journalRoute } from "./routes/journal/route";
 
 dotenv.config({ path: "../.env" });
 
@@ -29,7 +30,8 @@ const routes = honoApp
   .route("/chats", chatRouter)
   .route("/assessments", assessmentRoute)
   .route("/archetypes", archetypeRoute)
-  .route("/playground", playgroundRoute);
+  .route("/journal", journalRoute)
+  // .route("/playground", playgroundRoute);
 
 export type ApiType = typeof routes;
 
