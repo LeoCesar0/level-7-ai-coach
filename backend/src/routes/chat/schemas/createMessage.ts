@@ -9,5 +9,5 @@ export const zCreateMessage = z.object({
   chat: zId.describe("ObjectId:Chat"),
   user: zId.describe("ObjectId:User"),
   message: zStringNotEmpty,
-  role: zChatRole,
+  role: zChatRole.optional().default('user'),
 });
