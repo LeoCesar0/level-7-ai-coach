@@ -4,14 +4,15 @@ import { zCreateJournal } from "./createJournal";
 import { zMongoDocument } from "../../../@schemas/mongoose";
 import { zId } from "@zodyac/zod-mongoose";
 
-export const zJournalSchema = zCreateJournal
-  .merge(zMongoDocument)
-  .omit({ date: true })
-  .merge(
-    z.object({ date: z.date().optional(), user: zId.describe("ObjectId:User") })
-  );
+export const zJournal = zCreateJournal.merge(zMongoDocument).merge(
+  z.object({
+    user: zId.describe("ObjectId:User"),
+    assessed: z.boolean().nullish(),
+    shouldAssess: z.boolean().nullish(),
+  })
+);
 
-export type IJournal = z.infer<typeof zJournalSchema>;
+export type IJournal = z.infer<typeof zJournal>;
 
 const journalSchema = new mongoose.Schema<IJournal>(
   {
@@ -20,10 +21,18 @@ const journalSchema = new mongoose.Schema<IJournal>(
     images: [{ type: String }],
     date: {
       type: Date,
-      default: Date.now,
+      required: true,
     },
     draft: {
       type: Boolean,
+    },
+    assessed: {
+      type: Boolean,
+      default: false,
+    },
+    shouldAssess: {
+      type: Boolean,
+      default: true,
     },
   },
   {

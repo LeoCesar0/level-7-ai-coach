@@ -14,7 +14,7 @@ export const handleAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
   // @ts-ignore
   const forbiddenUser = ctx.get("forbiddenUser");
 
-  // console.log("❗ app err -->", err);
+  console.log("❗ app err -->", err);
 
   if (forbiddenUser) {
     status = 403;

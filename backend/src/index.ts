@@ -11,7 +11,7 @@ import assessmentRoute from "./routes/assessment/route";
 import archetypeRoute from "./routes/archetype/route";
 import { playgroundRoute } from "./routes/playground/route";
 import cron from "node-cron";
-import { journalRoute } from "./routes/journal/route";
+import { journalRoute } from "./routes/journals/route";
 import { processUserAnalytics } from "./services/analytics/processUserAnalytics";
 
 dotenv.config({ path: "../.env" });

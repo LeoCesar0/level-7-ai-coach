@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { IUser } from "../users/schemas/user.js";
-import { JournalModel, IJournal } from "./schemas/journal.js";
+import { JournalModel, IJournal, zJournal } from "./schemas/journal.js";
 import { routeValidator } from "../../middlewares/routeValidator.js";
 import { zCreateJournal } from "./schemas/createJournal.js";
 import { AppResponse } from "../../@schemas/app.js";
@@ -11,6 +11,7 @@ import { zListRouteQueryInput } from "../../@schemas/listRoute.js";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute.js";
 import { z } from "zod";
 import { zStringNotEmpty } from "../../@schemas/primitives/stringNotEmpty.js";
+import { stringToDate } from "../../helpers/stringToDate.js";
 
 // --------------------------
 // GET MANY
@@ -91,7 +92,8 @@ export const journalRoute = new Hono()
       permissionsTo: ["user"],
     }),
     async (ctx) => {
-      const { date, images, draft, text } = ctx.req.valid("json");
+      const body = ctx.req.valid("json");
+      const { date, images, draft, text } = body;
 
       // @ts-ignore
       const reqUser = ctx.get("reqUser") as IUser;
@@ -128,7 +130,7 @@ export const journalRoute = new Hono()
       target: "param",
     }),
     routeValidator({
-      schema: zCreateJournal.partial(),
+      schema: zJournal.partial(),
     }),
     authValidator({
       permissionsTo: ["user"],

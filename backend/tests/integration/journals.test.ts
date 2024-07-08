@@ -1,15 +1,15 @@
 import honoApp from "../../src";
 import { AppResponse } from "../../src/@schemas/app";
 import { IPaginationResult } from "../../src/@schemas/pagination";
+import { ICreateJournal } from "../../src/routes/journals/schemas/createJournal";
 import {
   JournalModel,
   IJournal,
-} from "../../src/routes/journal/schemas/journal";
+} from "../../src/routes/journals/schemas/journal";
 import { EXCEPTIONS } from "../../src/static/exceptions";
 import { stubGetUserFromToken } from "../helpers/stubGetUserFromToken";
 import { ISeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";
-import { ICreateJournal } from "../../src/routes/journal/schemas/createJournal";
 
 describe("journal integration suite", () => {
   console.log("🔻 Enter JOURNAL integration suite  -->");
@@ -39,15 +39,15 @@ describe("journal integration suite", () => {
   describe("create", () => {
     it("should create a new journal entry, by user", async () => {
       stub = await stubGetUserFromToken(_seed.normalUser);
-
+      const date = new Date();
       const body: ICreateJournal = {
-        date: new Date().toISOString(),
+        date: date,
         text: _journalText,
         draft: false,
         images: [],
       };
 
-      const res = await honoApp.request("/api/journal", {
+      const res = await honoApp.request("/api/journals", {
         method: "POST",
         body: JSON.stringify(body),
         headers: {
@@ -66,6 +66,7 @@ describe("journal integration suite", () => {
       expect(res.status).toBe(200);
       expect(json.error).toBe(null);
       expect(journal?.text).toBe(_journalText);
+      expect(typeof journal?.date).toBe("string");
 
       _createdJournal = journal;
     });
@@ -75,7 +76,7 @@ describe("journal integration suite", () => {
     it("should list and find created journal entry", async () => {
       stub = await stubGetUserFromToken(_seed.normalUser);
 
-      const res = await honoApp.request("/api/journal/list", {
+      const res = await honoApp.request("/api/journals/list", {
         method: "POST",
         body: JSON.stringify({}),
         headers: {
@@ -102,13 +103,16 @@ describe("journal integration suite", () => {
       }
       stub = await stubGetUserFromToken(_seed.normalUser);
 
-      const res = await honoApp.request(`/api/journal/${_createdJournal._id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer any-token",
-        },
-      });
+      const res = await honoApp.request(
+        `/api/journals/${_createdJournal._id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer any-token",
+          },
+        }
+      );
 
       const json: AppResponse<IJournal> = await res.json();
       const journal = json.data;
@@ -129,20 +133,23 @@ describe("journal integration suite", () => {
       }
       stub = await stubGetUserFromToken(_seed.normalUser);
 
-      const body: ICreateJournal = {
+      const body: Partial<ICreateJournal> = {
         text: _journalUpdatedText,
         draft: false,
         images: [],
       };
 
-      const res = await honoApp.request(`/api/journal/${_createdJournal._id}`, {
-        method: "PUT",
-        body: JSON.stringify(body),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer any-token",
-        },
-      });
+      const res = await honoApp.request(
+        `/api/journals/${_createdJournal._id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer any-token",
+          },
+        }
+      );
 
       const json: AppResponse<IJournal> = await res.json();
       const journal = json.data;
@@ -159,13 +166,16 @@ describe("journal integration suite", () => {
       }
       stub = await stubGetUserFromToken(_seed.normalUser);
 
-      const res = await honoApp.request(`/api/journal/${_createdJournal._id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer any-token",
-        },
-      });
+      const res = await honoApp.request(
+        `/api/journals/${_createdJournal._id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer any-token",
+          },
+        }
+      );
 
       const json: AppResponse<boolean> = await res.json();
 
