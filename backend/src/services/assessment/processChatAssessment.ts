@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import { ModelId } from "../@schemas/mongoose";
-import { AssessmentModel } from "../routes/assessment/schemas/assessment";
-import { ICreateAssessment } from "../routes/assessment/schemas/createAssessment";
-import { ChatModel } from "../routes/chat/schemas/chat";
-import { IUserFull } from "../routes/users/schemas/user";
-import { getChatAssessment } from "./langchain/getChatAssessment";
+import { ModelId } from "../../@schemas/mongoose";
+import { AssessmentModel } from "../../routes/assessment/schemas/assessment";
+import { ICreateAssessment } from "../../routes/assessment/schemas/createAssessment";
+import { ChatModel } from "../../routes/chat/schemas/chat";
+import { IUserFull } from "../../routes/users/schemas/user";
+import { getChatAssessment } from "../langchain/getChatAssessment";
 import { ClientSession } from "mongoose";
 
 export type IProcessChatAssessment = {

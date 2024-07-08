@@ -7,7 +7,7 @@ import { z } from "zod";
 import { ChatModel, IChat } from "../chat/schemas/chat";
 import { HTTPException } from "hono/http-exception";
 import { IUserFull, UserModel } from "../users/schemas/user";
-import { processChatAssessment } from "../../services/processChatAssessment";
+import { processChatAssessment } from "../../services/assessment/processChatAssessment";
 import { USER_POPULATES } from "../../static/populates";
 import { handleDBSession } from "../../handlers/handleDBSession";
 
