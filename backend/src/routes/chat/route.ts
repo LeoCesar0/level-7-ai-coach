@@ -236,8 +236,6 @@ export const chatRouter = new Hono()
     async (c) => {
       const { id: chatId } = c.req.valid("param");
 
-      console.log("❗ chatId -->", chatId);
-
       const exists = await ChatModel.findById(chatId);
       if (!exists) {
         throw new HTTPException(404, { message: "Chat not found" });

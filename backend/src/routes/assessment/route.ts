@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { AppResponse } from "../../@schemas/app";
 import { routeValidator } from "../../middlewares/routeValidator";
 import { authValidator } from "../../middlewares/authValidator";
-import { IAssessment } from "./schemas/assessment";
+import { AssessmentModel, IAssessment } from "./schemas/assessment";
 import { z } from "zod";
 import { ChatModel, IChat } from "../chat/schemas/chat";
 import { HTTPException } from "hono/http-exception";
@@ -16,16 +16,16 @@ const assessmentRoute = new Hono()
   // create
   // --------------------------
   .post(
-    "/chat/:chatId",
+    "/chat/:id",
     authValidator({ permissionsTo: ["user", "coach", "admin"] }),
     routeValidator({
       schema: z.object({
-        chatId: z.string(),
+        id: z.string(),
       }),
-      target: "query",
+      target: "param",
     }),
     async (ctx) => {
-      const { chatId } = ctx.req.valid("query");
+      const { id: chatId } = ctx.req.valid("param");
       // @ts-ignore
       const reqUser: IUser = ctx.get("reqUser");
 
@@ -65,6 +65,36 @@ const assessmentRoute = new Hono()
 
         return ctx.json(resData, 200);
       });
+    }
+  )
+  .get(
+    "/chat/:id",
+    authValidator({ permissionsTo: ["user", "coach", "admin"] }),
+    routeValidator({
+      schema: z.object({
+        id: z.string(),
+      }),
+      target: "param",
+    }),
+    async (ctx) => {
+      const { id: chatId } = ctx.req.valid("param");
+      // @ts-ignore
+      const reqUser: IUser = ctx.get("reqUser");
+
+      const foundChat = await ChatModel.findById(chatId);
+
+      if (!foundChat) {
+        throw new HTTPException(404, { message: "Chat not found" });
+      }
+
+      const assessment = await AssessmentModel.find({ chat: chatId });
+
+      const resData: AppResponse<IAssessment[]> = {
+        data: assessment,
+        error: null,
+      };
+
+      return ctx.json(resData, 200);
     }
   );
 // .post(
