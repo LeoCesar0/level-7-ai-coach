@@ -61,6 +61,6 @@ export default honoApp;
 if (process.env.NODE_ENV !== ENV.TEST) {
   cron.schedule("*/1 * * * *", () => {
     console.log("Running a task every minute");
-    processUserAnalytics()
+    // processUserAnalytics()
   });
 }

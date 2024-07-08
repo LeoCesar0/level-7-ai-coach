@@ -1,4 +1,5 @@
 import { ICreateAnalytics } from "../../@schemas/analytics";
+import { createAnalyticsSlug } from "../../helpers/createAnalyticsSlug";
 import { getDateFields } from "../../helpers/getDateFields";
 import { UserModel } from "../../routes/users/schemas/user";
 import { getCollection } from "../mongodb/getCollection";
@@ -20,7 +21,9 @@ export const processUserAnalytics = async () => {
       type: "count",
       value: totalUsers,
       ...dateFields,
+      slug: "", // ADD BELOW,
     };
+    entry.slug = createAnalyticsSlug({ data: entry });
 
     const collection = getCollection({ name: "userAnalytics" });
 

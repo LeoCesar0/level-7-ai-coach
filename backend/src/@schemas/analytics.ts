@@ -2,24 +2,25 @@ import { z } from "zod";
 import { zIsoDate } from "./primitives/isoDate";
 import { IMongoDocument, zMongoDocument } from "./mongoose";
 
-export const zCreateAnalytics = z.object({
-  date: z.date(),
-  model: z.string(),
-  type: z.string(),
-  value: z.any(),
-  year: z.number(),
-  month: z.number(),
-  day: z.number(),
-});
+// export const zCreateAnalytics = z.object({
+//   date: z.date(),
+//   model: z.string(),
+//   type: z.string(),
+//   value: z.any(),
+//   year: z.number(),
+//   month: z.number(),
+//   day: z.number(),
+//   slug: z.string(),
+// });
 
-export const zAnalytics = zCreateAnalytics
-  .omit({ date: true })
-  .merge(
-    z.object({
-      date: z.string(),
-    })
-  )
-  .merge(zMongoDocument);
+// export const zAnalytics = zCreateAnalytics
+//   .omit({ date: true })
+//   .merge(
+//     z.object({
+//       date: z.string(),
+//     })
+//   )
+//   .merge(zMongoDocument);
 
 export type IDateFields = {
   year: number;
@@ -32,6 +33,7 @@ export type IAnalytics<T> = {
   type: string;
   model: string;
   value: T;
+  slug: string;
 } & IMongoDocument;
 
 export type ICreateAnalytics<T> = {
@@ -39,4 +41,5 @@ export type ICreateAnalytics<T> = {
   model: string;
   type: string;
   value: T;
+  slug: string;
 } & IDateFields;
