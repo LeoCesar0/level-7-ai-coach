@@ -137,6 +137,10 @@ export const journalRoute = new Hono()
       const values = ctx.req.valid("json");
       const { id: journalId } = ctx.req.valid("param");
 
+      if (!values || !Object.keys(values).length) {
+        throw new HTTPException(400, { message: "No data to update" });
+      }
+
       let resData: AppResponse<IJournal>;
 
       // @ts-ignore

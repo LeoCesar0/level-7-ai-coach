@@ -107,6 +107,10 @@ const archetypeRoute = new Hono()
       const values = ctx.req.valid("json");
       // @ts-ignore
 
+      if (!values || !Object.keys(values).length) {
+        throw new HTTPException(400, { message: "No data to update" });
+      }
+
       if (values.name) {
         values.slug = slugify(values.name);
       }

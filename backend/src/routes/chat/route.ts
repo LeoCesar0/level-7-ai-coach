@@ -225,16 +225,18 @@ export const chatRouter = new Hono()
     }
   )
   .get(
-    "/history",
+    "/history/:id",
     routeValidator({
       schema: z.object({
-        chat: zStringNotEmpty,
+        id: zStringNotEmpty,
       }),
-      target: "query",
+      target: "param",
     }),
     authValidator(),
     async (c) => {
-      const { chat: chatId } = c.req.valid("query");
+      const { id: chatId } = c.req.valid("param");
+
+      console.log("❗ chatId -->", chatId);
 
       const exists = await ChatModel.findById(chatId);
       if (!exists) {

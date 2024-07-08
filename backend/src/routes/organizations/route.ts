@@ -100,6 +100,10 @@ const organizationsRoute = new Hono()
       const orgId = ctx.req.param("id");
       const inputs = ctx.req.valid("json");
 
+      if (!inputs || !Object.keys(inputs).length) {
+        throw new HTTPException(400, { message: "No data to update" });
+      }
+
       if (!orgId) {
         throw new HTTPException(400, {
           message: "Organization id is required",

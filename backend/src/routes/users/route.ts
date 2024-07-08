@@ -181,6 +181,11 @@ const userRoute = new Hono()
     async (ctx) => {
       const userId = ctx.req.param("id");
       const inputs = ctx.req.valid("json");
+
+      if (!inputs || !Object.keys(inputs).length) {
+        throw new HTTPException(400, { message: "No data to update" });
+      }
+
       let resData: AppResponse<IUserFull>;
 
       const userValues = cloneDeep(inputs);
