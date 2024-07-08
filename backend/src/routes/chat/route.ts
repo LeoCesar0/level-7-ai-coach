@@ -107,7 +107,7 @@ export const chatRouter = new Hono()
     }
   )
   .post(
-    "/messages",
+    "/send",
     routeValidator({
       schema: zCreateMessage,
     }),
