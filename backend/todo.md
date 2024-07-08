@@ -23,10 +23,11 @@
 - [x] - Pagination
 - [x] - Assessment route
 - [x] - Collect assessment on chat is open/close
-- [X] - Create Journal routes
-- [X] - Create and process user analytics
+- [x] - Create Journal routes
+- [x] - Create and process user analytics
 - [] - Collect assessment from journal
 - [] - Schedule to close chats after 1 day open
+- [] - Add Analytics fields to assessment (date fields and slug)
 
 **TEST**
 
