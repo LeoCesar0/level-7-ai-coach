@@ -6,3 +6,5 @@ export const zAddress = z.object({
   country: z.string(),
   address: z.string(),
 });
+
+export type IAddress = z.infer<typeof zAddress>;

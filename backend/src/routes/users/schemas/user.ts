@@ -3,11 +3,10 @@ import { z } from "zod";
 import { zMongoDocument } from "../../../@schemas/mongoose";
 import { ROLES_LIST } from "../../../static/roles";
 import { zCreateUser } from "./createUser";
-import zodSchema from "@zodyac/zod-mongoose";
-import { zAddress } from "./address";
-import { zAthleteInfoItem } from "./athleteInfo";
+import { IAddress, zAddress } from "./address";
 import { zArchetype } from "../../archetype/schemas/archetype";
 import { zOrganization } from "../../organizations/schemas/organization";
+import { zodSchema } from "@zodyac/zod-mongoose";
 
 export type IUser = z.infer<typeof zUser> & {
   firebaseId: string;
@@ -27,7 +26,12 @@ export const zUserFull = zUser
     })
   );
 
-const addressSchema = zodSchema(zAddress);
+const addressSchema = new Schema<IAddress>({
+  city: { type: String, required: true },
+  state: { type: String, required: true },
+  country: { type: String, required: true },
+  address: { type: String, required: true },
+});
 
 export const userSchema = new Schema<IUser>(
   {
