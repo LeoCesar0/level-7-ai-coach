@@ -124,11 +124,11 @@ export const chatRouter = new Hono()
 
       let resData: AppResponse<any>;
 
-      const userNow = new Date().toISOString();
+      const userTimestamp = new Date().toISOString();
 
-      const userExists = await UserModel.exists({ _id: userId });
+      const user = await getUserFull({ userId });
 
-      if (!userExists) {
+      if (!user) {
         throw new HTTPException(404, { message: "User not found" });
       }
       const foundChat = await ChatModel.findById(chatId.toString());
@@ -154,8 +154,8 @@ export const chatRouter = new Hono()
 
       const { chain } = await getChatChain({
         chatId: chatId.toString(),
-        userId: userId.toString(),
         message,
+        user,
       });
 
       const response = await chain.invoke(
@@ -199,7 +199,7 @@ export const chatRouter = new Hono()
           type: "human",
           user_id: userId.toString(),
           chat_id: chatId.toString(),
-          created_at: userNow,
+          created_at: userTimestamp,
         },
         {
           type: "ai",

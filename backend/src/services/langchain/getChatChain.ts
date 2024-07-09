@@ -3,21 +3,15 @@ import {
   MessagesPlaceholder,
 } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";
-import {
-  RunnableParallel,
-  RunnablePassthrough,
-  RunnableSequence,
-  RunnableWithMessageHistory,
-} from "@langchain/core/runnables";
+import { RunnableWithMessageHistory } from "@langchain/core/runnables";
 import { getChatHistory } from "./getChatHistory";
 import { agentTemplate } from "../../lib/langchain/templates";
 import { getUserRetriever } from "./getUserRetriever";
 import { memoryVectorStore } from "../../lib/langchain/memoryVectorStore";
 import { CHAT_MODEL, CHAT_TEMPERATURE } from "../../lib/langchain/@static";
-import { MongoDBAtlasVectorSearch } from "@langchain/mongodb";
 import { formatDocumentsAsString } from "langchain/util/document";
-import { chatOpenAI } from "../../lib/langchain/chatOpenAi";
-import { StringOutputParser } from "@langchain/core/output_parsers";
+import { ChatTemplateInput } from "../../@schemas/langchain";
+import { IUserFull } from "../../routes/users/schemas/user";
 
 // https://js.langchain.com/v0.1/docs/integrations/chat_memory/mongodb/#usage
 // https://js.langchain.com/v0.2/docs/integrations/chat_memory/zep_memory_cloud/#zepcloudchatmessagehistory--runnablewithmessagehistory-usage
@@ -25,44 +19,89 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 
 export type IGetChatChain = {
   chatId: string;
-  userId: string;
   message: string;
+  user: IUserFull;
 };
 
 export const getChatChain = async ({
   chatId,
-  userId,
+  user,
   message,
 }: IGetChatChain) => {
+  const aiResponseLimit = 5;
+
   const inputKey = "question";
   const currentHistoryKey = "history";
+  const userId = user._id.toString();
 
   const chatHistory = getChatHistory({ chatId });
 
-  const prevChatsRetriever = getUserRetriever({
-    chatId,
-    userId,
-    vectorStore: memoryVectorStore,
-    type: "prevChats",
-  });
+  const currentMessages = await chatHistory.getMessages();
 
-  const relevantContext = await prevChatsRetriever._getRelevantDocuments(
-    message
-  );
+  const nAiResponses = currentMessages.reduce((acc, entry) => {
+    if (entry._getType() === "ai") {
+      acc += 1;
+    }
+    return acc;
+  }, 0);
+  const isEnding = nAiResponses > aiResponseLimit;
 
-  const relevantContextString = formatDocumentsAsString(relevantContext);
+  let relevantContextString = "";
 
+  // --------------------------
+  // GET PREVIOUS CONTEXTS
+  // --------------------------
 
-  const prompt = ChatPromptTemplate.fromMessages([
-    ["system", agentTemplate],
-    ["system", `Previous sessions context: ${relevantContextString}`],
-    // [
-    //   "assistant",
-    //   "Welcome back Fred! How are you feeling today? Is there anything specific you'd like to discuss or focus on in today's session?",
-    // ],
-    new MessagesPlaceholder(currentHistoryKey),
-    ["human", `{${inputKey}}`],
-  ]);
+  if (!isEnding) {
+    const prevChatsRetriever = getUserRetriever({
+      chatId,
+      userId,
+      vectorStore: memoryVectorStore,
+      type: "prevChats",
+    });
+
+    const relevantContext = await prevChatsRetriever._getRelevantDocuments(
+      message
+    );
+
+    relevantContextString = formatDocumentsAsString(relevantContext);
+  }
+
+  // --------------------------
+  // TEMPLATE
+  // --------------------------
+
+  let templateInput: ChatTemplateInput = [["system", agentTemplate]];
+
+  if (relevantContextString) {
+    templateInput.push([
+      "system",
+      `Previous sessions context: ${relevantContextString}`,
+    ]);
+  }
+
+  if (user.archetype) {
+    templateInput.push([
+      "system",
+      `User archetype is ${user.archetype.name}. Description: ${user.archetype.description}`,
+    ]);
+  }
+
+  if (isEnding) {
+    templateInput.push([
+      "system",
+      "You have reached final of this current session. You must now politely end the session, answering the athlete's last question and telling the athlete a story that fits the current session and will help the athlete. You should use real great players or philosophers as characters for this story. Add Stoicism topics and beliefs to it.",
+    ]);
+  }
+
+  templateInput.push(new MessagesPlaceholder(currentHistoryKey));
+  templateInput.push(["human", `{${inputKey}}`]);
+
+  // --------------------------
+  // END TEMPLATE
+  // --------------------------
+
+  const prompt = ChatPromptTemplate.fromMessages(templateInput);
 
   const runnable = prompt.pipe(
     new ChatOpenAI({
@@ -106,6 +145,7 @@ export const getChatChain = async ({
 
   return {
     chain: chainWithHistory,
+    isEnding,
   };
 };
 

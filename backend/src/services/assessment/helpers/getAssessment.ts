@@ -18,15 +18,14 @@ import { chatOpenAI } from "../../../lib/langchain/chatOpenAi";
 import { getAssessmentTopicsText } from "../../../routes/assessment/schemas/enums";
 import { IArchetype } from "../../../routes/archetype/schemas/archetype";
 import { IUserFull } from "../../../routes/users/schemas/user";
-
-type TemplateInput = Parameters<typeof ChatPromptTemplate.fromMessages>[0];
+import { ChatTemplateInput } from "../../../@schemas/langchain";
 
 export type IGetAssessment = {
   user: IUserFull;
   userPreviousData: IAssessment[];
   messages: string;
   type: "journal" | "chat";
-  extraTemplate?: TemplateInput;
+  extraTemplate?: ChatTemplateInput;
 };
 
 const chatAssessmentInstructions =
@@ -91,13 +90,13 @@ export const getAssessment = async ({
   // templates.push(new MessagesPlaceholder('format_instructions'))
   // templates.push(new MessagesPlaceholder('history'))
 
-  let templateInputs: TemplateInput = [
+  let templateInputs: ChatTemplateInput = [
     ["system", systemInstructions],
     ["system", assessmentTopicsExplanation],
     ["system", generalInstructions],
   ];
 
-  const extraInfo: TemplateInput = [...extraTemplate];
+  const extraInfo: ChatTemplateInput = [...extraTemplate];
   if (userArchetype) {
     extraInfo.push([
       "system",
@@ -105,7 +104,7 @@ export const getAssessment = async ({
     ]);
   }
 
-  const finalInputs: TemplateInput = [
+  const finalInputs: ChatTemplateInput = [
     ...extraInfo,
     ["system", "{format_instructions}"],
     new MessagesPlaceholder("history"),
@@ -122,11 +121,6 @@ export const getAssessment = async ({
     promptTemplate,
     chatOpenAI,
   ]);
-
-  const test = await promptTemplate.formatPromptValue({
-    history: messages,
-    format_instructions: formattedInstructions,
-  });
 
   const chainResult = await chain.invoke({
     history: messages,
