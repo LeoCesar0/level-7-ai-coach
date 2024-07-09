@@ -44,12 +44,6 @@ export const processChatAssessment = async ({
     type: "chat",
   });
 
-  // const { entries } = await getChatAssessment({
-  //   chatId: chatId.toString(),
-  //   userPreviousData: [],
-  //   user,
-  // });
-
   const { createdAssessments } = await processAssessmentEntries({
     chatId: chatId.toString(),
     entries: entries as ICreateAssessment[],

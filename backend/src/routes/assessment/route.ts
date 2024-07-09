@@ -12,6 +12,8 @@ import { USER_POPULATES } from "../../static/populates";
 import { handleDBSession } from "../../handlers/handleDBSession";
 import { zListRouteQueryInput } from "../../@schemas/listRoute";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
+import { processJournalsAssessment } from "../../services/assessment/processJournalsAssessment";
+import { stringToDate } from "../../helpers/stringToDate";
 
 const assessmentRoute = new Hono()
   // --------------------------
@@ -55,7 +57,7 @@ const assessmentRoute = new Hono()
           chatId,
           user,
           session,
-          date: new Date(foundChat.createdAt),
+          date: stringToDate(foundChat.createdAt),
         });
 
         const resData: AppResponse<{
@@ -121,6 +123,20 @@ const assessmentRoute = new Hono()
         reqUser,
         modelHasActive: false,
       });
+
+      return ctx.json(resData, 200);
+    }
+  )
+  .post(
+    "process-journals",
+    authValidator({ permissionsTo: ["admin"] }),
+    async (ctx) => {
+      const result = await processJournalsAssessment();
+
+      const resData: AppResponse<boolean> = {
+        data: true,
+        error: null,
+      };
 
       return ctx.json(resData, 200);
     }

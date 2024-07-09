@@ -21,6 +21,7 @@ import { getUserFull } from "../../services/getUserFull.js";
 import mongoose, { Mongoose } from "mongoose";
 import { handleDBSession } from "../../handlers/handleDBSession.js";
 import { createNullishFilter } from "../../helpers/createNullishFilter";
+import { stringToDate } from "../../helpers/stringToDate.js";
 
 export const chatRouter = new Hono()
   .get(
@@ -62,14 +63,9 @@ export const chatRouter = new Hono()
         throw new HTTPException(404, { message: "User not found" });
       }
 
-      const chatsToClose = await ChatModel.find({
+      const chatsOpened = await ChatModel.find({
         user: userId,
         $or: createNullishFilter("closed"),
-        // $or: [
-        //   { closed: { $exists: false } }, // `closed` does not exist
-        //   { closed: { $eq: false } }, // `closed` is explicitly `false`
-        //   { closed: { $eq: null } }, // `closed` is `null`
-        // ],
       });
 
       return await handleDBSession(async (session) => {
@@ -92,12 +88,12 @@ export const chatRouter = new Hono()
         const promises: Promise<any>[] = [];
 
         try {
-          for (const _chat of chatsToClose) {
+          for (const _chat of chatsOpened) {
             const promise = processChatAssessment({
               chatId: _chat._id,
               user: user,
               session,
-              date: new Date(_chat.createdAt),
+              date: stringToDate(_chat.createdAt),
             });
             promises.push(promise);
           }
@@ -153,7 +149,7 @@ export const chatRouter = new Hono()
       // V1
       // --------------------------
 
-      const { chain } = await getChatChain({
+      const { chain, isEnding } = await getChatChain({
         chatId: chatId.toString(),
         message,
         user,
@@ -217,9 +213,32 @@ export const chatRouter = new Hono()
 
       await memoryVectorStore.addDocuments(documents);
 
+      if (isEnding) {
+        // --------------------------
+        // CLOSE CHAT
+        // --------------------------
+        handleDBSession(async (session) => {
+          await ChatModel.updateOne(
+            {
+              _id: chatId,
+            },
+            {
+              closed: true,
+            }
+          );
+          processChatAssessment({
+            chatId,
+            date: stringToDate(foundChat.createdAt),
+            session,
+            user,
+          });
+        });
+      }
+
       resData = {
         data: {
           response,
+          closed: isEnding,
         },
         error: null,
       };

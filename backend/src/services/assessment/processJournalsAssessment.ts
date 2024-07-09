@@ -7,7 +7,7 @@ import { getAssessment } from "./helpers/getAssessment";
 import { processAssessmentEntries } from "./helpers/processAssessmentEntries";
 import { handleDBSession } from "../../handlers/handleDBSession";
 import { createNullishFilter } from "../../helpers/createNullishFilter";
-import { subHours, subMinutes } from "date-fns";
+import { subHours } from "date-fns";
 import { stringToDate } from "../../helpers/stringToDate";
 
 // --------------------------
@@ -22,12 +22,10 @@ export const processJournalsAssessment = async () => {
   const journals = await JournalModel.find({
     shouldAssess: true,
     $or: createNullishFilter("draft"),
-    // createdAt: {
-    //   $lt: subMinutes(now, 1),
-    // },
+    createdAt: {
+      $lt: subHours(now, 3), // JOURNAL SHOULD BE CREATED AT LEAST 3 HOURS AGO
+    },
   });
-
-  console.log("❗ journals on process -->", journals);
 
   for (const journal of journals) {
     // --------------------------
@@ -71,7 +69,6 @@ export const processJournalsAssessment = async () => {
           { session, new: true }
         );
 
-        console.log("❗ createdAssessments -->", createdAssessments);
         console.log(
           `📊 Created ${createdAssessments.length} entries to a journal`
         );
