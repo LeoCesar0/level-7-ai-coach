@@ -5,6 +5,8 @@ import { zAssessmentKey } from "./enums";
 
 export type ICreateAssessment = z.infer<typeof zCreateAssessment>;
 
+export type IAssessmentAIResponse = z.infer<typeof zAssessmentAIResponse>;
+
 export const zCreateAssessmentAIAnswer = z.object({
   key: zAssessmentKey,
   value: z

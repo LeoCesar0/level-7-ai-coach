@@ -11,6 +11,7 @@ import { UserRecord } from "firebase-admin/auth";
 import { ChatModel } from "../src/routes/chat/schemas/chat";
 import { getCollection } from "../src/services/mongodb/getCollection";
 import {
+  COLLECTION,
   HISTORY_COLLECTION,
   MEMORY_COLLECTION,
 } from "../src/lib/langchain/@static";
@@ -23,6 +24,7 @@ import memorySeed from "./data/dev/memory.json";
 import { IHistory } from "../src/@schemas/history";
 import { IMemoryMessage } from "../src/@schemas/memory";
 import { ObjectId } from "mongodb";
+import { JournalModel } from "../src/routes/journals/schemas/journal";
 
 dotenv.config({ path: "../.env" });
 
@@ -83,11 +85,15 @@ const run = async () => {
   await ChatModel.deleteMany();
   await ArchetypeModel.deleteMany();
   await AssessmentModel.deleteMany();
+  await JournalModel.deleteMany();
 
   const historyCol = getCollection({ name: HISTORY_COLLECTION });
   await historyCol.deleteMany();
   const memoryCol = getCollection({ name: MEMORY_COLLECTION });
   await memoryCol.deleteMany();
+
+  const userAnalytics = getCollection({ name: COLLECTION.USER_ANALYTICS });
+  await userAnalytics.deleteMany();
 
   // --------------------------
   // ARCHETYPES

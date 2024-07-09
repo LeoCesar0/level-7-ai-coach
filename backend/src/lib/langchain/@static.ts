@@ -11,3 +11,9 @@ export const MEMORY_COLLECTION = "memory";
 
 export const MESSAGES_CHUNK_SIZE = 60;
 export const MESSAGES_CHUNK_OVERLAP = 25;
+
+export const COLLECTION = {
+  HISTORY: HISTORY_COLLECTION,
+  MEMORY: MEMORY_COLLECTION,
+  USER_ANALYTICS: "userAnalytics",
+};

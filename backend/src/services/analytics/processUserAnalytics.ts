@@ -1,6 +1,7 @@
 import { ICreateAnalytics } from "../../@schemas/analytics";
 import { createAnalyticsSlug } from "../../helpers/createAnalyticsSlug";
 import { getDateFields } from "../../helpers/getDateFields";
+import { COLLECTION } from "../../lib/langchain/@static";
 import { UserModel } from "../../routes/users/schemas/user";
 import { getCollection } from "../mongodb/getCollection";
 
@@ -25,7 +26,7 @@ export const processUserAnalytics = async () => {
     };
     entry.slug = createAnalyticsSlug({ data: entry });
 
-    const collection = getCollection({ name: "userAnalytics" });
+    const collection = getCollection({ name: COLLECTION.USER_ANALYTICS });
 
     await collection.insertOne(entry);
     console.log("📊 Processed user analytics - count");

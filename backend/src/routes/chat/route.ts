@@ -20,6 +20,7 @@ import { processChatAssessment } from "../../services/assessment/processChatAsse
 import { getUserFull } from "../../services/getUserFull.js";
 import mongoose, { Mongoose } from "mongoose";
 import { handleDBSession } from "../../handlers/handleDBSession.js";
+import { createNullishFilter } from "../../helpers/createNullishFilter";
 
 export const chatRouter = new Hono()
   .get(
@@ -63,11 +64,12 @@ export const chatRouter = new Hono()
 
       const chatsToClose = await ChatModel.find({
         user: userId,
-        $or: [
-          { closed: { $exists: false } }, // `closed` does not exist
-          { closed: { $eq: false } }, // `closed` is explicitly `false`
-          { closed: { $eq: null } }, // `closed` is `null`
-        ],
+        $or: createNullishFilter("closed"),
+        // $or: [
+        //   { closed: { $exists: false } }, // `closed` does not exist
+        //   { closed: { $eq: false } }, // `closed` is explicitly `false`
+        //   { closed: { $eq: null } }, // `closed` is `null`
+        // ],
       });
 
       return await handleDBSession(async (session) => {

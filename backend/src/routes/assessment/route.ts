@@ -10,6 +10,8 @@ import { IUserFull, UserModel } from "../users/schemas/user";
 import { processChatAssessment } from "../../services/assessment/processChatAssessment";
 import { USER_POPULATES } from "../../static/populates";
 import { handleDBSession } from "../../handlers/handleDBSession";
+import { zListRouteQueryInput } from "../../@schemas/listRoute";
+import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 
 const assessmentRoute = new Hono()
   // --------------------------
@@ -93,6 +95,31 @@ const assessmentRoute = new Hono()
         data: assessment,
         error: null,
       };
+
+      return ctx.json(resData, 200);
+    }
+  )
+  // --------------------------
+  // PAGINATE
+  // --------------------------
+  .post(
+    "/list",
+    authValidator({ permissionsTo: ["admin", "user", "coach"] }),
+    routeValidator({
+      schema: zListRouteQueryInput,
+      target: "json",
+    }),
+    async (ctx) => {
+      const body = ctx.req.valid("json");
+      // @ts-ignore
+      const reqUser: IUser = ctx.get("reqUser");
+
+      const resData = await handlePaginationRoute<IAssessment>({
+        model: AssessmentModel,
+        body,
+        reqUser,
+        modelHasActive: false,
+      });
 
       return ctx.json(resData, 200);
     }

@@ -14,7 +14,7 @@ import { zStringNotEmpty } from "../../@schemas/primitives/stringNotEmpty.js";
 import { stringToDate } from "../../helpers/stringToDate.js";
 
 // --------------------------
-// GET MANY
+// GET
 // --------------------------
 export const journalRoute = new Hono()
   .get(

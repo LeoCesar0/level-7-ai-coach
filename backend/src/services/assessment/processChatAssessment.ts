@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
 import { ModelId } from "../../@schemas/mongoose";
-import { AssessmentModel } from "../../routes/assessment/schemas/assessment";
 import { ICreateAssessment } from "../../routes/assessment/schemas/createAssessment";
 import { ChatModel } from "../../routes/chat/schemas/chat";
 import { IUserFull } from "../../routes/users/schemas/user";
-import { getChatAssessment } from "../langchain/getChatAssessment";
 import { ClientSession } from "mongoose";
+import { getChatHistory } from "../langchain/getChatHistory";
+import { getAssessment } from "./helpers/getAssessment";
+import { processAssessmentEntries } from "./helpers/processAssessmentEntries";
 
 export type IProcessChatAssessment = {
   chatId: ModelId;
@@ -20,30 +20,41 @@ export const processChatAssessment = async ({
 }: IProcessChatAssessment) => {
   const userId = user._id.toString();
 
-  const { entries } = await getChatAssessment({
-    chatId: chatId.toString(),
-    userPreviousData: [],
+  const chatHistory = getChatHistory({ chatId: chatId.toString() });
+
+  const history = await chatHistory.getMessages(); // message type: BaseMessage[]
+
+  if (history.length < 6) {
+    throw new Error("Not enough messages to assess");
+  }
+
+  const messages = history
+    .map((item) => {
+      const type = item._getType();
+      return `${type}: ${item.toDict().data.content}`;
+    })
+    .join("\n");
+
+  const { entries } = await getAssessment({
+    messages,
     user,
+    userPreviousData: [],
+    type: "chat",
   });
 
-  let _entries: ICreateAssessment[] = entries.map((item) => {
-    return {
-      ...item,
-      user: userId,
-      chat: chatId,
-      journal: undefined,
-    };
+  // const { entries } = await getChatAssessment({
+  //   chatId: chatId.toString(),
+  //   userPreviousData: [],
+  //   user,
+  // });
+
+  const { createdAssessments } = await processAssessmentEntries({
+    chatId: chatId.toString(),
+    entries: entries as ICreateAssessment[],
+    journalId: undefined,
+    session,
+    userId,
   });
-
-  await AssessmentModel.deleteMany(
-    {
-      chat: chatId.toString(),
-      journal: undefined,
-    },
-    { session }
-  );
-
-  const result = await AssessmentModel.insertMany(_entries, { session });
 
   const updatedChat = await ChatModel.findByIdAndUpdate(
     chatId.toString(),
@@ -53,7 +64,7 @@ export const processChatAssessment = async ({
 
   // await session.endSession();
   return {
-    assessment: result,
+    assessment: createdAssessments,
     chat: updatedChat,
   };
 };

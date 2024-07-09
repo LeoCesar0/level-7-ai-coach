@@ -13,6 +13,7 @@ import { playgroundRoute } from "./routes/playground/route";
 import cron from "node-cron";
 import { journalRoute } from "./routes/journals/route";
 import { processUserAnalytics } from "./services/analytics/processUserAnalytics";
+import { processJournalsAssessment } from "./services/assessment/processJournalsAssessment";
 
 dotenv.config({ path: "../.env" });
 
@@ -59,8 +60,13 @@ export default honoApp;
 // --------------------------
 
 if (process.env.NODE_ENV !== ENV.TEST) {
-  cron.schedule("*/1 * * * *", () => {
+  ("0 3 * * *"); // Every day at 3 am
+  ("*/1 * * * *"); // Every 1 min
+  ("*/30 * * * * *"); // Every 30 sec
+  cron.schedule("0 3 * * *", () => {
     console.log("Running a task every minute");
-    // processUserAnalytics()
+    processJournalsAssessment();
+
+    processUserAnalytics();
   });
 }
