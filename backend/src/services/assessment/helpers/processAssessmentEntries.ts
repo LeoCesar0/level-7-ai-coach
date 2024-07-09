@@ -11,6 +11,7 @@ export type IProcessAssessmentEntries = {
   chatId: string | undefined;
   journalId: string | undefined;
   session: ClientSession;
+  date: Date;
 };
 
 export const processAssessmentEntries = async ({
@@ -19,6 +20,7 @@ export const processAssessmentEntries = async ({
   entries,
   journalId,
   userId,
+  date,
 }: IProcessAssessmentEntries) => {
   let _entries: ICreateAssessment[] = entries.map((item) => {
     return {
@@ -26,6 +28,7 @@ export const processAssessmentEntries = async ({
       user: userId,
       chat: chatId,
       journal: journalId,
+      date,
     };
   });
 

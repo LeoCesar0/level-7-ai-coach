@@ -38,6 +38,10 @@ export const athleteEntry = new Schema<IAssessment>(
       type: Number,
       required: true,
     },
+    date: {
+      type: Date,
+      required: true,
+    },
   },
   { timestamps: true }
 );

@@ -8,6 +8,7 @@ import { processAssessmentEntries } from "./helpers/processAssessmentEntries";
 import { handleDBSession } from "../../handlers/handleDBSession";
 import { createNullishFilter } from "../../helpers/createNullishFilter";
 import { subHours, subMinutes } from "date-fns";
+import { stringToDate } from "../../helpers/stringToDate";
 
 // --------------------------
 // Process all journals that should be assessed. To be used globally and scheduled.
@@ -36,6 +37,7 @@ export const processJournalsAssessment = async () => {
       await handleDBSession(async (session) => {
         const userId = journal.user.toString();
         const journalId = journal._id.toString();
+
         let user: IUserFull | undefined = usersMap.get(userId);
         if (!user) {
           user = (await getUserFull({ userId })) ?? undefined;
@@ -60,6 +62,7 @@ export const processJournalsAssessment = async () => {
           entries,
           session,
           userId,
+          date: stringToDate(journal.date),
         });
 
         const updatedJournal = await JournalModel.findByIdAndUpdate(

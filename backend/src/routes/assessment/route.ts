@@ -55,6 +55,7 @@ const assessmentRoute = new Hono()
           chatId,
           user,
           session,
+          date: new Date(foundChat.createdAt),
         });
 
         const resData: AppResponse<{

@@ -11,12 +11,14 @@ export type IProcessChatAssessment = {
   chatId: ModelId;
   user: IUserFull;
   session: ClientSession;
+  date: Date;
 };
 
 export const processChatAssessment = async ({
   chatId,
   user,
   session,
+  date,
 }: IProcessChatAssessment) => {
   const userId = user._id.toString();
 
@@ -54,6 +56,7 @@ export const processChatAssessment = async ({
     journalId: undefined,
     session,
     userId,
+    date,
   });
 
   const updatedChat = await ChatModel.findByIdAndUpdate(

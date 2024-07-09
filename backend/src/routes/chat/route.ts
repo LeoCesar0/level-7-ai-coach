@@ -92,11 +92,12 @@ export const chatRouter = new Hono()
         const promises: Promise<any>[] = [];
 
         try {
-          for (const item of chatsToClose) {
+          for (const _chat of chatsToClose) {
             const promise = processChatAssessment({
-              chatId: item._id,
+              chatId: _chat._id,
               user: user,
               session,
+              date: new Date(_chat.createdAt),
             });
             promises.push(promise);
           }
