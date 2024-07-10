@@ -18,7 +18,7 @@ set dotenv-load := true
   docker compose -f docker-compose.yml up -d --force-recreate --remove-orphans
 
 # Para o serviço
-@teardown:
+@down:
   echo "\n🛑 stopping service..."
   echo "----------------------"
   docker compose down -v

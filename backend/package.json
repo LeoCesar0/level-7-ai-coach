@@ -23,7 +23,8 @@
     "build": "NODE_ENV=production pkgroll",
     "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules npx jest tests/ --runInBand",
     "test:dev": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules npx jest --watchAll tests/",
-    "test:debug": "NODE_ENV=test node --experimental-vm-modules --inspect-brk ./node_modules/jest/bin/jest.js --watchAll ./tests/"
+    "test:debug": "NODE_ENV=test node --experimental-vm-modules --inspect-brk ./node_modules/jest/bin/jest.js --watchAll ./tests/",
+    "ipconfig": "node scripts/ipconfig.js"
   },
   "dependencies": {
     "@hono/node-server": "^1.11.4",

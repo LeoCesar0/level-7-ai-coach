@@ -1,6 +1,6 @@
 version: '3.8'
 
-x-common-env: &common-env
+x-common-env: &x-common-env
   ENVIRONMENT: "development"
   NODE_ENV: "development"
   BACKEND_HOST: "${BACKEND_HOST:-}"
@@ -14,10 +14,19 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend:/app
     ports:
       - "${DOCKER_BACKEND_PORT}:8000"
+    env_file:
+      - .env
     environment:
-      <<: *common-env
+      <<: *x-common-env
+    # networks:
+    #   mongo_net:
+    #     ipv4_address: 172.16.0.1
+    # command: mongod --bind_ip 127.0.0.1,172.16.0.1
+
   frontend:
     restart: always
     build:
@@ -27,5 +36,7 @@ services:
       - ./frontend:/app
     ports:
       - "${DOCKER_FRONTEND_PORT}:3000"
+    env_file:
+      - .env
     environment:
-      <<: *common-env
+      <<: *x-common-env

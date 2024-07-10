@@ -32,8 +32,8 @@ const routes = honoApp
   .route("/chats", chatRouter)
   .route("/assessments", assessmentRoute)
   .route("/archetypes", archetypeRoute)
-  .route("/journals", journalRoute);
-// .route("/playground", playgroundRoute);
+  .route("/journals", journalRoute)
+  .route("/playground", playgroundRoute);
 
 export type ApiType = typeof routes;
 
@@ -43,7 +43,9 @@ export const honoServer = serve({
 });
 
 honoServer.on("listening", () => {
-  console.log(`🚀 Server is running on port ${port}`);
+  console.log(
+    `🚀 Server is running on port ${port}, env: ${process.env.NODE_ENV}`
+  );
 });
 
 if (

@@ -2,7 +2,8 @@
 FROM node:20-alpine
 
 # Set the working directory in the container
-WORKDIR /usr/src/app
+# WORKDIR /usr/src/app
+WORKDIR /app
 
 # Copy package.json and package-lock.json before other files
 # Utilize Docker cache to save re-installing dependencies if unchanged
@@ -17,10 +18,11 @@ RUN pnpm install
 COPY . .
 
 # Build the NestJS application
-RUN pnpm build
+# RUN pnpm build
 
 # Expose the port the app runs on
 EXPOSE 8000
 
 # Define the command to run the application
-CMD ["node", "dist/main"]
+# CMD ["node", "dist/main"]
+CMD ["pnpm", "dev"]
