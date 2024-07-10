@@ -2,6 +2,8 @@ import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { HomeArrow } from "./HomeArrow";
 import { HomeDetails } from "./HomeDetails";
+import Link from "next/link";
+import { ROUTE } from "@/static/routes";
 
 export default function Home() {
   return (
@@ -14,7 +16,9 @@ export default function Home() {
             <h1 className="text-5xl">Level 7 AI</h1>
           </div>
           <div className="absolute bottom-[calc(-100%-64px)]">
-            <HomeArrow />
+            <Link href={ROUTE["sign-in"].href}>
+              <HomeArrow />
+            </Link>
           </div>
         </div>
       </div>
