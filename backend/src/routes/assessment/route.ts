@@ -20,6 +20,20 @@ const assessmentRoute = new Hono()
   // create
   // --------------------------
   .post(
+    "process-journals",
+    authValidator({ permissionsTo: ["admin"] }),
+    async (ctx) => {
+      const result = await processJournalsAssessment();
+
+      const resData: AppResponse<boolean> = {
+        data: true,
+        error: null,
+      };
+
+      return ctx.json(resData, 200);
+    }
+  )
+  .post(
     "/chat/:id",
     authValidator({ permissionsTo: ["user", "coach", "admin"] }),
     routeValidator({
@@ -52,7 +66,7 @@ const assessmentRoute = new Hono()
       if (!user) {
         throw new HTTPException(404, { message: "User not found" });
       }
-      handleDBSession(async (session) => {
+      const { assessment, chat } = await handleDBSession(async (session) => {
         const result = await processChatAssessment({
           chatId,
           user,
@@ -60,16 +74,20 @@ const assessmentRoute = new Hono()
           date: stringToDate(foundChat.createdAt),
         });
 
-        const resData: AppResponse<{
-          assessment: IAssessment[];
-          chat: IChat | null;
-        }> = {
-          data: result,
-          error: null,
-        };
-
-        return ctx.json(resData, 200);
+        return result;
       });
+
+      const resData: AppResponse<{
+        assessment: IAssessment[];
+        chat: IChat | null;
+      }> = {
+        data: {
+          assessment,
+          chat,
+        },
+        error: null,
+      };
+      return ctx.json(resData, 200);
     }
   )
   .get(
@@ -126,47 +144,6 @@ const assessmentRoute = new Hono()
 
       return ctx.json(resData, 200);
     }
-  )
-  .post(
-    "process-journals",
-    authValidator({ permissionsTo: ["admin"] }),
-    async (ctx) => {
-      const result = await processJournalsAssessment();
-
-      const resData: AppResponse<boolean> = {
-        data: true,
-        error: null,
-      };
-
-      return ctx.json(resData, 200);
-    }
   );
-// .post(
-//   "/",
-//   authValidator({ permissionsTo: ["user", "coach", "admin"] }),
-//   routeValidator({
-//     schema: zCreateAssessmentRoute,
-//     target: "json",
-//   }),
-//   async (ctx) => {
-//     const { entries, userId } = ctx.req.valid("json");
-//     // @ts-ignore
-//     const reqUser: IUser = ctx.get("reqUser");
-
-//     const _entries = entries.map((item) => ({
-//       ...item,
-//       userId: userId.toString(),
-//     }));
-
-//     const result = await AssessmentModel.insertMany(_entries);
-
-//     const resData: AppResponse<IAssessment[]> = {
-//       data: result,
-//       error: null,
-//     };
-
-//     return ctx.json(resData, 200);
-//   }
-// );
 
 export default assessmentRoute;

@@ -25,7 +25,41 @@ import { stringToDate } from "../../helpers/stringToDate.js";
 
 export const chatRouter = new Hono()
   .get(
-    "/",
+    "/:id",
+    routeValidator({
+      schema: z.object({
+        id: zStringNotEmpty,
+      }),
+      target: "param",
+    }),
+    authValidator({ permissionsTo: ["admin", "coach", "user"] }),
+    async (ctx) => {
+      const { id: chatId } = ctx.req.valid("param");
+      // @ts-ignore
+
+      const chat = await ChatModel.findById(chatId);
+
+      if (!chat) {
+        const res: AppResponse<IChat> = {
+          data: null,
+          error: {
+            _isAppError: true,
+            message: "Chat not found",
+          },
+        };
+        return ctx.json(res, 404);
+      }
+
+      const resData: AppResponse<IChat> = {
+        data: chat,
+        error: null,
+      };
+
+      return ctx.json(resData, 200);
+    }
+  )
+  .get(
+    "/list",
     authValidator({ permissionsTo: ["admin", "coach", "user"] }),
     async (ctx) => {
       // @ts-ignore
@@ -226,7 +260,7 @@ export const chatRouter = new Hono()
               closed: true,
             }
           );
-          processChatAssessment({
+          await processChatAssessment({
             chatId,
             date: stringToDate(foundChat.createdAt),
             session,

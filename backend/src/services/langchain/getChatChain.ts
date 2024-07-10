@@ -73,17 +73,34 @@ export const getChatChain = async ({
 
   let templateInput: ChatTemplateInput = [["system", agentTemplate]];
 
-  if (relevantContextString) {
-    templateInput.push([
-      "system",
-      `Previous sessions context: ${relevantContextString}`,
-    ]);
-  }
-
   if (user.archetype) {
     templateInput.push([
       "system",
       `User archetype is ${user.archetype.name}. Description: ${user.archetype.description}`,
+    ]);
+  }
+  if (user.athleteInfo) {
+    const infos = Object.entries(user.athleteInfo).reduce<string[]>(
+      (acc, entry) => {
+        if (!entry) return acc;
+        const [key, value] = entry;
+        if (value) {
+          acc.push(`{Q: ${value.question}, A: ${value.answer}}`);
+        }
+        return acc;
+      },
+      []
+    );
+    templateInput.push([
+      "system",
+      `Here is a questionnaire the athlete answered: [${infos.join(",")}]`,
+    ]);
+  }
+
+  if (relevantContextString) {
+    templateInput.push([
+      "system",
+      `Previous sessions context: ${relevantContextString}`,
     ]);
   }
 
@@ -96,6 +113,11 @@ export const getChatChain = async ({
 
   templateInput.push(new MessagesPlaceholder(currentHistoryKey));
   templateInput.push(["human", `{${inputKey}}`]);
+
+  console.log("❗ templateInput -->", templateInput);
+
+  console.log("❗ isEnding -->", isEnding);
+  console.log("❗ nAiResponses -->", nAiResponses);
 
   // --------------------------
   // END TEMPLATE
