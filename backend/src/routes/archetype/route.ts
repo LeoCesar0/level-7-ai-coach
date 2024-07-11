@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { AppResponse } from "../../@schemas/app";
 import { routeValidator } from "../../middlewares/routeValidator";
 import { authValidator } from "../../middlewares/authValidator";
 import { ArchetypeModel, IArchetype } from "./schemas/archetype";
@@ -9,7 +8,8 @@ import { zCreateArchetype } from "./schemas/createArchetype";
 import { zListRouteQueryInput } from "../../@schemas/listRoute";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { slugify } from "../../helpers/slugify";
-import { EXCEPTIONS } from "../../static/exceptions";
+import { EXCEPTIONS } from "@common/static/exceptions";
+import { AppResponse } from "@common/schemas/app";
 
 const archetypeRoute = new Hono()
   // --------------------------

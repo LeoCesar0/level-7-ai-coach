@@ -2,7 +2,7 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import userRoute from "./routes/users/route";
 import dotenv from "dotenv";
-import { ENV } from "./static/envs";
+import { ENV } from "@common/static/envs";
 import { MongooseServer } from "./lib/mongoose";
 import organizationsRoute from "./routes/organizations/route";
 import { handleAppError } from "./handlers/handleAppError";

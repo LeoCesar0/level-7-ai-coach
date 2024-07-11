@@ -4,7 +4,6 @@ import {
   IOrganization,
   zOrganization,
 } from "./schemas/organization";
-import { AppResponse } from "../../@schemas/app";
 import { routeValidator } from "../../middlewares/routeValidator";
 import { authValidator } from "../../middlewares/authValidator";
 import { zListRouteQueryInput } from "../../@schemas/listRoute";
@@ -15,11 +14,12 @@ import {
 import { z } from "zod";
 import { zStringNotEmpty } from "../../@schemas/primitives/stringNotEmpty";
 import { HTTPException } from "hono/http-exception";
-import { EXCEPTIONS } from "../../static/exceptions";
+import { EXCEPTIONS } from "@common/static/exceptions";
 import { IUser, UserModel } from "../users/schemas/user";
 import { firebaseAuth } from "../../lib/firebase";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { zValidator } from "@hono/zod-validator";
+import { AppResponse } from "@common/schemas/app";
 
 const organizationsRoute = new Hono()
   // --------------------------

@@ -3,7 +3,6 @@ import { IUser, UserModel } from "../users/schemas/user.js";
 import { ChatModel, IChat } from "./schemas/chat.js";
 import { routeValidator } from "../../middlewares/routeValidator.js";
 import { zCreateChat } from "./schemas/createChat.js";
-import { AppResponse } from "../../@schemas/app.js";
 import { zCreateMessage } from "./schemas/createMessage.js";
 import { authValidator } from "../../middlewares/authValidator.js";
 import { z } from "zod";
@@ -15,13 +14,14 @@ import { createDocuments } from "../../services/langchain/createDocuments.js";
 import { ICreateMemoryMessage } from "../../@schemas/memory.js";
 import { getChatHistory } from "../../services/langchain/getChatHistory.js";
 import { StoredMessage } from "@langchain/core/messages";
-import { EXCEPTIONS } from "../../static/exceptions.js";
+import { EXCEPTIONS } from "@common/static/exceptions.js";
 import { processChatAssessment } from "../../services/assessment/processChatAssessment.js";
 import { getUserFull } from "../../services/getUserFull.js";
 import mongoose, { Mongoose } from "mongoose";
 import { handleDBSession } from "../../handlers/handleDBSession.js";
 import { createNullishFilter } from "../../helpers/createNullishFilter";
 import { stringToDate } from "../../helpers/stringToDate.js";
+import { AppResponse } from "@common/schemas/app.js";
 
 export const chatRouter = new Hono()
   .get(

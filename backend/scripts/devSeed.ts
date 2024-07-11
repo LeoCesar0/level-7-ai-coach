@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-import { ENV } from "../src/static/envs";
 import { OrganizationModel } from "../src/routes/organizations/schemas/organization";
 import { slugify } from "../src/helpers/slugify";
 import { createAppUser } from "../src/services/createAppUser";
@@ -25,6 +24,7 @@ import { IHistory } from "../src/@schemas/history";
 import { IMemoryMessage } from "../src/@schemas/memory";
 import { ObjectId } from "mongodb";
 import { JournalModel } from "../src/routes/journals/schemas/journal";
+import { ENV } from "@common/static/envs";
 
 dotenv.config({ path: "../.env" });
 

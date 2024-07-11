@@ -5,9 +5,11 @@ import { zCreateMessage } from "../chat/schemas/createMessage";
 import { getChatChainV2 } from "../../services/langchain/getChatChainV2";
 import { UserModel } from "../users/schemas/user";
 import { ChatModel } from "../chat/schemas/chat";
-import { AppResponse } from "../../@schemas/app";
 import { Hono } from "hono";
 import { zCreateArchetype } from "../archetype/schemas/createArchetype";
+import { getCollection } from "@/services/mongodb/getCollection";
+import { COLLECTION } from "@/lib/langchain/@static";
+import { ArchetypeModel } from "../archetype/schemas/archetype";
 
 export const playgroundRoute = new Hono().post(
   "/",
@@ -17,12 +19,23 @@ export const playgroundRoute = new Hono().post(
   async (c) => {
     const { description, name, slug } = c.req.valid("json");
 
-    const users = await UserModel.find();
+    console.log("❗❗❗ Here ");
+
+    await ArchetypeModel.create({
+      name,
+      description,
+      slug: name + Date.now().toString(),
+    });
+
+    const items = await ArchetypeModel.find();
+
+    // const collection = getCollection({ name: "users" });
+    // const users = await collection.find().toArray();
 
     return c.json(
       {
         hello: name,
-        users,
+        items,
       },
       200
     );

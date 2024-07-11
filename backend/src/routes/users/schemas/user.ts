@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import { z } from "zod";
 import { zMongoDocument } from "../../../@schemas/mongoose";
-import { ROLES_LIST } from "../../../static/roles";
+import { ROLES_LIST } from "@common/static/roles";
 import { zCreateUser } from "./createUser";
 import { IAddress, zAddress } from "./address";
 import { zArchetype } from "../../archetype/schemas/archetype";

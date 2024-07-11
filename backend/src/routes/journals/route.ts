@@ -3,7 +3,6 @@ import { IUser } from "../users/schemas/user.js";
 import { JournalModel, IJournal, zJournal } from "./schemas/journal.js";
 import { routeValidator } from "../../middlewares/routeValidator.js";
 import { zCreateJournal } from "./schemas/createJournal.js";
-import { AppResponse } from "../../@schemas/app.js";
 import { authValidator } from "../../middlewares/authValidator.js";
 import { HTTPException } from "hono/http-exception";
 import { getUserFull } from "../../services/getUserFull.js";
@@ -12,6 +11,7 @@ import { handlePaginationRoute } from "../../handlers/handlePaginationRoute.js";
 import { z } from "zod";
 import { zStringNotEmpty } from "../../@schemas/primitives/stringNotEmpty.js";
 import { stringToDate } from "../../helpers/stringToDate.js";
+import { AppResponse } from "@common/schemas/app.js";
 
 // --------------------------
 // GET

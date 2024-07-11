@@ -7,6 +7,9 @@ import z from "zod";
 import { InputControl } from "@/@components/InputControl";
 import { Button } from "@/@components/ui/button";
 import { ISignIn, zSignIn } from "@/@schemas/signIn";
+import { AppResponse } from "@common/schemas/app";
+import { User } from "firebase/auth";
+import { parseAppError } from "@/handlers/parseAppErr";
 
 interface IProps {}
 
@@ -20,19 +23,25 @@ const SignInPage: React.FC<IProps> = ({}) => {
   });
 
   const onSubmit = async (values: ISignIn) => {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log("values", values);
-    const res = await fetch("http://localhost:3000/api/auth/sign-in", {
-      method: "POST",
-      body: JSON.stringify(values),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const resData = await res.json();
+    try {
+      const res = await fetch("http://localhost:3000/api/auth/sign-in", {
+        method: "POST",
+        body: JSON.stringify(values),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("❗ res -->", res);
+      const resData: AppResponse<User> = await res.json();
 
-    console.log("❗ resData -->", resData);
+      console.log("❗ resData -->", resData);
+    } catch (err) {
+      console.log("❗ catch err -->", err);
+      const appError = parseAppError(err);
+      if (appError) {
+        appError.message;
+      }
+    }
   };
 
   return (

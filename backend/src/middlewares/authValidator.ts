@@ -1,9 +1,9 @@
 import { Context } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
-import { ENV } from "../static/envs";
 import { getUserFromToken } from "../services/getUserFromToken";
 import { IRole } from "../@schemas/roles";
 import { IUser, UserModel } from "../routes/users/schemas/user";
+import { ENV } from "@common/static/envs";
 
 type IAuthValidator =
   | {

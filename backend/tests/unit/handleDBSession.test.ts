@@ -1,8 +1,8 @@
+import { ENV } from "@common/static/envs";
 import { handleDBSession } from "../../src/handlers/handleDBSession";
 import { slugify } from "../../src/helpers/slugify";
 import { MongooseServer } from "../../src/lib/mongoose";
 import { ArchetypeModel } from "../../src/routes/archetype/schemas/archetype";
-import { ENV } from "../../src/static/envs";
 import { ISeedResult, TestServer } from "../mongodb-memory-server";
 
 describe("handleDBSession unit suite", () => {

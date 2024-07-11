@@ -12,4 +12,5 @@ export const EXCEPTIONS = {
   VALIDATION_ERROR: "Validation Error",
   USER_NOT_ACTIVE: "User not allowed",
   CHAT_CLOSED: "This chat is closed, create a new one to continue.",
+  SIGN_IN_INVALID: "Invalid email or password",
 };

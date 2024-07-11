@@ -1,6 +1,5 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
-import { ENV } from "../src/static/envs";
 import { MongooseServer } from "../src/lib/mongoose";
 import {
   IOrganization,
@@ -9,6 +8,7 @@ import {
 import { IUser } from "../src/routes/users/schemas/user";
 import { createAppUser } from "../src/services/createAppUser";
 import { slugify } from "../src/helpers/slugify";
+import { ENV } from "@common/static/envs";
 
 type IConnectTestServer = {
   CONNECT_REAL_SERVER?: boolean;

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { EXCEPTIONS } from "../../../static/exceptions";
+import { EXCEPTIONS } from "@common/static/exceptions";
 
 export type ICreateOrganization = z.infer<typeof zCreateOrganization>;
 

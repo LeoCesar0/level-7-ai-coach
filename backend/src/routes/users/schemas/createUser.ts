@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { zId } from "@zodyac/zod-mongoose";
 import { zRole } from "../../../@schemas/roles";
-import { EXCEPTIONS } from "../../../static/exceptions";
+import { EXCEPTIONS } from "@common/static/exceptions";
 import { zAthleteInfo } from "./athleteInfo";
 import { zAddress } from "./address";
 import {

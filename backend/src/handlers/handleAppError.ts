@@ -2,10 +2,10 @@ import { ErrorHandler } from "hono";
 import { HTTPException } from "hono/http-exception";
 import { BlankEnv } from "hono/types";
 import { StatusCode } from "hono/utils/http-status";
-import { EXCEPTIONS } from "../static/exceptions";
-import { AppResponse } from "../@schemas/app";
 import { ZodError } from "zod";
 import { getZodErrorMessage } from "../helpers/getZodErrorMessage";
+import { EXCEPTIONS } from '@common/static/exceptions';
+import { AppResponse } from "@common/schemas/app";
 
 export const handleAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
   let message = EXCEPTIONS.SERVER_ERROR;

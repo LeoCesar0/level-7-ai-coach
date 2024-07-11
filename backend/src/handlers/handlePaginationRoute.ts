@@ -1,8 +1,8 @@
 import { FilterQuery, Model } from "mongoose";
-import { AppResponse } from "../@schemas/app";
 import { IPaginationBodyOutput } from "../@schemas/listRoute";
 import { IPaginationResult } from "../@schemas/pagination";
 import { IUser } from "../routes/users/schemas/user";
+import { AppResponse } from "@common/schemas/app";
 
 export type IHandlePaginationRoute<T> = {
   body: IPaginationBodyOutput;

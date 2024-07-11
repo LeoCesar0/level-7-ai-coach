@@ -15,6 +15,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile.dev
     volumes:
+      - ./common:/common
       - ./backend:/app
     ports:
       - "${DOCKER_BACKEND_PORT}:8000"
@@ -22,10 +23,9 @@ services:
       - .env
     environment:
       <<: *x-common-env
-    # networks:
-    #   mongo_net:
-    #     ipv4_address: 172.16.0.1
-    # command: mongod --bind_ip 127.0.0.1,172.16.0.1
+    networks:
+      level_7_network:
+        ipv4_address: 172.18.0.22
 
   frontend:
     restart: always
@@ -33,6 +33,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.dev
     volumes:
+      - ./common:/common
       - ./frontend:/app
     ports:
       - "${DOCKER_FRONTEND_PORT}:3000"
@@ -40,3 +41,10 @@ services:
       - .env
     environment:
       <<: *x-common-env
+
+networks:
+  level_7_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16

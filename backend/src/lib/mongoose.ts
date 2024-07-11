@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
-import { ENV } from "../static/envs";
 import dotenv from "dotenv";
+import { ENV } from "@common/static/envs";
 
 dotenv.config({ path: "../.env" });
 
@@ -35,6 +35,10 @@ export class MongooseServer {
   };
 
   static getConnectionString = () => {
+    console.log("❗❗❗ Here get string");
+
+    // const string = `mongodb://${MONGO_DB_USER}:${MONGO_DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?authSource=admin`
+
     let connectionString = process.env.MONGO_DB_CONNECTION_STRING!;
     if (!connectionString) {
       throw new Error("Mongo db connection string is not set");
@@ -42,13 +46,16 @@ export class MongooseServer {
     if (!connectionString?.endsWith("/")) {
       connectionString = connectionString + "/";
     }
-    const [p1] = connectionString.split("mongodb.net/");
-    connectionString = p1 + "mongodb.net/";
+    console.log("❗ connectionString first -->", connectionString);
+    // const [p1] = connectionString.split("mongodb.net/");
+    // console.log("❗ p1 -->", p1);
+    // connectionString = p1 + "mongodb.net/";
 
     connectionString = connectionString + this.dbName; // DB NAME
 
     const complement = process.env.MONGO_DB_CONNECTION_STRING_COMPLEMENT || "";
     connectionString = connectionString + complement;
+    console.log("❗ connectionString END -->", connectionString);
     return connectionString;
   };
 }

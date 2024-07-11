@@ -1,7 +1,9 @@
 import { Hono } from "hono";
-import { routeValidator } from "../../../../../backend/src/middlewares/routeValidator";
 import { zSignIn } from "@/@schemas/signIn";
 import { firebaseAuth } from "@/lib/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { AppResponse } from "@common/schemas/app";
+import { routeValidator } from "@/middlewares/routeValidator";
 
 const authRoute = new Hono()
   .get("/", async (ctx) => {
@@ -23,7 +25,18 @@ const authRoute = new Hono()
     async (ctx) => {
       const data = ctx.req.valid("json");
 
-      return ctx.json({ data: data }, 200);
+      const result = await signInWithEmailAndPassword(
+        firebaseAuth,
+        data.email,
+        data.password
+      );
+
+      let resData: AppResponse = {
+        data: result.user,
+        error: null,
+      };
+
+      return ctx.json(resData, 200);
     }
   );
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ROLES_LIST } from "../static/roles";
+import { ROLES_LIST } from "@common/static/roles";
 
 export const zRole = z.enum(["admin", "user", "coach"]);
 

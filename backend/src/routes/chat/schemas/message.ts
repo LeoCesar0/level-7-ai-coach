@@ -4,7 +4,7 @@
 // import { z } from "zod";
 // import zodSchema from "@zodyac/zod-mongoose";
 // import { zChatRole } from "../../../@schemas/roles";
-// import { CHAT_ROLES_LIST } from "../../../static/roles";
+// import { CHAT_ROLES_LIST } from "@common/static/roles";
 
 // export const zMessage = zCreateMessage.merge(zMongoDocument).merge(
 //   z.object({

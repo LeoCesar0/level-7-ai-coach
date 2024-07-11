@@ -1,12 +1,11 @@
+import { AppResponse } from "@common/schemas/app";
 import honoApp from "../../src";
-import { AppResponse } from "../../src/@schemas/app";
 import { IPaginationResult } from "../../src/@schemas/pagination";
 import { ICreateJournal } from "../../src/routes/journals/schemas/createJournal";
 import {
   JournalModel,
   IJournal,
 } from "../../src/routes/journals/schemas/journal";
-import { EXCEPTIONS } from "../../src/static/exceptions";
 import { stubGetUserFromToken } from "../helpers/stubGetUserFromToken";
 import { ISeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";

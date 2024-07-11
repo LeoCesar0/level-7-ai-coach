@@ -1,5 +1,5 @@
+import { EXCEPTIONS } from "@common/static/exceptions";
 import honoApp from "../../src";
-import { AppResponse } from "../../src/@schemas/app";
 import { IPaginationResult } from "../../src/@schemas/pagination";
 import { slugify } from "../../src/helpers/slugify";
 import { ArchetypeModel } from "../../src/routes/archetype/schemas/archetype";
@@ -19,10 +19,10 @@ import {
   IUserFull,
   UserModel,
 } from "../../src/routes/users/schemas/user";
-import { EXCEPTIONS } from "../../src/static/exceptions";
 import { stubGetUserFromToken } from "../helpers/stubGetUserFromToken";
 import { ISeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";
+import { AppResponse } from "@common/schemas/app";
 
 describe("users integration suite", () => {
   console.log("🔻 Enter USERS integration suite  -->");
@@ -253,14 +253,14 @@ describe("users integration suite", () => {
 
       const body: IUpdateUserRoute = {
         athleteInfo: {
-          effort_goals: {
+          goals: {
             answer: "Become the best!",
-            question: ASSESSMENT_QUESTION["effort_goals"],
+            question: ASSESSMENT_QUESTION["goals"],
             section: zAssessmentSection.enum.effort,
           },
-          goals_goalsAchieved: {
+          goalsAchieved: {
             answer: "Win a gold medal",
-            question: ASSESSMENT_QUESTION["goals_goalsAchieved"],
+            question: ASSESSMENT_QUESTION["goalsAchieved"],
             section: zAssessmentSection.enum.goals,
           },
         },
@@ -300,14 +300,14 @@ describe("users integration suite", () => {
         name: "updated name",
         birthday: new Date("1990-01-01").toISOString(),
         athleteInfo: {
-          effort_goals: {
+          goals: {
             answer: "Become the best!",
-            question: ASSESSMENT_QUESTION["effort_goals"],
+            question: ASSESSMENT_QUESTION["goals"],
             section: zAssessmentSection.enum.effort,
           },
-          goals_goalsAchieved: {
+          goalsAchieved: {
             answer: "Win a gold medal",
-            question: ASSESSMENT_QUESTION["goals_goalsAchieved"],
+            question: ASSESSMENT_QUESTION["goalsAchieved"],
             section: zAssessmentSection.enum.goals,
           },
         },
@@ -358,17 +358,17 @@ describe("users integration suite", () => {
       const body: IUpdateUserRoute = {
         phone: "12345678915",
         athleteInfo: {
-          // effort_goals DID NOT TOUCH
-          goals_goalsAchieved: {
+          // goals DID NOT TOUCH
+          goalsAchieved: {
             // UPDATED
             answer: newAnswer,
-            question: ASSESSMENT_QUESTION["goals_goalsAchieved"],
+            question: ASSESSMENT_QUESTION["goalsAchieved"],
             section: zAssessmentSection.enum.goals,
           },
-          physical_injuriesAndHealthIssues: {
+          injuriesAndHealthIssues: {
             // ADDED
             answer: "None",
-            question: ASSESSMENT_QUESTION["physical_injuriesAndHealthIssues"],
+            question: ASSESSMENT_QUESTION["injuriesAndHealthIssues"],
             section: zAssessmentSection.enum.physical,
           },
         },
@@ -399,16 +399,16 @@ describe("users integration suite", () => {
       expect(user?.archetype.name).toBeTruthy();
 
       // UPDATED
-      expect(user?.athleteInfo?.goals_goalsAchieved?.answer).toBe(newAnswer);
+      expect(user?.athleteInfo?.goalsAchieved?.answer).toBe(newAnswer);
 
       // ADDED
-      expect(user?.athleteInfo?.physical_injuriesAndHealthIssues).toEqual(
-        body.athleteInfo?.physical_injuriesAndHealthIssues
+      expect(user?.athleteInfo?.injuriesAndHealthIssues).toEqual(
+        body.athleteInfo?.injuriesAndHealthIssues
       );
 
       // DID NOT TOUCH
-      expect(user?.athleteInfo?.effort_goals).toEqual(
-        _updatedUser.athleteInfo?.effort_goals
+      expect(user?.athleteInfo?.goals).toEqual(
+        _updatedUser.athleteInfo?.goals
       );
     });
   });

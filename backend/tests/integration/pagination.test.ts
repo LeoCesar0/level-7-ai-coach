@@ -1,5 +1,5 @@
+import { AppResponse } from "@common/schemas/app";
 import honoApp from "../../src";
-import { AppResponse } from "../../src/@schemas/app";
 import { IPaginationBody } from "../../src/@schemas/listRoute";
 import { IPaginationResult } from "../../src/@schemas/pagination";
 import { ICreateOrganization } from "../../src/routes/organizations/schemas/createOrganization";

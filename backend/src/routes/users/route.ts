@@ -1,8 +1,7 @@
 import { Hono } from "hono";
 import { UserModel, IUser, IUserFull } from "./schemas/user";
-import { AppResponse } from "../../@schemas/app";
 import { routeValidator } from "../../middlewares/routeValidator";
-import { EXCEPTIONS } from "../../static/exceptions";
+import { EXCEPTIONS } from "@common/static/exceptions";
 import { firebaseAuth } from "../../lib/firebase";
 import { authValidator } from "../../middlewares/authValidator";
 import { createAppUser } from "../../services/createAppUser";
@@ -13,8 +12,9 @@ import cloneDeep from "lodash.clonedeep";
 import { OrganizationModel } from "../organizations/schemas/organization";
 import { zListRouteQueryInput } from "../../@schemas/listRoute";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
-import { USER_POPULATES } from "../../static/populates";
 import { getUserFull } from "../../services/getUserFull";
+import { USER_POPULATES } from "@/static/populates";
+import { AppResponse } from "@common/schemas/app";
 
 const userRoute = new Hono()
   // --------------------------

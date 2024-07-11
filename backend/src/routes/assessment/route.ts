@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { AppResponse } from "../../@schemas/app";
 import { routeValidator } from "../../middlewares/routeValidator";
 import { authValidator } from "../../middlewares/authValidator";
 import { AssessmentModel, IAssessment } from "./schemas/assessment";
@@ -8,12 +7,13 @@ import { ChatModel, IChat } from "../chat/schemas/chat";
 import { HTTPException } from "hono/http-exception";
 import { IUserFull, UserModel } from "../users/schemas/user";
 import { processChatAssessment } from "../../services/assessment/processChatAssessment";
-import { USER_POPULATES } from "../../static/populates";
 import { handleDBSession } from "../../handlers/handleDBSession";
 import { zListRouteQueryInput } from "../../@schemas/listRoute";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { processJournalsAssessment } from "../../services/assessment/processJournalsAssessment";
 import { stringToDate } from "../../helpers/stringToDate";
+import { USER_POPULATES } from "@/static/populates";
+import { AppResponse } from "@common/schemas/app";
 
 const assessmentRoute = new Hono()
   // --------------------------
