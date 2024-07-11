@@ -1,62 +1,67 @@
 "use client";
 
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/@components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
-
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-});
+import { InputControl } from "@/@components/InputControl";
+import { Button } from "@/@components/ui/button";
+import { ISignIn, zSignIn } from "@/@schemas/signIn";
 
 interface IProps {}
 
 const SignInPage: React.FC<IProps> = ({}) => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<ISignIn>({
+    resolver: zodResolver(zSignIn),
     defaultValues: {
-      username: "",
+      email: "",
+      password: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (values: ISignIn) => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+    console.log("values", values);
+    const res = await fetch("http://localhost:3000/api/auth/sign-in", {
+      method: "POST",
+      body: JSON.stringify(values),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const resData = await res.json();
+
+    console.log("❗ resData -->", resData);
+  };
 
   return (
     <>
-      <h2 className="text-2xl font-medium mb-4">Sign In</h2>
+      <h2 className="text-2xl font-medium mb-6">Sign In</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input placeholder="shadcn" {...field} />
-                </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="space-y-6">
+            <InputControl
+              label="Email"
+              name="email"
+              form={form}
+              component="input"
+              placeholder="soccer_boy@email.com"
+              description="Enter your email"
+            />
+            <InputControl
+              label="Password"
+              name="password"
+              form={form}
+              component="input"
+              props={{
+                type: "password",
+              }}
+            />
+          </div>
+          <div className="mt-8">
+            <Button>Continue</Button>
+          </div>
         </form>
       </Form>
     </>

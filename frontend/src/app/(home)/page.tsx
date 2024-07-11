@@ -1,5 +1,5 @@
-import { Logo } from "@/components/Logo";
-import { Button } from "@/components/ui/button";
+import { Logo } from "@/@components/Logo";
+import { Button } from "@/@components/ui/button";
 import { HomeArrow } from "./HomeArrow";
 import { HomeDetails } from "./HomeDetails";
 import Link from "next/link";
