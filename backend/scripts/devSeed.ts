@@ -74,6 +74,7 @@ const run = async () => {
   if (!process.env.DEV_PASSWORD) {
     throw new Error("Dev password env is not set");
   }
+  const devPassword = process.env.DEV_PASSWORD!;
 
   await MongooseServer.connectServer();
 
@@ -129,12 +130,13 @@ const run = async () => {
     firebaseAdmin = await firebaseAuth.createUser({
       email: adminEmail,
       displayName: adminName,
+      password: devPassword,
     });
   }
   // console.log("firebaseAdmin", firebaseAdmin);
   const admin = await createAppUser({
     inputs: {
-      password: process.env.DEV_PASSWORD!,
+      password: devPassword,
       user: {
         active: true,
         name: adminName,
@@ -166,12 +168,13 @@ const run = async () => {
     firebaseUser = await firebaseAuth.createUser({
       displayName: normalUserName,
       email: normalUserEmail,
+      password: devPassword,
     });
   }
 
   const normalUser = await createAppUser({
     inputs: {
-      password: process.env.DEV_PASSWORD!,
+      password: devPassword,
       user: {
         active: true,
         name: normalUserName,
@@ -197,11 +200,12 @@ const run = async () => {
     firebaseCoach = await firebaseAuth.createUser({
       displayName: coachUserName,
       email: coachUserEmail,
+      password: devPassword,
     });
   }
   const coachUser = await createAppUser({
     inputs: {
-      password: process.env.DEV_PASSWORD!,
+      password: devPassword,
       user: {
         active: true,
         name: coachUserName,

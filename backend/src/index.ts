@@ -14,6 +14,7 @@ import cron from "node-cron";
 import { journalRoute } from "./routes/journals/route";
 import { processUserAnalytics } from "./services/analytics/processUserAnalytics";
 import { processJournalsAssessment } from "./services/assessment/processJournalsAssessment";
+import { cors } from "hono/cors";
 
 dotenv.config({ path: "../.env" });
 
@@ -25,6 +26,15 @@ if (!process.env.MONGO_DB_CONNECTION_STRING) {
 }
 
 const honoApp = new Hono().basePath("/api").onError(handleAppError);
+
+honoApp.use(
+  "/*",
+  cors({
+    origin: "*",
+    // allowHeaders: ["Content-Type", "Authorization"],
+    // allowMethods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 
 const routes = honoApp
   .route("/users", userRoute)

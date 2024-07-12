@@ -21,6 +21,7 @@ export const createVerifyAuthToken = ({
     ctx: Context
   ) => boolean | Promise<boolean> = async (token, ctx) => {
     try {
+      console.log('❗ token in auth -->', !!token);
       let user: IUser | null = null;
 
       if (
@@ -31,7 +32,9 @@ export const createVerifyAuthToken = ({
         user = (await UserModel.findById(token).catch((err) => {})) ?? null;
       }
       if (!user) {
+        console.log("❗❗❗ Here IS THE TOKEN");
         user = await getUserFromToken.exec({ token });
+        console.log("❗ user finally -->", user);
       }
 
       if (!user || (user && !user.active && user.role !== "admin")) {

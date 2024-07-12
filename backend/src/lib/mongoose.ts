@@ -35,7 +35,6 @@ export class MongooseServer {
   };
 
   static getConnectionString = () => {
-    console.log("❗❗❗ Here get string");
 
     // const string = `mongodb://${MONGO_DB_USER}:${MONGO_DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?authSource=admin`
 
@@ -46,7 +45,6 @@ export class MongooseServer {
     if (!connectionString?.endsWith("/")) {
       connectionString = connectionString + "/";
     }
-    console.log("❗ connectionString first -->", connectionString);
     // const [p1] = connectionString.split("mongodb.net/");
     // console.log("❗ p1 -->", p1);
     // connectionString = p1 + "mongodb.net/";
@@ -55,7 +53,6 @@ export class MongooseServer {
 
     const complement = process.env.MONGO_DB_CONNECTION_STRING_COMPLEMENT || "";
     connectionString = connectionString + complement;
-    console.log("❗ connectionString END -->", connectionString);
     return connectionString;
   };
 }

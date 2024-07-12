@@ -8,12 +8,16 @@ import { InputControl } from "@/@components/InputControl";
 import { Button } from "@/@components/ui/button";
 import { ISignIn, zSignIn } from "@/@schemas/signIn";
 import { AppResponse } from "@common/schemas/app";
-import { User } from "firebase/auth";
+import { User, signInWithEmailAndPassword } from "firebase/auth";
 import { parseAppError } from "@/handlers/parseAppErr";
+import { useUser } from "@/features/users/hooks/useUser";
+import { firebaseAuth } from "@/lib/firebase";
 
 interface IProps {}
 
 const SignInPage: React.FC<IProps> = ({}) => {
+  const { firebaseUser } = useUser();
+
   const form = useForm<ISignIn>({
     resolver: zodResolver(zSignIn),
     defaultValues: {
@@ -36,6 +40,13 @@ const SignInPage: React.FC<IProps> = ({}) => {
       const resData: AppResponse<User> = await res.json();
 
       console.log("❗ resData -->", resData);
+
+      // const userHere = await signInWithEmailAndPassword(
+      //   firebaseAuth,
+      //   values.email,
+      //   values.password
+      // );
+      // console.log("❗ userHere -->", userHere);
     } catch (err) {
       console.log("❗ catch err -->", err);
       const appError = parseAppError(err);
@@ -47,7 +58,9 @@ const SignInPage: React.FC<IProps> = ({}) => {
 
   return (
     <>
-      <h2 className="text-2xl font-medium mb-6">Sign In</h2>
+      <h2 className="text-2xl font-medium mb-6">
+        Sign In firebaseUser: {JSON.stringify(firebaseUser)}
+      </h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="space-y-6">

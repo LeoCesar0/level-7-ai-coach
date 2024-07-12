@@ -5,7 +5,7 @@ import { EXCEPTIONS } from "@common/static/exceptions";
 import { firebaseAuth } from "../../lib/firebase";
 import { authValidator } from "../../middlewares/authValidator";
 import { createAppUser } from "../../services/createAppUser";
-import { zSignUp } from "./schemas/signUpRoute";
+import { zCreateUserRoute } from "./schemas/createUserRoute";
 import { HTTPException } from "hono/http-exception";
 import { updateUserRoute } from "./schemas/updateUserRoute";
 import cloneDeep from "lodash.clonedeep";
@@ -43,6 +43,31 @@ const userRoute = new Hono()
       return ctx.json(resData, 200);
     }
   )
+  .get("/me", authValidator(), async (ctx) => {
+    // @ts-ignore
+    const reqUser: IUser = ctx.get("reqUser");
+
+    if (!reqUser) {
+      throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+    }
+
+    const user = await getUserFull({ userId: reqUser._id.toString() });
+
+    if (!user) {
+      throw new HTTPException(404, { message: "User not found" });
+    }
+
+    if (user && !user.active && reqUser.role === "user") {
+      throw new HTTPException(401, { message: EXCEPTIONS.USER_NOT_ACTIVE });
+    }
+
+    const resData: AppResponse<IUserFull> = {
+      data: user,
+      error: null,
+    };
+
+    return ctx.json(resData, 200);
+  })
   // --------------------------
   // GET USER BY ID
   // --------------------------
@@ -78,7 +103,7 @@ const userRoute = new Hono()
   // --------------------------
   .post(
     "/",
-    routeValidator({ schema: zSignUp }),
+    routeValidator({ schema: zCreateUserRoute }),
     authValidator({ permissionsTo: ["admin", "coach"] }),
     async (ctx) => {
       const inputs = ctx.req.valid("json");

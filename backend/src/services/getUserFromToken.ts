@@ -11,7 +11,10 @@ const exec = async ({ token }: IGetUserFromToken) => {
   // }
 
   try {
+    console.log("❗❗❗ Here  just before verify");
     const res = await firebaseAuth.verifyIdToken(token);
+
+    console.log("❗ res firebase -->", res);
 
     const user = await UserModel.findOne({
       firebaseId: res.uid,

@@ -1,11 +1,11 @@
 import { ENV } from "@common/static/envs";
 import { firebaseAuth } from "../lib/firebase";
-import { ISignUpRoute } from "../routes/users/schemas/signUpRoute";
+import { ICreateUserRoute } from "../routes/users/schemas/createUserRoute";
 
 export const createFirebaseUser = async ({
   inputs,
 }: {
-  inputs: ISignUpRoute;
+  inputs: ICreateUserRoute;
 }) => {
   const createdFirebaseUser = await firebaseAuth.createUser({
     password: inputs.password,

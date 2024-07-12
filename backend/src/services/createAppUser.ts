@@ -1,6 +1,6 @@
 import { ENV } from "@common/static/envs";
 import { OrganizationModel } from "../routes/organizations/schemas/organization";
-import { ISignUpRoute } from "../routes/users/schemas/signUpRoute";
+import { ICreateUserRoute } from "../routes/users/schemas/createUserRoute";
 import { UserModel } from "../routes/users/schemas/user";
 import { createFirebaseUser } from "./createFirebaseUser";
 
@@ -8,7 +8,7 @@ export const createAppUser = async ({
   inputs,
   firebaseId,
 }: {
-  inputs: ISignUpRoute;
+  inputs: ICreateUserRoute;
   firebaseId?: string;
 }) => {
   let _firebaseId = firebaseId ?? "TEST_FIREBASE_UID";

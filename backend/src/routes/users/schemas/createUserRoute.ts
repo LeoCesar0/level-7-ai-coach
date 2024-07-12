@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { zCreateUser } from "./createUser";
 
-export type ISignUpRoute = z.input<typeof zSignUp>;
+export type ICreateUserRoute = z.input<typeof zCreateUserRoute>;
 
-export const zSignUp = z.object({
+export const zCreateUserRoute = z.object({
   password: z
     .string()
     .min(8, { message: "Password must be at least 6 characters long" }),

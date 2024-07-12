@@ -12,7 +12,7 @@ import {
   OrganizationModel,
 } from "../../src/routes/organizations/schemas/organization";
 import { ICreateUser } from "../../src/routes/users/schemas/createUser";
-import { ISignUpRoute } from "../../src/routes/users/schemas/signUpRoute";
+import { ICreateUserRoute } from "../../src/routes/users/schemas/createUserRoute";
 import { IUpdateUserRoute } from "../../src/routes/users/schemas/updateUserRoute";
 import {
   IUser,
@@ -74,7 +74,7 @@ describe("users integration suite", () => {
         organization: _organization._id,
         email: _userEmail,
       };
-      const body: ISignUpRoute = {
+      const body: ICreateUserRoute = {
         password: "123456789",
         user: userOnCreate,
       };
@@ -150,7 +150,7 @@ describe("users integration suite", () => {
         organization: _organization!._id,
         email: _createdUser.email,
       };
-      const body: ISignUpRoute = {
+      const body: ICreateUserRoute = {
         password: "123456789",
         user: userOnCreate,
       };
@@ -407,9 +407,7 @@ describe("users integration suite", () => {
       );
 
       // DID NOT TOUCH
-      expect(user?.athleteInfo?.goals).toEqual(
-        _updatedUser.athleteInfo?.goals
-      );
+      expect(user?.athleteInfo?.goals).toEqual(_updatedUser.athleteInfo?.goals);
     });
   });
 

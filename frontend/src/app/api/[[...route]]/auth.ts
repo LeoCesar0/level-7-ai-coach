@@ -4,9 +4,11 @@ import { firebaseAuth } from "@/lib/firebase";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signInWithCredential,
 } from "firebase/auth";
 import { AppResponse } from "@common/schemas/app";
 import { routeValidator } from "@/middlewares/routeValidator";
+import { cookies } from "next/headers";
 
 const authRoute = new Hono()
   .get("/", async (ctx) => {
@@ -51,8 +53,15 @@ const authRoute = new Hono()
 
       console.log("❗ result -->", result);
 
+      const token = await result.user.getIdToken();
+
+      cookies().set("token", token);
+
       let resData: AppResponse = {
-        data: result.user,
+        data: {
+          user: result.user,
+          token: token,
+        },
         error: null,
       };
 
