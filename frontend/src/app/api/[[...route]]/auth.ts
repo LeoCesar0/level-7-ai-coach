@@ -1,7 +1,10 @@
 import { Hono } from "hono";
 import { zSignIn } from "@/@schemas/signIn";
 import { firebaseAuth } from "@/lib/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
 import { AppResponse } from "@common/schemas/app";
 import { routeValidator } from "@/middlewares/routeValidator";
 
@@ -16,6 +19,19 @@ const authRoute = new Hono()
   .get("/me", async (ctx) => {
     return ctx.json({ currentUser: firebaseAuth.currentUser });
   })
+  .get("/test-register", async (ctx) => {
+    const createResult = await createUserWithEmailAndPassword(
+      firebaseAuth,
+      "dev_fulano@test.com",
+      "password123456789"
+    );
+
+    console.log("❗ create createResult -->", createResult);
+
+    return ctx.json({
+      createResult,
+    });
+  })
   .post(
     "/sign-in",
     routeValidator({
@@ -25,11 +41,15 @@ const authRoute = new Hono()
     async (ctx) => {
       const data = ctx.req.valid("json");
 
+      console.log("❗ data in -->", data);
+
       const result = await signInWithEmailAndPassword(
         firebaseAuth,
         data.email,
         data.password
       );
+
+      console.log("❗ result -->", result);
 
       let resData: AppResponse = {
         data: result.user,

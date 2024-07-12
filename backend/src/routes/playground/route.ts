@@ -21,11 +21,11 @@ export const playgroundRoute = new Hono().post(
 
     console.log("❗❗❗ Here ");
 
-    await ArchetypeModel.create({
-      name,
-      description,
-      slug: name + Date.now().toString(),
-    });
+    // await ArchetypeModel.create({
+    //   name,
+    //   description,
+    //   slug: name + Date.now().toString(),
+    // });
 
     const items = await ArchetypeModel.find();
 

@@ -23,6 +23,7 @@ const SignInPage: React.FC<IProps> = ({}) => {
   });
 
   const onSubmit = async (values: ISignIn) => {
+    console.log("❗ values -->", values);
     try {
       const res = await fetch("http://localhost:3000/api/auth/sign-in", {
         method: "POST",

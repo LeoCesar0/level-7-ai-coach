@@ -7,6 +7,8 @@ import { BlankEnv } from "hono/types";
 export const handleAppError: ErrorHandler<BlankEnv> = (error, ctx) => {
   let resData: AppResponse<null>;
 
+  console.log("❗ app Err -->", error);
+
   if (error instanceof FirebaseError) {
     error.code === "auth/invalid-credential";
     resData = {
