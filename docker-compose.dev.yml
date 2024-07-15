@@ -23,9 +23,9 @@ services:
       - .env
     environment:
       <<: *x-common-env
-    networks:
-      level_7_network:
-        ipv4_address: 172.18.0.22
+    # networks:
+    #   level_7_network:
+    #     ipv4_address: 172.18.0.22
 
   frontend:
     restart: always
@@ -41,12 +41,12 @@ services:
       - .env
     environment:
       <<: *x-common-env
-    networks:
-      - level_7_network
+    # networks:
+    #   - level_7_network
 
-networks:
-  level_7_network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.18.0.0/16
+# networks:
+#   level_7_network:
+#     driver: bridge
+#     ipam:
+#       config:
+#         - subnet: 172.18.0.0/16

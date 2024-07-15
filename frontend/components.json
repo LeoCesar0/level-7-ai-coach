@@ -1,17 +1,17 @@
 {
-  "$schema": "https://ui.shadcn.com/schema.json",
+  "$schema": "https://shadcn-vue.com/schema.json",
   "style": "new-york",
-  "rsc": true,
-  "tsx": true,
+  "typescript": true,
+  "tsConfigPath": ".nuxt/tsconfig.json",
   "tailwind": {
     "config": "tailwind.config.ts",
     "css": "src/styles/globals.scss",
     "baseColor": "slate",
-    "cssVariables": true,
-    "prefix": ""
+    "cssVariables": true
   },
+  "framework": "nuxt",
   "aliases": {
-    "components": "@/@components",
+    "components": "@/components",
     "utils": "@/lib/utils"
   }
 }
