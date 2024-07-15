@@ -9,6 +9,7 @@ export const useUser = () => {
   const user = ref();
   const firebaseUser = ref<IFirebaseUser | null>(null);
   const loading = ref(false);
+  const { handleToastAnyPromise } = useToast();
 
   firebaseAuth.beforeAuthStateChanged((user) => {
     loading.value = true;
@@ -21,11 +22,11 @@ export const useUser = () => {
 
   const login = async (values: ISignIn) => {
     const { email, password } = values;
-    loading.value = true;
-    try {
-      await signInWithEmailAndPassword(firebaseAuth, email, password);
-    } catch (error) {}
-    loading.value = false;
+
+    await handleToastAnyPromise({
+      promise: signInWithEmailAndPassword(firebaseAuth, email, password),
+      loadingRef: loading,
+    });
   };
 
   const logout = async () => {

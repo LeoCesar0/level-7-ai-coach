@@ -14,9 +14,13 @@ export default defineNuxtConfig({
   imports: {
     dirs: ["composables/*.ts", "composables/**/*.ts"],
   },
-  // alias: {
-  //   "@": resolve(__dirname, "./src"),
-  // },
+  alias: {
+    // "@": resolve(__dirname, "./src"),
+    // '@common/*':resolve(__dirname, "./../common/*"),
+    // "@common/*": "./../common/*",
+    // "@common": resolve(__dirname, "./common"),
+    "@common": resolve(__dirname, "./../common"),
+  },
   shadcn: {
     // prefix: "Shad",
     prefix: "",

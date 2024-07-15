@@ -8,35 +8,18 @@ type Props = {};
 const props = defineProps<Props>();
 
 const onSubmit = async (values: ISignIn) => {
-  try {
-    await login(values);
-  } catch (err) {
-    console.log("❗ err -->", err);
-  }
+  await login(values);
 };
 </script>
 <template>
-  <h2 class="text-2xl font-medium mb-6">
-    Sign In firebaseUser: {{ firebaseUser?.displayName }}
-  </h2>
-  <UiButton
-    @click="
-      () => {
-        logout();
-      }
-    "
-    >test</UiButton
-  >
-
+  <h2 class="text-2xl font-medium mb-6">Sign In</h2>
   <UiAutoForm
     :field-config="{
       email: {
         label: 'Email',
-        description: 'Enter your email address',
       },
       password: {
         label: 'Password',
-        description: 'Enter your password',
         inputProps: {
           type: 'password',
         },

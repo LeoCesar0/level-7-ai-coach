@@ -9,7 +9,17 @@ export type AppError = {
   _data?: any;
 };
 
-export type AppResponse<T = any> = {
-  data: T | null;
-  error: AppError | null;
-};
+// export type AppResponse<T = any> = {
+//   data: T | null;
+//   error: AppError | null;
+// };
+
+export type AppResponse<T = any> =
+  | {
+      data: T;
+      error: null;
+    }
+  | {
+      data: null;
+      error: AppError;
+    };

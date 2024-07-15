@@ -1,8 +1,9 @@
 import z from "zod";
+import { zStringNotEmpty } from "./primitives";
 
 export const zSignIn = z.object({
-  email: z.string().email(),
-  password: z.string(),
+  email: zStringNotEmpty.email(),
+  password: zStringNotEmpty,
 });
 
 export type ISignIn = z.infer<typeof zSignIn>;
