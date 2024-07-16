@@ -43,3 +43,4 @@
 - [] - Add transaction sessions everywhere possible
 - [] - THINK ABOUT - change getChatChain approach to a manual input of the messages
 - [] - THINK ABOUT (chat chain/memory) - giving more relevance to data retrieved from last chat
+- [] - Remove files from common that are duplicated in backend

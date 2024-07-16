@@ -1,4 +1,4 @@
-import { IChatRole, IRole } from "../../backend/src/@schemas/roles";
+import { type IChatRole, type IRole } from "../schemas/roles";
 
 export const ROLE = {
   ADMIN: "admin",

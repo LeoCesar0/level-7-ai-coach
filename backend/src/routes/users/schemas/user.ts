@@ -6,7 +6,6 @@ import { zCreateUser } from "./createUser";
 import { IAddress, zAddress } from "./address";
 import { zArchetype } from "../../archetype/schemas/archetype";
 import { zOrganization } from "../../organizations/schemas/organization";
-import { zodSchema } from "@zodyac/zod-mongoose";
 
 export type IUser = z.infer<typeof zUser> & {
   firebaseId: string;
