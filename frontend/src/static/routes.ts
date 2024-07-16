@@ -22,5 +22,6 @@ export const ROUTE: Record<Route, IRoute> = {
   dashboard: {
     href: "/dashboard",
     label: "Dashboard",
+    permissions: [],
   },
 };

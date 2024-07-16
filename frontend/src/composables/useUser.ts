@@ -30,34 +30,54 @@ export const useUser = defineStore(makeStoreKey("users"), () => {
     } catch (error) {}
     loading.value = false;
   };
+
+  const fetchCurrentUser = async () => {
+    const token = tokenCookie.value;
+    if (!token) {
+      currentUser.value = null;
+      return null;
+    }
+    const { data: res, error } = await fetchApi<IUserFull>({
+      url: "/users/me",
+      loadingRef: loading,
+    });
+    if (res.value?.data) {
+      currentUser.value = res.value.data;
+      return currentUser.value;
+    } else {
+      currentUser.value = null;
+      toast.error("Error getting user");
+      console.error("❗ auth error -->", error.value, res.value?.error);
+      return null;
+    }
+  };
+
   if (!isServerSide) {
-    firebaseAuth.beforeAuthStateChanged((user) => {
-      loading.value = true;
-    });
-
-    firebaseAuth.onAuthStateChanged(async (user) => {
-      if (user) {
-        const token = await user.getIdToken();
-        tokenCookie.value = token ?? "";
-
-        if (user && currentUser?.value?.firebaseId !== user.uid) {
-          const { data: res, error } = await fetchApi<IUserFull>({
-            url: "/users/me",
-            loadingRef: loading,
-          });
-          if (res.value?.data) {
-            currentUser.value = res.value.data;
-          } else {
-            currentUser.value = null;
-            toast.error("Error getting user");
-            console.error("❗ auth error -->", error.value, res.value?.error);
-          }
-        }
-      } else {
-        tokenCookie.value = "";
-        currentUser.value = null;
-      }
-    });
+    // firebaseAuth.beforeAuthStateChanged((user) => {
+    //   loading.value = true;
+    // });
+    // firebaseAuth.onAuthStateChanged(async (user) => {
+    //   if (user) {
+    //     const token = await user.getIdToken();
+    //     tokenCookie.value = token ?? "";
+    //     if (user && currentUser?.value?.firebaseId !== user.uid) {
+    //       const { data: res, error } = await fetchApi<IUserFull>({
+    //         url: "/users/me",
+    //         loadingRef: loading,
+    //       });
+    //       if (res.value?.data) {
+    //         currentUser.value = res.value.data;
+    //       } else {
+    //         currentUser.value = null;
+    //         toast.error("Error getting user");
+    //         console.error("❗ auth error -->", error.value, res.value?.error);
+    //       }
+    //     }
+    //   } else {
+    //     tokenCookie.value = "";
+    //     currentUser.value = null;
+    //   }
+    // });
   }
 
   return {
@@ -65,6 +85,7 @@ export const useUser = defineStore(makeStoreKey("users"), () => {
     loading,
     login,
     logout,
+    fetchCurrentUser,
   };
 });
 
