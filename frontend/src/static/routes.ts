@@ -1,3 +1,5 @@
+import type { IRole } from "@common/schemas/roles";
+
 export const ROUTES = ["home", "sign-in", "dashboard"] as const;
 
 export type Route = (typeof ROUTES)[number];
@@ -5,6 +7,7 @@ export type Route = (typeof ROUTES)[number];
 type IRoute = {
   label: string;
   href: string;
+  permissions?: IRole[];
 };
 
 export const ROUTE: Record<Route, IRoute> = {

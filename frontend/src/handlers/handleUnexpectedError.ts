@@ -1,4 +1,4 @@
-import type { AppResponse } from "@common/schemas/app";
+import type { AppResponseError } from "@common/schemas/app";
 import { EXCEPTIONS } from "@common/static/exceptions";
 import { FirebaseError } from "firebase/app";
 
@@ -8,8 +8,8 @@ export const handleUnexpectedError = ({
 }: {
   error: any;
   defaultMessage?: string;
-}): AppResponse<null> => {
-  let resData: AppResponse<null>;
+}): AppResponseError => {
+  let resData: AppResponseError;
 
   if (error instanceof FirebaseError) {
     error.code === "auth/invalid-credential";

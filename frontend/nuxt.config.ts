@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     "@/styles/utils.scss",
     "@/styles/components.scss",
   ],
-  modules: ["@nuxtjs/tailwindcss", "shadcn-nuxt"],
+  modules: ["@nuxtjs/tailwindcss", "shadcn-nuxt", "@pinia/nuxt"],
   imports: {
     dirs: ["composables/*.ts", "composables/**/*.ts"],
   },

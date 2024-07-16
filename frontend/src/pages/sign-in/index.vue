@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { zSignIn, type ISignIn } from "@/@schemas/auth";
 
-const { login, firebaseUser, logout } = useUser();
+const userStore = useUser();
+const { currentUser, loading } = storeToRefs(userStore);
+const { login } = userStore;
+
+const token = useAuthToken();
 
 type Props = {};
 
@@ -12,7 +16,11 @@ const onSubmit = async (values: ISignIn) => {
 };
 </script>
 <template>
-  <h2 class="text-2xl font-medium mb-6">Sign In</h2>
+  <h2 class="text-2xl font-medium mb-6">
+    Sign In: currentUser: {{ currentUser?.name }}
+  </h2>
+  <p>loading: {{ loading }}</p>
+  <p>token: {{ token }}</p>
   <UiAutoForm
     :field-config="{
       email: {

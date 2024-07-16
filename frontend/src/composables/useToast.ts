@@ -56,10 +56,10 @@ export const useToast = () => {
         const error = handleUnexpectedError({
           error: err,
           defaultMessage: defaultErrorMessage,
-        }) as unknown as AppResponse<T>;
+        });
 
         toast.update(toastId, {
-          render: error.error?.message,
+          render: error.error.message,
           type: "error",
           isLoading: false,
           autoClose: 5000,
@@ -86,13 +86,15 @@ export const useToast = () => {
     }
     return promise
       .then((results: any) => {
+        console.log("❗ results -->", results);
         let res: AppResponse<T>;
         if (results?.error) {
           const errorRes = handleUnexpectedError({
             error: results?.error,
-          }) as AppResponse<T>;
+            defaultMessage: defaultErrorMessage,
+          });
           toast.update(toastId, {
-            render: errorRes.error?.message ?? defaultErrorMessage,
+            render: errorRes.error.message,
             type: "error",
             isLoading: false,
             autoClose: 5000,
@@ -113,11 +115,13 @@ export const useToast = () => {
         return res;
       })
       .catch((err) => {
+        console.log("❗ err -->", err);
         const errorRes = handleUnexpectedError({
           error: err,
-        }) as AppResponse<T>;
+          defaultMessage: defaultErrorMessage,
+        });
         toast.update(toastId, {
-          render: defaultErrorMessage,
+          render: errorRes.error?.message,
           type: "error",
           isLoading: false,
           autoClose: 5000,
