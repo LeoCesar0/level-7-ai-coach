@@ -33,6 +33,8 @@ export const useFetchApi = () => {
   }: IFetchApi<T>): Promise<IFetchApiResponse<T>> => {
     const fullUrl = normalizeUrl(`${baseUrl}/${url}`);
     const token = defaultToken ?? tokenCookie.value;
+    console.log("------------- 🟢 START SESSION FETCH API -------------");
+    console.log("❗ fullUrl -->", fullUrl);
     console.log("❗ token in fetchapi -->", !!token);
     const _options: typeof options = {
       ...options,
@@ -72,6 +74,8 @@ export const useFetchApi = () => {
       return {
         response: error,
       };
+    } finally {
+      console.log("------------- 🔴 END FETCH API -------------");
     }
 
     // const { data, error } = await useFetch<AppResponse<T>, AppResponseError>(

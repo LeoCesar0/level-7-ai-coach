@@ -1,6 +1,5 @@
 import type { AppResponseError } from "@common/schemas/app";
 import { EXCEPTIONS, EXCEPTION_CODE } from "@common/static/exceptions";
-import { FirebaseError } from "firebase/app";
 
 export const handleApiError = ({
   error,
@@ -10,9 +9,11 @@ export const handleApiError = ({
   errorMessage?: string;
 }): AppResponseError => {
   let resError: AppResponseError = { ...error };
-  // const authCookie = useAuthToken()
+  const authCookie = useAuthToken();
 
   if (error.error.code === EXCEPTION_CODE.EXPIRED_TOKEN) {
+    console.log("❗❗❗ Here Removing Token");
+    authCookie.value = "";
     resError = {
       data: null,
       error: {

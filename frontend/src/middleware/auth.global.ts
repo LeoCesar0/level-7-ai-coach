@@ -1,25 +1,37 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  if (typeof window === "undefined") {
+  const isServerSide = typeof window === "undefined";
+  if (isServerSide) {
     // --------------------------
     // SERVER SIDE
     // --------------------------
 
     return;
   }
-  console.log("❗❗❗ CLIENT SIDE SIDE ");
 
   // --------------------------
   // CLIENT SIDE
   // --------------------------
+  console.log("❗❗❗ CLIENT SIDE SIDE ");
 
   const userStore = useUser();
   const { currentUser } = storeToRefs(userStore);
-  const { fetchCurrentUser } = userStore;
+  const { handleFetchCurrentUser } = userStore;
+  const authToken = useAuthToken();
 
-  const resCurrentUser = await fetchCurrentUser();
+  // --------------------------
+  // HANDLE CURRENT USER
+  // --------------------------
+  if (!currentUser.value && authToken.value) {
+    await handleFetchCurrentUser(authToken.value);
+  }
+  if (currentUser.value && !authToken.value) {
+    currentUser.value = null;
+  }
 
+  // const resCurrentUser = await fetchCurrentUser();
+
+  // console.log("❗ CLIENT resCurrentUser -->", resCurrentUser);
   console.log("❗ CLIENT currentUser -->", currentUser.value);
-  console.log("❗ CLIENT resCurrentUser -->", resCurrentUser);
   console.log("------------");
 
   // if (!currentUser.value && authToken.value) {

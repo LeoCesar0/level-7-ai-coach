@@ -21,6 +21,9 @@ const onSubmit = async (values: ISignIn) => {
   </h2>
   <p>loading: {{ loading }}</p>
   <p>token: {{ token }}</p>
+  <NuxtLink to="/dashboard">
+    <UiButton> To dashboard </UiButton>
+  </NuxtLink>
   <UiAutoForm
     :field-config="{
       email: {
