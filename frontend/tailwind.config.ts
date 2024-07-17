@@ -49,6 +49,13 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // --------------------------
+        // CUSTOM
+        // --------------------------
+        drawer: {
+          DEFAULT: "hsl(var(--drawer))",
+          foreground: "hsl(var(--drawer-foreground))",
+        },
       },
       borderRadius: {
         xl: "calc(var(--radius) + 4px)",

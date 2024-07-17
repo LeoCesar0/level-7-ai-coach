@@ -6,11 +6,17 @@
 
 @layer base {
   :root {
+    // --------------------------
+    // GERAL
+    // --------------------------
+    --drawer-width: 280px;
+
     --background: 0 0% 100%;
     // --foreground: 222.2 84% 4.9%;
     --foreground: 217 33% 17%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    // --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 217 33% 17%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
     --primary: 222.2 47.4% 11.2%;
@@ -32,6 +38,12 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+
+    // --------------------------
+    // custom
+    // --------------------------
+    --drawer: 202 25% 53%;
+    --drawer-foreground: 210 40% 96.1%;
   }
 
   .dark-theme {
@@ -59,6 +71,12 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+    // --------------------------
+    // custom
+    // --------------------------
+    --drawer: 217.2 32.6% 17.5%;
+    --drawer-foreground: 210 40% 96.1%;
   }
 }
 
@@ -72,6 +90,7 @@
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
+    box-sizing: border-box;
   }
   body {
     @apply bg-background text-foreground;
@@ -84,6 +103,10 @@
 
 .flex-center {
   @apply flex items-center justify-center;
+}
+
+.accent-hover {
+  @apply hover:bg-accent hover:text-accent-foreground;
 }
 
 // --------------------------
