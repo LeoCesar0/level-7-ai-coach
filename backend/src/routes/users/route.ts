@@ -47,8 +47,6 @@ const userRoute = new Hono()
     // @ts-ignore
     const reqUser: IUser = ctx.get("reqUser");
 
-    console.log("❗❗❗ Here auth/me");
-
     if (!reqUser) {
       throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
     }

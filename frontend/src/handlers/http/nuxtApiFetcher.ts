@@ -7,7 +7,7 @@ import type {
 import { handleApiError } from "../handleApiError";
 import { handleUnexpectedError } from "../handleUnexpectedError";
 
-export const useFetchApiFetcher: ApiFetcher = async <T>({
+export const nuxtApiFetcher: ApiFetcher = async <T>({
   method,
   url,
   body,
@@ -15,9 +15,6 @@ export const useFetchApiFetcher: ApiFetcher = async <T>({
   token,
 }: IApiFetcherOptions): Promise<IApiFetcherResponse<T>> => {
   try {
-    console.log(
-      "------------- 🟢 START SESSION useFetchApiFetcher -------------"
-    );
     const { data, error } = await useFetch<AppResponse<T>>(url, {
       method: method,
       ...(body ? { body: body } : {}),
@@ -48,5 +45,6 @@ export const useFetchApiFetcher: ApiFetcher = async <T>({
     return {
       response: error,
     };
+  } finally {
   }
 };

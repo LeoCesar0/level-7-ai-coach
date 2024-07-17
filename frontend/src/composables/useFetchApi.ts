@@ -1,19 +1,9 @@
 import { normalizeUrl } from "~/helpers/normalizeUrl";
 import { useAuthToken } from "./useAuthToken";
 import { debugLog } from "~/helpers/debugLog";
-import type {
-  AppError,
-  AppResponse,
-  AppResponseError,
-} from "@common/schemas/app";
-import type { UseFetchOptions } from "#app";
-import axios, { AxiosError, type AxiosRequestConfig } from "axios";
-import { handleUnexpectedError } from "~/handlers/handleUnexpectedError";
-import { handleApiError } from "~/handlers/handleApiError";
-import { axiosApiFetcher } from "~/handlers/http/axiosApiFetcher";
+import type { AppResponse } from "@common/schemas/app";
 import type { IApiFetcherOptions } from "~/@types/fetcher";
-import { serverApiFetcher } from "~/handlers/http/serverApiFetcher";
-import { useFetchApiFetcher } from "~/handlers/http/useFetchApiFetcher";
+import { nuxtApiFetcher } from "~/handlers/http/nuxtApiFetcher";
 
 export type IFetchApiExtraOptions = {
   loadingRef?: Ref<boolean>;
@@ -34,16 +24,13 @@ export const useFetchApi = () => {
       `${baseUrl.replace("localhost", "backend")}/${url}`
     );
     const token = defaultToken ?? tokenCookie.value;
-    console.log("------------- 🟢 START SESSION FETCH API -------------");
-    console.log("❗ fullUrl -->", fullUrl);
-    console.log("❗ token in fetch api -->", !!token);
 
     if (loadingRef) {
       loadingRef.value = true;
     }
 
     // const fetcher = isServerSide ? serverApiFetcher : axiosApiFetcher;
-    const fetcher = useFetchApiFetcher;
+    const fetcher = nuxtApiFetcher;
 
     // --------------------------
     // CLIENT FETCHER
@@ -58,8 +45,6 @@ export const useFetchApi = () => {
         loadingRef.value = false;
       }
     });
-    console.log("❗ fetcher api res -->", res);
-    console.log("------------- 🔴 END FETCH API -------------");
     return res;
   };
 

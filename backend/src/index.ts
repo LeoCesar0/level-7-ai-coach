@@ -25,7 +25,7 @@ if (!process.env.MONGO_DB_CONNECTION_STRING) {
   process.exit(1);
 }
 
-const honoApp = new Hono().basePath("/api").onError(handleAppError);
+const honoApp = new Hono().basePath("/api").onError(handleAppError)
 
 honoApp.use(
   "/*",

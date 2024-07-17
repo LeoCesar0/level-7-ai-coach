@@ -11,8 +11,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const { handleFetchCurrentUser } = userStore;
   const authToken = useAuthToken();
 
-  const { firebaseAuth } = useFirebase();
-  await firebaseAuth.authStateReady();
+  // const { firebaseAuth } = useFirebase();
+  // await firebaseAuth.authStateReady();
 
   // --------------------------
   // HANDLE CURRENT USER

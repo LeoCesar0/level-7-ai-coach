@@ -74,7 +74,6 @@ export const useUser = defineStore(makeStoreKey("users"), () => {
       if (user) {
         const token = await user.getIdToken();
         tokenCookie.value = token;
-        // await handleFetchCurrentUser(token);
       } else {
         tokenCookie.value = "";
         currentUser.value = null;
