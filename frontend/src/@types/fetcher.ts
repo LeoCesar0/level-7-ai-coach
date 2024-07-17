@@ -1,12 +1,17 @@
 import type { AppResponse } from "@common/schemas/app";
 
-interface IFetcherOptions {
+export type IApiFetcherOptions = {
   url: string;
   method: "POST" | "GET" | "PUT" | "DELETE" | "PATCH";
   body?: any;
   contentType?: string;
-  token?: string;
-  onSuccessData?: any;
-}
+  token?: string | null;
+};
 
-export type Fetcher = (options: IFetcherOptions) => Promise<AppResponse<any>>;
+export type IApiFetcherResponse<T> = {
+  response: AppResponse<T>;
+};
+
+export type ApiFetcher = (
+  options: IApiFetcherOptions
+) => Promise<IApiFetcherResponse<any>>;

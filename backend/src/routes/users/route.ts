@@ -47,6 +47,8 @@ const userRoute = new Hono()
     // @ts-ignore
     const reqUser: IUser = ctx.get("reqUser");
 
+    console.log("❗❗❗ Here auth/me");
+
     if (!reqUser) {
       throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
     }
@@ -290,6 +292,10 @@ const userRoute = new Hono()
       }
 
       const finalRes = await getUserFull({ userId });
+
+      if (!finalRes) {
+        throw new HTTPException(404, { message: "User not found" });
+      }
 
       resData = {
         data: finalRes,

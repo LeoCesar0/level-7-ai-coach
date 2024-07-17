@@ -12,11 +12,11 @@ let num: number = 2;
       <h1 class="text-5xl">Level 7 AI</h1>
     </div>
     <div class="absolute bottom-[calc(-100%-64px)]">
-      <a :href="ROUTE['sign-in'].href">
+      <NuxtLink :to="ROUTE['sign-in'].href">
         <div class="animate-fade-right animate-once">
           <HomeArrow />
         </div>
-      </a>
+      </NuxtLink>
     </div>
   </div>
 </template>

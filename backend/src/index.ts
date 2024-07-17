@@ -43,7 +43,13 @@ const routes = honoApp
   .route("/assessments", assessmentRoute)
   .route("/archetypes", archetypeRoute)
   .route("/journals", journalRoute)
-  .route("/playground", playgroundRoute);
+  .route("/playground", playgroundRoute)
+  .route(
+    "hello",
+    new Hono().get("/", async (ctx) => {
+      return ctx.json({ hello: "world" }, 200);
+    })
+  );
 
 export type ApiType = typeof routes;
 

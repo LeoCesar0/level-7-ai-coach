@@ -1,13 +1,9 @@
-import type { AppResponse } from "@common/schemas/app";
 import type { IUserFull } from "@common/schemas/userFull";
-import { EXCEPTION_CODE } from "@common/static/exceptions";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import type { ISignIn } from "~/@schemas/auth";
 import { makeStoreKey } from "~/helpers/makeStoreKey";
 
-// makeStoreKey("users")
-
-export const useUser = defineStore("@lvl7-users", () => {
+export const useUser = defineStore(makeStoreKey("users"), () => {
   const { firebaseAuth } = useFirebase();
   const currentUser = ref<IUserFull | null>(null);
   const loading = ref(false);
@@ -36,10 +32,15 @@ export const useUser = defineStore("@lvl7-users", () => {
   };
 
   const fetchCurrentUser = async () => {
-    const { response } = await fetchApi<IUserFull>({
-      url: "/users/me",
-      loadingRef: loading,
-    });
+    const { response } = await fetchApi<IUserFull>(
+      {
+        url: "/users/me",
+        method: "GET",
+      },
+      {
+        loadingRef: loading,
+      }
+    );
 
     return { response };
   };
@@ -69,6 +70,7 @@ export const useUser = defineStore("@lvl7-users", () => {
       console.log(
         "------------- 🟢 START SESSION onAuthStateChanged -------------"
       );
+      console.log("❗ onAuthStateChanged user -->", user);
       if (user) {
         const token = await user.getIdToken();
         tokenCookie.value = token;

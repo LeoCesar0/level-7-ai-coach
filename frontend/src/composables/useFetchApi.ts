@@ -10,12 +10,13 @@ import type { UseFetchOptions } from "#app";
 import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 import { handleUnexpectedError } from "~/handlers/handleUnexpectedError";
 import { handleApiError } from "~/handlers/handleApiError";
+import { axiosApiFetcher } from "~/handlers/http/axiosApiFetcher";
+import type { IApiFetcherOptions } from "~/@types/fetcher";
+import { serverApiFetcher } from "~/handlers/http/serverApiFetcher";
+import { useFetchApiFetcher } from "~/handlers/http/useFetchApiFetcher";
 
-export type IFetchApi<T> = {
-  url: string;
+export type IFetchApiExtraOptions = {
   loadingRef?: Ref<boolean>;
-  options?: AxiosRequestConfig;
-  token?: string;
 };
 
 export type IFetchApiResponse<T> = { response: AppResponse<T> };
@@ -25,67 +26,41 @@ export const useFetchApi = () => {
   const runtime = useRuntimeConfig();
   const baseUrl = runtime.public.apiBase;
 
-  const fetchApi = async <T>({
-    loadingRef,
-    url,
-    options = {},
-    token: defaultToken,
-  }: IFetchApi<T>): Promise<IFetchApiResponse<T>> => {
-    const fullUrl = normalizeUrl(`${baseUrl}/${url}`);
+  const fetchApi = async <T>(
+    { token: defaultToken, url, ...rest }: IApiFetcherOptions,
+    { loadingRef }: IFetchApiExtraOptions = {}
+  ): Promise<IFetchApiResponse<T>> => {
+    const fullUrl = normalizeUrl(
+      `${baseUrl.replace("localhost", "backend")}/${url}`
+    );
     const token = defaultToken ?? tokenCookie.value;
     console.log("------------- 🟢 START SESSION FETCH API -------------");
     console.log("❗ fullUrl -->", fullUrl);
-    console.log("❗ token in fetchapi -->", !!token);
-    const _options: typeof options = {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...(options.headers ?? {}),
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    };
+    console.log("❗ token in fetch api -->", !!token);
+
     if (loadingRef) {
       loadingRef.value = true;
     }
 
-    try {
-      const { data } = await axios<AppResponse<T>>({
-        method: options.method ?? "GET",
-        url: fullUrl,
-        ..._options,
-      });
+    // const fetcher = isServerSide ? serverApiFetcher : axiosApiFetcher;
+    const fetcher = useFetchApiFetcher;
 
-      console.log("❗ data -->", data);
-      return {
-        response: data,
-      };
-    } catch (err) {
-      if (err instanceof AxiosError && err.response?.data) {
-        const resData: AppResponseError = err.response.data;
-        const resError = handleApiError({ error: resData });
-        console.error("❗ fetchApi error -->", err.response, resError);
+    // --------------------------
+    // CLIENT FETCHER
+    // --------------------------
 
-        return {
-          response: resError,
-        };
+    const res = await fetcher({
+      ...rest,
+      url: fullUrl,
+      token: token,
+    }).finally(() => {
+      if (loadingRef) {
+        loadingRef.value = false;
       }
-      console.error("❗ fetchApi unexpected error -->", err);
-      const error = handleUnexpectedError({ error: err });
-      return {
-        response: error,
-      };
-    } finally {
-      console.log("------------- 🔴 END FETCH API -------------");
-    }
-
-    // const { data, error } = await useFetch<AppResponse<T>, AppResponseError>(
-    //   fullUrl,
-    //   _options
-    // ).finally(() => {
-    //   if (loadingRef) {
-    //     loadingRef.value = false;
-    //   }
-    // });
+    });
+    console.log("❗ fetcher api res -->", res);
+    console.log("------------- 🔴 END FETCH API -------------");
+    return res;
   };
 
   return {
