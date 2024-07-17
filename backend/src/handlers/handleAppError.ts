@@ -4,7 +4,7 @@ import { BlankEnv } from "hono/types";
 import { StatusCode } from "hono/utils/http-status";
 import { ZodError } from "zod";
 import { getZodErrorMessage } from "../helpers/getZodErrorMessage";
-import { EXCEPTIONS } from '@common/static/exceptions';
+import { EXCEPTIONS, EXCEPTION_CODE } from "@common/static/exceptions";
 import { AppResponse } from "@common/schemas/app";
 
 export const handleAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
@@ -13,9 +13,29 @@ export const handleAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
 
   // @ts-ignore
   const forbiddenUser = ctx.get("forbiddenUser");
+  // @ts-ignore
+  const invalidToken = ctx.get("expiredToken");
 
-  console.log("❗ app err -->", err);
+  // --------------------------
+  // INVALID TOKEN
+  // --------------------------
+  if (invalidToken) {
+    status = 401;
+    const error: AppResponse = {
+      error: {
+        message: message,
+        _message: EXCEPTION_CODE.EXPIRED_TOKEN,
+        code: EXCEPTION_CODE.EXPIRED_TOKEN,
+        _isAppError: true,
+      },
+      data: null,
+    };
+    return ctx.json(error, status);
+  }
 
+  // --------------------------
+  // FORBIDDEN
+  // --------------------------
   if (forbiddenUser) {
     status = 403;
     message = EXCEPTIONS.FORBIDDEN;
@@ -30,6 +50,9 @@ export const handleAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
     return ctx.json(error, status);
   }
 
+  // --------------------------
+  // ZOD ERROR
+  // --------------------------
   if (err instanceof ZodError) {
     console.log("ZOD ERROR INSTANCE");
     message = getZodErrorMessage({ error: err });
@@ -46,6 +69,9 @@ export const handleAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
     return ctx.json(error, status);
   }
 
+  // --------------------------
+  // HTTP EXCEPTION
+  // --------------------------
   if (err instanceof HTTPException) {
     const httpError = err.getResponse();
 
@@ -53,7 +79,9 @@ export const handleAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
     if (status === 401) {
       message = EXCEPTIONS.NOT_AUTHORIZED;
     }
-    // const text = await httpError.text();
+    const text = await httpError.text();
+    console.log("❗ text -->", text);
+
     // const statusText = httpError.statusText;
     // console.log("Error is HTTPException");
     // console.log("httpError.status", httpError.status);

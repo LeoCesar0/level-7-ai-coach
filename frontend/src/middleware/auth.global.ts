@@ -3,34 +3,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     // --------------------------
     // SERVER SIDE
     // --------------------------
-    console.log("❗❗❗ Here SERVER SIDE");
-
-    const token = useAuthToken();
-
-    console.log("❗ server side token -->", !!token);
-
-    const userStore = useUser();
-    const { currentUser } = storeToRefs(userStore);
-    const { fetchCurrentUser } = userStore;
-    // console.log("❗ SERVER currentUser -->", currentUser.value);
-    // console.log("❗ SERVER resCurrentUser -->", resCurrentUser);
-
-    // const resCurrentUser = await fetchCurrentUser();
-
-    const { data, error } = await useFetch(
-      // "http://localhost:8000/api/auth/me",
-      "http://localhost:8000/api/playground",
-      {
-        headers: {
-          Authorization: "Bearer " + token.value,
-        },
-      }
-    );
-    console.log("❗ data.value -->", data.value);
-    console.log("❗ error.value -->", error.value);
-    // console.log("❗ SERVER currentUser -->", currentUser.value);
-    // console.log("❗ SERVER resCurrentUser -->", resCurrentUser);
-    console.log("------------");
 
     return;
   }

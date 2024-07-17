@@ -1,4 +1,5 @@
 import type { IUserFull } from "@common/schemas/userFull";
+import { EXCEPTION_CODE } from "@common/static/exceptions";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import type { ISignIn } from "~/@schemas/auth";
 import { makeStoreKey } from "~/helpers/makeStoreKey";
@@ -37,19 +38,27 @@ export const useUser = defineStore(makeStoreKey("users"), () => {
       currentUser.value = null;
       return null;
     }
-    const { data: res, error } = await fetchApi<IUserFull>({
+    const { response } = await fetchApi<IUserFull>({
       url: "/users/me",
       loadingRef: loading,
     });
-    if (res.value?.data) {
-      currentUser.value = res.value.data;
-      return currentUser.value;
-    } else {
-      currentUser.value = null;
-      toast.error("Error getting user");
-      console.error("❗ auth error -->", error.value, res.value?.error);
-      return null;
-    }
+
+    console.log("❗ HERE response -->", response);
+
+    // if (res.value?.data) {
+    //   currentUser.value = res.value.data;
+    //   return currentUser.value;
+    // }
+    // // --------------------------
+    // // CASE ERROR
+    // // --------------------------
+    // if (res.value?.error?.code === EXCEPTION_CODE.EXPIRED_TOKEN) {
+    //   console.log("❗❗❗ Here EXPIRED TOKEN");
+    //   tokenCookie.value = "";
+    // }
+    // currentUser.value = null;
+    // console.error("❗ auth error -->", error.value, res.value?.error);
+    // return null;
   };
 
   if (!isServerSide) {

@@ -2,34 +2,26 @@ import type { AppResponseError } from "@common/schemas/app";
 import { EXCEPTIONS, EXCEPTION_CODE } from "@common/static/exceptions";
 import { FirebaseError } from "firebase/app";
 
-export const handleUnexpectedError = ({
+export const handleApiError = ({
   error,
   errorMessage,
 }: {
-  error: any;
+  error: AppResponseError;
   errorMessage?: string;
 }): AppResponseError => {
-  let resData: AppResponseError;
+  let resError: AppResponseError = { ...error };
+  // const authCookie = useAuthToken()
 
-  if (error instanceof FirebaseError) {
-    error.code === EXCEPTION_CODE.INVALID_CREDENTIALS;
-    resData = {
+  if (error.error.code === EXCEPTION_CODE.EXPIRED_TOKEN) {
+    resError = {
       data: null,
       error: {
         _isAppError: true,
         message: EXCEPTIONS.SIGN_IN_INVALID,
       },
     };
-    return resData;
+    return resError;
   }
 
-  resData = {
-    data: null,
-    error: {
-      _isAppError: true,
-      message: errorMessage ?? EXCEPTIONS.REQUEST_ERROR,
-    },
-  };
-
-  return resData;
+  return resError;
 };

@@ -1,5 +1,4 @@
 import { type AppResponse } from "@common/schemas/app";
-import { EXCEPTIONS } from "@common/static/exceptions";
 import { handleUnexpectedError } from "~/handlers/handleUnexpectedError";
 
 export type ToastPromiseOptions<T> = {
@@ -24,7 +23,7 @@ export const useToast = () => {
   const handleToastPromise = async <T extends any>({
     promise,
     loadingMessage = "Loading",
-    defaultErrorMessage = EXCEPTIONS.SERVER_ERROR,
+    defaultErrorMessage,
     successMessage = "Success",
     loadingRef,
   }: ToastPromiseOptions<T>): Promise<AppResponse<T>> => {
@@ -53,9 +52,10 @@ export const useToast = () => {
         return results;
       })
       .catch((err) => {
+        console.log("❗ handleToastPromise catch -->", err);
         const error = handleUnexpectedError({
           error: err,
-          defaultMessage: defaultErrorMessage,
+          errorMessage: defaultErrorMessage,
         });
 
         toast.update(toastId, {
@@ -76,7 +76,7 @@ export const useToast = () => {
   const handleToastAnyPromise = async <T extends any>({
     promise,
     loadingMessage = "Loading",
-    defaultErrorMessage = EXCEPTIONS.SERVER_ERROR,
+    defaultErrorMessage,
     successMessage = "Success",
     loadingRef,
   }: ToastPromiseAnyOptions<T>): Promise<AppResponse<T>> => {
@@ -86,12 +86,11 @@ export const useToast = () => {
     }
     return promise
       .then((results: any) => {
-        console.log("❗ results -->", results);
         let res: AppResponse<T>;
         if (results?.error) {
           const errorRes = handleUnexpectedError({
             error: results?.error,
-            defaultMessage: defaultErrorMessage,
+            errorMessage: defaultErrorMessage,
           });
           toast.update(toastId, {
             render: errorRes.error.message,
@@ -115,10 +114,10 @@ export const useToast = () => {
         return res;
       })
       .catch((err) => {
-        console.log("❗ err -->", err);
+        console.log("❗ handleToastAnyPromise catch -->", err);
         const errorRes = handleUnexpectedError({
           error: err,
-          defaultMessage: defaultErrorMessage,
+          errorMessage: defaultErrorMessage,
         });
         toast.update(toastId, {
           render: errorRes.error?.message,

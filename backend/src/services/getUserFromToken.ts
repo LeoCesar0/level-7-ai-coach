@@ -1,20 +1,21 @@
+import { FirebaseAuthError } from "firebase-admin/auth";
 import { firebaseAuth } from "../lib/firebase";
 import { UserModel } from "../routes/users/schemas/user";
+import { Context } from "hono";
+import { EXCEPTION_CODE } from "@common/static/exceptions";
 
 export type IGetUserFromToken = {
   token: string;
+  ctx?: Context;
 };
 
-const exec = async ({ token }: IGetUserFromToken) => {
+const exec = async ({ token, ctx }: IGetUserFromToken) => {
   // if(process.env.NODE_ENV === ENV.TEST){
   //   const user = await
   // }
 
   try {
-    console.log("❗❗❗ Here  just before verify");
     const res = await firebaseAuth.verifyIdToken(token);
-
-    console.log("❗ res firebase -->", res);
 
     const user = await UserModel.findOne({
       firebaseId: res.uid,
@@ -22,6 +23,16 @@ const exec = async ({ token }: IGetUserFromToken) => {
     if (!user) return null;
     return user.toObject();
   } catch (err) {
+    console.log("❗ HERE! err -->", err);
+    if (err instanceof FirebaseAuthError) {
+      console.log("❗ err.code -->", err.code);
+      if (err.code === EXCEPTION_CODE.EXPIRED_TOKEN) {
+        if (ctx) {
+          ctx.set("expiredToken", true);
+          return null;
+        }
+      }
+    }
     return null;
   }
 };
