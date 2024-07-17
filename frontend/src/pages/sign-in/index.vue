@@ -16,37 +16,39 @@ const onSubmit = async (values: ISignIn) => {
 };
 </script>
 <template>
-  <h2 class="text-2xl font-medium mb-6">
-    Sign In: currentUser: {{ currentUser?.name }}
-  </h2>
-  <p>loading: {{ loading }}</p>
-  <p>token: {{ token }}</p>
-  <NuxtLink to="/dashboard">
-    <UiButton> To dashboard </UiButton>
-  </NuxtLink>
-  <UiAutoForm
-    :field-config="{
-      email: {
-        label: 'Email',
-      },
-      password: {
-        label: 'Password',
-        inputProps: {
-          type: 'password',
+  <NuxtLayout name="home-layout">
+    <h2 class="text-2xl font-medium mb-6">
+      Sign In: currentUser: {{ currentUser?.name }}
+    </h2>
+    <p>loading: {{ loading }}</p>
+    <p>token: {{ token }}</p>
+    <NuxtLink to="/dashboard">
+      <UiButton> To dashboard </UiButton>
+    </NuxtLink>
+    <UiAutoForm
+      :field-config="{
+        email: {
+          label: 'Email',
         },
-      },
-    }"
-    :schema="zSignIn"
-    @submit="
+        password: {
+          label: 'Password',
+          inputProps: {
+            type: 'password',
+          },
+        },
+      }"
+      :schema="zSignIn"
+      @submit="
       (values) => {
         onSubmit(values as ISignIn);
       }
     "
-  >
-    <div class="mt-4">
-      <UiButton type="submit"> Submit </UiButton>
-    </div>
-  </UiAutoForm>
+    >
+      <div class="mt-4">
+        <UiButton type="submit"> Submit </UiButton>
+      </div>
+    </UiAutoForm>
+  </NuxtLayout>
 </template>
 
 <style lang="scss" scoped>

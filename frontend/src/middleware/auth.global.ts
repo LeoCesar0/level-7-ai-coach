@@ -1,7 +1,5 @@
 import { compareRoute } from "~/helpers/compareRoute";
 import { ROUTE, ROUTES_LIST } from "~/static/routes";
-import {} from "firebase/auth";
-import fetch from "node-fetch";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const toPath: string = to.path;

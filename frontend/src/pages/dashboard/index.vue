@@ -8,7 +8,7 @@ const {} = useUserStore;
 </script>
 
 <template>
-  <NuxtLayout name="dashboard-layout" >
+  <NuxtLayout name="dashboard-layout">
     <div class="container">
       <h1>DASHBOARD</h1>
       <p>currentUser: {{ currentUser?.name }}</p>
