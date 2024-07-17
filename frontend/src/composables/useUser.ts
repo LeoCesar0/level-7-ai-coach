@@ -25,12 +25,6 @@ export const useUser = defineStore("@lvl7-users", () => {
       promise: signInWithEmailAndPassword(firebaseAuth, email, password),
       loadingRef: loading,
     });
-
-    console.log("❗ LOGIN response -->", response);
-
-    // if(response.data?.user){
-    //   const idToken = response.data.user.getIdToken()
-    // }
   };
 
   const logout = async () => {
@@ -47,19 +41,7 @@ export const useUser = defineStore("@lvl7-users", () => {
       loadingRef: loading,
     });
 
-    console.log("❗ FETCH USER response -->", response);
-
     return { response };
-    // // --------------------------
-    // // CASE ERROR
-    // // --------------------------
-    // if (res.value?.error?.code === EXCEPTION_CODE.EXPIRED_TOKEN) {
-    //   console.log("❗❗❗ Here EXPIRED TOKEN");
-    //   tokenCookie.value = "";
-    // }
-    // currentUser.value = null;
-    // console.error("❗ auth error -->", error.value, res.value?.error);
-    // return null;
   };
 
   const handleFetchCurrentUser = async (token: string) => {

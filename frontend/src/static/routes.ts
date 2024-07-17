@@ -25,3 +25,5 @@ export const ROUTE: Record<Route, IRoute> = {
     permissions: [],
   },
 };
+
+export const ROUTES_LIST: IRoute[] = Object.values(ROUTE)

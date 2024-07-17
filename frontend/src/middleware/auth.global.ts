@@ -1,4 +1,8 @@
+import { compareRoute } from "~/helpers/compareRoute";
+import { ROUTE, ROUTES_LIST } from "~/static/routes";
+
 export default defineNuxtRouteMiddleware(async (to, from) => {
+  const toPath: string = to.path;
   const isServerSide = typeof window === "undefined";
   if (isServerSide) {
     // --------------------------
@@ -11,7 +15,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   // --------------------------
   // CLIENT SIDE
   // --------------------------
-  console.log("❗❗❗ CLIENT SIDE SIDE ");
+  console.log("------------- 🟢 START CLIENT MIDDLEWARE -------------");
+  console.log("❗ toPath -->", toPath);
 
   const userStore = useUser();
   const { currentUser } = storeToRefs(userStore);
@@ -21,55 +26,54 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   // --------------------------
   // HANDLE CURRENT USER
   // --------------------------
+  console.log("❗ CLIENT token 1 -->", !!authToken.value);
   if (!currentUser.value && authToken.value) {
     await handleFetchCurrentUser(authToken.value);
   }
   if (currentUser.value && !authToken.value) {
     currentUser.value = null;
   }
-
-  // const resCurrentUser = await fetchCurrentUser();
-
-  // console.log("❗ CLIENT resCurrentUser -->", resCurrentUser);
+  // --------------------------
+  console.log("❗ CLIENT token 2 -->", !!authToken.value);
   console.log("❗ CLIENT currentUser -->", currentUser.value);
-  console.log("------------");
 
-  // if (!currentUser.value && authToken.value) {
-  //   const runtimeConfig = useRuntimeConfig();
-  //   const apiBaseURL = runtimeConfig.app.apiBaseURL;
-  //   const auth = new Auth({
-  //     apiBaseURL: apiBaseURL,
-  //     fetcher: commonFetcher,
-  //     onUserChange: (user) => {
-  //       currentUser.value = user;
-  //     },
-  //     token: authToken.value || undefined,
-  //   });
-  //   await auth.getAuthenticatedUser();
-  // }
+  // --------------------------
+  // HANDLE ROUTING
+  // --------------------------
 
-  // // --------------------------
-  // // HANDLE ROUTING
-  // // --------------------------
-  // abortNavigation;
-  // const toPath: string = to.path;
+  const currentPage = ROUTES_LIST.find((page) =>
+    compareRoute(page.href, toPath, {
+      ignoreQuery: true,
+      rootOnly: true,
+    })
+  );
 
-  // const currentPage = APP_PAGES.find((page) =>
-  //   compareRoute(page.link, toPath, {
-  //     ignoreQuery: true,
-  //     rootOnly: true,
-  //   })
-  // );
+  console.log("❗ currentPage -->", currentPage);
 
-  // if (currentPage?.link === APP_PAGE_LOGIN.link && currentUser.value) {
-  //   return navigateTo("/");
-  // }
+  const pagePermissions = currentPage?.permissions;
 
-  // if ((currentPage?.private || currentPage?.adminOnly) && !currentUser.value) {
-  //   return navigateTo("/login");
-  // }
+  if (currentPage?.href === ROUTE["sign-in"].href && currentUser.value) {
+    // --------------------------
+    // HAS SIGNED IN, REDIRECT TO DASHBOARD
+    // --------------------------
+    return navigateTo("/dashboard");
+  }
 
-  // if (currentPage?.adminOnly && currentUser.value?.role !== "admin") {
-  //   return abortNavigation();
-  // }
+  if (pagePermissions && !currentUser.value) {
+    // --------------------------
+    // ROUTE IS PROTECTED, USER IS NOT AUTHENTICATED
+    // --------------------------
+    return navigateTo(ROUTE["sign-in"].href);
+  }
+
+  if (pagePermissions && currentUser.value && pagePermissions.length > 0) {
+    // PAGE IS PROTECTED, ONLY SPECIFIED ROLES CAN ACCESS
+    const userCanAccess = pagePermissions.includes(currentUser.value.role);
+
+    if (!userCanAccess) {
+      return abortNavigation();
+    }
+  }
+
+  console.log("------------- 🔴 END CLIENT MIDDLEWARE -------------");
 });
