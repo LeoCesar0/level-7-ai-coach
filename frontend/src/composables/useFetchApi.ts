@@ -23,7 +23,6 @@ export const useFetchApi = () => {
   ): Promise<IFetchApiResponse<T>> => {
     const fullUrl = normalizeUrl(`${baseUrl}/${url}`);
     const token = authToken.value;
-    console.log("❗AHOY token -->", token);
 
     if (loadingRef) {
       loadingRef.value = true;

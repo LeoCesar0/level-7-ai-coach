@@ -5,6 +5,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   compatibilityDate: "2024-07-12",
   srcDir: "src/",
+  ssr: false,
   css: [
     "@/styles/globals.scss",
     "@/styles/utils.scss",

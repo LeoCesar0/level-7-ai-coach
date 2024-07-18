@@ -19,9 +19,7 @@ export const nuxtApiFetcher: ApiFetcher = async <T>({
     if (isServerSide) {
       url = url.replace("localhost", "backend");
     }
-    console.log("❗ isServerSide -->", isServerSide);
     console.log("❗ url -->", url);
-    console.log("❗ token -->", token);
     const res = await $fetch<AppResponse<T>>(url, {
       method: method,
       ...(body ? { body: body } : {}),

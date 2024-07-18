@@ -32,7 +32,6 @@ export const useUser = defineStore(makeStoreKey("users"), () => {
   };
 
   const fetchCurrentUser = async () => {
-    console.log("------------- 🟢 START SESSION  -------------");
     const { response } = await fetchApi<IUserFull>(
       {
         url: "/users/me",
@@ -47,10 +46,6 @@ export const useUser = defineStore(makeStoreKey("users"), () => {
   };
 
   const handleFetchCurrentUser = async () => {
-    console.log(
-      "------------- 🟢 START SESSION handleFetchCurrentUser -------------"
-    );
-    // authToken.value = token ?? ""; // SET TOKEN TO COOKIES
     const { response } = await fetchCurrentUser();
 
     if (response.data) {
@@ -62,15 +57,10 @@ export const useUser = defineStore(makeStoreKey("users"), () => {
       toast.error("You need to sign in again");
       currentUser.value = null;
     }
-    console.log("------------- 🔴 END handleFetchCurrentUser -------------");
   };
 
   if (!isServerSide) {
     firebaseAuth.onAuthStateChanged(async (user) => {
-      console.log(
-        "------------- 🟢 START SESSION onAuthStateChanged -------------"
-      );
-      console.log("❗ onAuthStateChanged user -->", user);
       if (user) {
         const token = await user.getIdToken();
         authToken.value = token;
@@ -78,7 +68,6 @@ export const useUser = defineStore(makeStoreKey("users"), () => {
         authToken.value = "";
         currentUser.value = null;
       }
-      console.log("------------- 🔴 END onAuthStateChanged -------------");
     });
   }
 

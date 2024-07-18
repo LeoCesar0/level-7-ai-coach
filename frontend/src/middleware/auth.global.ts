@@ -11,11 +11,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const authStore = useAuthToken();
   const { authToken } = storeToRefs(authStore);
 
-  // const { firebaseAuth } = useFirebase();
-  // await firebaseAuth.authStateReady();
-
-  console.log("❗ authToken.value -->", authToken.value);
-
   // --------------------------
   // HANDLE CURRENT USER
   // --------------------------
@@ -25,7 +20,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   if (currentUser.value && !authToken.value) {
     currentUser.value = null;
   }
-  console.log("❗ currentUser.value -->", currentUser.value?.name);
   // --------------------------
 
   // --------------------------

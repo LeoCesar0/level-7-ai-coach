@@ -15,9 +15,10 @@ const { logout } = userStore;
 
 const routes = computed<IRoute[]>(() => {
   if (!currentUser.value) return [];
-  return ROUTES_LIST.filter((route) => {
+  const list = ROUTES_LIST.filter((route) => {
     return route.inMenuFor && route.inMenuFor.includes(currentUser.value!.role);
   });
+  return list;
 });
 </script>
 

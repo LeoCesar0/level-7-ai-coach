@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import type { IRoute } from "~/static/routes";
+import { cn } from "../../lib/utils";
+
+const router = useRoute();
 
 type Props = {
   route: IRoute;
@@ -7,12 +10,26 @@ type Props = {
 };
 
 const props = defineProps<Props>();
+
+const isSelected = computed(() => {
+  return props.route.href && router.path.includes(props.route.href);
+});
 </script>
 
 <template>
   <NuxtLink :to="route.href">
     <li
-      class="px-6 py-8 border-border border-b flex items-center gap-6 transition-colors accent-hover"
+      :class="
+        cn(
+          [
+            'px-6 py-8 border-border border-b flex items-center gap-6 transition-colors pointer',
+          ],
+          {
+            'bg-primary/60 text-primary-foreground hover:bg-primary/80': isSelected,
+            'hover:bg-accent hover:text-accent-foreground': !isSelected,
+          }
+        )
+      "
       @click="
         () => {
           if (action) {

@@ -40,8 +40,9 @@ export const ROUTE: Record<Route, IRoute> = {
   },
   dashboard: {
     href: "/dashboard",
-    label: "Dashboard",
+    label: "Home",
     permissions: ["admin", "coach", "user"],
+    inMenuFor: ["admin", "coach", "user"],
     icon: DashboardIcon,
   },
   chat: {

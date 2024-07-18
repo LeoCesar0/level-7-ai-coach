@@ -8,25 +8,18 @@ const { currentUser } = storeToRefs(useUserStore);
 </script>
 
 <template>
-  <div class="flex debug-3 flex-1 relative pl-[w-[var(--drawer-width)]]">
+  <div class="flex flex-1 relative pl-[var(--drawer-width)]">
     <DashboardMenu />
-    <div class="flex-1 width-full">
-      <header
-        class="debug container h-[70px] flex items-center justify-between"
-      >
-        <div></div>
-        <div>{{ currentUser?.name }}</div>
-      </header>
-      <div class="layout-container debug-1">
+    <div class="flex-1 flex flex-col width-full py-8">
+      <!-- <DashboardHeader /> -->
+      <div class="p-4 flex-1 flex flex-col">
         <slot />
       </div>
-      <footer class="debug-2">footer</footer>
+      <!-- <DashboardFooter /> -->
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.layout-container {
-  width: 100%;
-}
+
 </style>
