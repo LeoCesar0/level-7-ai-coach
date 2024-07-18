@@ -21,8 +21,3 @@ const {} = useUserStore;
   </NuxtLayout>
 </template>
 
-<style lang="scss" scoped>
-.container {
-  width: 100%;
-}
-</style>

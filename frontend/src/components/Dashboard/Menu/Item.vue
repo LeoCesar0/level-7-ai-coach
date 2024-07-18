@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { IRoute } from "~/static/routes";
-import { cn } from "../../lib/utils";
-
+import { cn } from '../../../lib/utils';
+import { compareRoute } from '../../../helpers/compareRoute';
 const router = useRoute();
 
 type Props = {
@@ -12,7 +12,8 @@ type Props = {
 const props = defineProps<Props>();
 
 const isSelected = computed(() => {
-  return props.route.href && router.path.includes(props.route.href);
+  
+  return props.route.href && compareRoute(router.path, props.route.href);
 });
 </script>
 

@@ -4,7 +4,7 @@ import { ROUTE, type IRoute } from "~/static/routes";
 import { cn } from "~/lib/utils";
 import { APP_CONFIG } from "~/static/app";
 import {} from "@radix-icons/vue";
-import Logout from "../icons/Logout.vue";
+import Logout from "../../icons/Logout.vue";
 
 const dashboardStore = useDashboardStore();
 const { menuIsOpen } = storeToRefs(dashboardStore);
