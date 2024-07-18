@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import type { IRoute } from "~/static/routes";
-import { cn } from '../../../lib/utils';
-import { compareRoute } from '../../../helpers/compareRoute';
+import { cn } from "../../../lib/utils";
+import { compareRoute } from "../../../helpers/compareRoute";
 const router = useRoute();
 
 type Props = {
   route: IRoute;
   action?: () => void;
+  isLast?: boolean;
 };
 
 const props = defineProps<Props>();
 
 const isSelected = computed(() => {
-  
   return props.route.href && compareRoute(router.path, props.route.href);
 });
 </script>
@@ -23,11 +23,13 @@ const isSelected = computed(() => {
       :class="
         cn(
           [
-            'px-6 py-8 border-border border-b flex items-center gap-6 transition-colors pointer',
+            'px-6 py-6 border-border border-b flex items-center gap-6 transition-colors pointer',
           ],
           {
-            'bg-primary/60 text-primary-foreground hover:bg-primary/80': isSelected,
+            'bg-primary/60 text-primary-foreground hover:bg-primary/80':
+              isSelected,
             'hover:bg-accent hover:text-accent-foreground': !isSelected,
+            'border-b-0': !!isLast,
           }
         )
       "

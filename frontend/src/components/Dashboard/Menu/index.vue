@@ -33,15 +33,21 @@ const routes = computed<IRoute[]>(() => {
       ])
     "
   >
-    <header class="mb-8 py-4">
+    <header class="mb-8 py-4 px-4 space-y-4">
       <NuxtLink :to="ROUTE.dashboard.href">
-        <span
-          class="flex items-center gap-4 accent-hover transition-colors p-4"
-        >
+        <span class="flex items-center gap-4 transition-colors py-4">
           <Logo />
-          <span>{{ APP_CONFIG.title }}</span>
+          <span class="text-2xl tracking-wide font-bold">{{
+            APP_CONFIG.title
+          }}</span>
         </span>
       </NuxtLink>
+      <div className="">
+        <h3 class="text-base">
+          Hello,
+          <span class="font-semibold text-xl">{{ currentUser?.name }}</span> 👋
+        </h3>
+      </div>
     </header>
     <ul class="flex flex-col flex-1 pb-4">
       <template v-for="route in routes" :key="route.href">
@@ -56,6 +62,7 @@ const routes = computed<IRoute[]>(() => {
             label: 'Logout',
             icon: Logout,
           }"
+          :isLast="true"
           :action="
             () => {
               logout();
