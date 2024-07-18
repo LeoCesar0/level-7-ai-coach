@@ -11,6 +11,8 @@ export const handleAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
   let message = EXCEPTIONS.SERVER_ERROR;
   let status: StatusCode = 500;
 
+  console.log("❗ err -->", err);
+
   // @ts-ignore
   const forbiddenUser = ctx.get("forbiddenUser");
   // @ts-ignore

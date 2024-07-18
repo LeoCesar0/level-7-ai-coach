@@ -6,7 +6,7 @@ import {
 } from "./schemas/organization";
 import { routeValidator } from "../../middlewares/routeValidator";
 import { authValidator } from "../../middlewares/authValidator";
-import { zListRouteQueryInput } from "../../@schemas/listRoute";
+import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute";
 import {
   ICreateOrganization,
   zCreateOrganization,
@@ -29,7 +29,7 @@ const organizationsRoute = new Hono()
     "/list",
     authValidator({ permissionsTo: ["admin", "user", "coach"] }),
     routeValidator({
-      schema: zListRouteQueryInput,
+      schema: zPaginateRouteQueryInput,
       target: "json",
     }),
     async (ctx) => {
@@ -61,6 +61,10 @@ const organizationsRoute = new Hono()
       const id = ctx.req.param("id");
 
       const item = await OrganizationModel.findById(id);
+
+      if (!item) {
+        throw new HTTPException(404, { message: "Organization not found" });
+      }
 
       const resData: AppResponse<IOrganization> = {
         data: item,

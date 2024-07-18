@@ -10,7 +10,7 @@ import { HTTPException } from "hono/http-exception";
 import { updateUserRoute } from "./schemas/updateUserRoute";
 import cloneDeep from "lodash.clonedeep";
 import { OrganizationModel } from "../organizations/schemas/organization";
-import { zListRouteQueryInput } from "../../@schemas/listRoute";
+import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { getUserFull } from "../../services/getUserFull";
 import { USER_POPULATES } from "@/static/populates";
@@ -24,7 +24,7 @@ const userRoute = new Hono()
     "/list",
     authValidator({ permissionsTo: ["admin", "coach"] }),
     routeValidator({
-      schema: zListRouteQueryInput,
+      schema: zPaginateRouteQueryInput,
       target: "json",
     }),
     async (ctx) => {

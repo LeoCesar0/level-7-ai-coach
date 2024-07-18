@@ -6,7 +6,7 @@ import { zCreateJournal } from "./schemas/createJournal.js";
 import { authValidator } from "../../middlewares/authValidator.js";
 import { HTTPException } from "hono/http-exception";
 import { getUserFull } from "../../services/getUserFull.js";
-import { zListRouteQueryInput } from "../../@schemas/listRoute.js";
+import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute.js";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute.js";
 import { z } from "zod";
 import { zStringNotEmpty } from "../../@schemas/primitives/stringNotEmpty.js";
@@ -62,7 +62,7 @@ export const journalRoute = new Hono()
     "/list",
     authValidator({ permissionsTo: ["admin", "user", "coach"] }),
     routeValidator({
-      schema: zListRouteQueryInput,
+      schema: zPaginateRouteQueryInput,
       target: "json",
     }),
     async (ctx) => {

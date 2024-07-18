@@ -1,19 +1,25 @@
 <script setup lang="ts">
 import { PaperPlaneIcon } from "@radix-icons/vue";
+import { type IChat } from "../../../@types/chat";
 type Props = {};
 
 const props = defineProps<Props>();
-const useUserStore = useUser();
-const { currentUser } = storeToRefs(useUserStore);
-const {} = useUserStore;
+const userStore = useUserStore();
+const { currentUser } = storeToRefs(userStore);
+const {} = userStore;
+
+const chatStore = useChatStore();
+const { currentOpenChat } = storeToRefs(chatStore);
 
 const currentPrompt = ref<string>("");
-const charactersPerRow = 70;
 
 const nRows = computed(() => {
+  const charactersPerRow = 70;
   const rows = Math.ceil(currentPrompt.value.length / charactersPerRow);
   return Math.max(1, rows);
 });
+
+const handleSendMessage = () => {};
 </script>
 
 <template>
@@ -21,6 +27,7 @@ const nRows = computed(() => {
     <main
       class="flex-1 flex flex-col gap-4 container p-4 rounded-2xl items-center"
     >
+      <p>currentOpenChat: {{ currentOpenChat?._id }}</p>
       <div class="flex-1 flex flex-col w-full p-8">
         <ChatMessage
           :isCurrentUser="true"
@@ -38,7 +45,12 @@ const nRows = computed(() => {
           :tabindex="0"
           v-model="currentPrompt"
         />
-        <UiButton class="" variant="ghost" size="icon">
+        <UiButton
+          class=""
+          variant="ghost"
+          size="icon"
+          @click="handleSendMessage"
+        >
           <!-- <PaperPlaneIcon /> -->
           <ChatSendIcon />
         </UiButton>

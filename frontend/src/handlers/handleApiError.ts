@@ -11,10 +11,12 @@ export const handleApiError = ({
   let resError: AppResponseError = { ...error };
   const authStore = useAuthToken();
   const { authToken } = storeToRefs(authStore);
+  const { toast } = useToast();
 
   if (error.error.code === EXCEPTION_CODE.EXPIRED_TOKEN) {
-    console.log("❗ REMOVING TOKEN WHICH EXPIRED -->");
-    authToken.value = "";
+    toast.error("Your session has expired. Please sign in again.");
+    // console.log("❗ REMOVING TOKEN WHICH EXPIRED -->");
+    // authToken.value = "";
     resError = {
       data: null,
       error: {

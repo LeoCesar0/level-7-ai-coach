@@ -46,9 +46,9 @@ services:
     # networks:
     #   - level_7_network
 
-# networks:
-#   level_7_network:
-#     driver: bridge
-#     ipam:
-#       config:
-#         - subnet: 172.18.0.0/16
+    # networks:
+    #   level_7_network:
+    #     driver: bridge
+    #     ipam:
+    #       config:
+    #         - subnet: 172.18.0.0/16

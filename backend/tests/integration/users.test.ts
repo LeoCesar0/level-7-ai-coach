@@ -1,6 +1,6 @@
 import { EXCEPTIONS } from "@common/static/exceptions";
 import honoApp from "../../src";
-import { IPaginationResult } from "../../src/@schemas/pagination";
+import { IPaginationResult } from "@common/schemas/pagination";
 import { slugify } from "../../src/helpers/slugify";
 import { ArchetypeModel } from "../../src/routes/archetype/schemas/archetype";
 import {

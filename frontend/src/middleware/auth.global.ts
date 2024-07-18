@@ -4,7 +4,7 @@ import { ROUTE, ROUTES_LIST } from "~/static/routes";
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const toPath: string = to.path;
 
-  const userStore = useUser();
+  const userStore = useUserStore();
   const { currentUser } = storeToRefs(userStore);
   const { handleFetchCurrentUser } = userStore;
 

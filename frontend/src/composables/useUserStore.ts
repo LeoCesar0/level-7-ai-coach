@@ -6,7 +6,7 @@ import { makeStoreKey } from "~/helpers/makeStoreKey";
 import { sleep } from "~/helpers/sleep";
 import { ROUTE } from "~/static/routes";
 
-export const useUser = defineStore(makeStoreKey("users"), () => {
+export const useUserStore = defineStore(makeStoreKey("users"), () => {
   const { firebaseAuth } = useFirebase();
   const currentUser = ref<IUserFull | null>(null);
   const loading = ref(false);
@@ -17,6 +17,10 @@ export const useUser = defineStore(makeStoreKey("users"), () => {
 
   const authStore = useAuthToken();
   const { authToken } = storeToRefs(authStore);
+
+  watch(currentUser, async (newVal) => {
+    console.log("❗ currentUser -->", newVal);
+  });
 
   // const isServerSide = getIsServerSide();
   const isServerSide = typeof window === "undefined";
@@ -54,13 +58,14 @@ export const useUser = defineStore(makeStoreKey("users"), () => {
 
     if (!response.data) {
       console.error("❗ auth error -->", response.error);
-      toast.error("You need to sign in again");
+      // toast.error("You need to sign in again");
       currentUser.value = null;
     }
   };
 
   if (!isServerSide) {
     firebaseAuth.onAuthStateChanged(async (user) => {
+      console.log("❗ onAuthStateChanged -->", user);
       if (user) {
         const token = await user.getIdToken();
         authToken.value = token;

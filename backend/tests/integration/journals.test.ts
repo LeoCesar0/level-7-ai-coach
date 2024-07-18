@@ -1,6 +1,6 @@
 import { AppResponse } from "@common/schemas/app";
 import honoApp from "../../src";
-import { IPaginationResult } from "../../src/@schemas/pagination";
+import { IPaginationResult } from "@common/schemas/pagination";
 import { ICreateJournal } from "../../src/routes/journals/schemas/createJournal";
 import {
   JournalModel,

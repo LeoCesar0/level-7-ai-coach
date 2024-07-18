@@ -13,17 +13,127 @@ import { memoryVectorStore } from "../../lib/langchain/memoryVectorStore.js";
 import { createDocuments } from "../../services/langchain/createDocuments.js";
 import { ICreateMemoryMessage } from "../../@schemas/memory.js";
 import { getChatHistory } from "../../services/langchain/getChatHistory.js";
-import { StoredMessage } from "@langchain/core/messages";
 import { EXCEPTIONS } from "@common/static/exceptions.js";
 import { processChatAssessment } from "../../services/assessment/processChatAssessment.js";
 import { getUserFull } from "../../services/getUserFull.js";
-import mongoose, { Mongoose } from "mongoose";
 import { handleDBSession } from "../../handlers/handleDBSession.js";
 import { createNullishFilter } from "../../helpers/createNullishFilter";
 import { stringToDate } from "../../helpers/stringToDate.js";
 import { AppResponse } from "@common/schemas/app.js";
+import { IChatRole } from "@common/schemas/roles.js";
+import { IChatHistoryMessage } from "@common/schemas/chatHistory";
+import { ISendChatMessageResponse } from "@common/schemas/sendChatMessageResponse";
+import { handlePaginationRoute } from "@/handlers/handlePaginationRoute.js";
+import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute.js";
 
 export const chatRouter = new Hono()
+  // --------------------------
+  // LIST
+  // --------------------------
+  .post(
+    "/paginate",
+    authValidator({ permissionsTo: ["admin", "user", "coach"] }),
+    routeValidator({
+      schema: zPaginateRouteQueryInput,
+      target: "json",
+    }),
+    async (ctx) => {
+      const body = ctx.req.valid("json");
+      // @ts-ignore
+      const reqUser: IUser = ctx.get("reqUser");
+
+      let filters: (typeof body)["filters"] = body.filters ?? {};
+
+      if (reqUser.role === "coach") {
+        filters = {
+          ...filters,
+          organization: reqUser.organization.toString(),
+        };
+      } else if (reqUser.role === "user") {
+        filters = {
+          ...filters,
+          user: reqUser._id.toString(),
+        };
+      }
+
+      const resData = await handlePaginationRoute<IChat>({
+        model: ChatModel,
+        body: {
+          ...body,
+          filters: filters,
+        },
+        reqUser,
+        modelHasActive: false,
+      });
+
+      return ctx.json(resData, 200);
+    }
+  )
+  .get(
+    "/list",
+    // authValidator({ permissionsTo: ["admin", "coach", "user"] }),
+    async (ctx) => {
+      // @ts-ignore
+      const reqUser = ctx.get("reqUser") as IUser;
+      let list: IChat[] = [];
+
+      if (reqUser.role === "admin") {
+        list = await ChatModel.find();
+      } else if (reqUser.role === "coach") {
+        list = await ChatModel.find({ organization: reqUser.organization });
+      } else if (reqUser.role === "user") {
+        list = await ChatModel.find({ user: reqUser._id.toString() });
+      }
+
+      const resData: AppResponse<IChat[]> = {
+        data: list,
+        error: null,
+      };
+
+      return ctx.json(resData, 200);
+    }
+  )
+  .get(
+    "/history/:id",
+    routeValidator({
+      schema: z.object({
+        id: zStringNotEmpty,
+      }),
+      target: "param",
+    }),
+    authValidator(),
+    async (c) => {
+      const { id: chatId } = c.req.valid("param");
+
+      const chat = await ChatModel.findById(chatId);
+      if (!chat) {
+        throw new HTTPException(404, { message: "Chat not found" });
+      }
+
+      const chatHistory = getChatHistory({ chatId });
+
+      const baseMessages = await chatHistory.getMessages();
+
+      const messages = baseMessages.map((item) => item.toDict());
+
+      const historyMessages: IChatHistoryMessage[] = messages.map(
+        (item, index) => {
+          return {
+            chat: chatId.toString(),
+            message: item.data.content,
+            role: item.type as IChatRole,
+          };
+        }
+      );
+
+      const resData: AppResponse<IChatHistoryMessage[]> = {
+        data: historyMessages,
+        error: null,
+      };
+
+      return c.json(resData, 200);
+    }
+  )
   .get(
     "/:id",
     routeValidator({
@@ -52,30 +162,6 @@ export const chatRouter = new Hono()
 
       const resData: AppResponse<IChat> = {
         data: chat,
-        error: null,
-      };
-
-      return ctx.json(resData, 200);
-    }
-  )
-  .get(
-    "/list",
-    authValidator({ permissionsTo: ["admin", "coach", "user"] }),
-    async (ctx) => {
-      // @ts-ignore
-      const reqUser = ctx.get("reqUser") as IUser;
-      let list: IChat[] = [];
-
-      if (reqUser.role === "admin") {
-        list = await ChatModel.find();
-      } else if (reqUser.role === "coach") {
-        list = await ChatModel.find({ organization: reqUser.organization });
-      } else if (reqUser.role === "user") {
-        list = await ChatModel.find({ user: reqUser._id });
-      }
-
-      const resData: AppResponse<IChat[]> = {
-        data: list,
         error: null,
       };
 
@@ -153,7 +239,7 @@ export const chatRouter = new Hono()
         role,
       } = ctx.req.valid("json");
 
-      let resData: AppResponse<any>;
+      let resData: AppResponse<ISendChatMessageResponse>;
 
       const userTimestamp = new Date().toISOString();
 
@@ -271,43 +357,17 @@ export const chatRouter = new Hono()
 
       resData = {
         data: {
-          response,
-          closed: isEnding,
+          chatClosed: isEnding,
+          fullResponse: response,
+          reply: {
+            chat: chatId.toString(),
+            message: aiAnswer,
+            role: "assistant",
+          },
         },
         error: null,
       };
 
       return ctx.json(resData, 200);
-    }
-  )
-  .get(
-    "/history/:id",
-    routeValidator({
-      schema: z.object({
-        id: zStringNotEmpty,
-      }),
-      target: "param",
-    }),
-    authValidator(),
-    async (c) => {
-      const { id: chatId } = c.req.valid("param");
-
-      const exists = await ChatModel.findById(chatId);
-      if (!exists) {
-        throw new HTTPException(404, { message: "Chat not found" });
-      }
-
-      const chatHistory = getChatHistory({ chatId });
-
-      const baseMessages = await chatHistory.getMessages();
-
-      const messages = baseMessages.map((item) => item.toDict());
-
-      const resData: AppResponse<StoredMessage[]> = {
-        data: messages,
-        error: null,
-      };
-
-      return c.json(resData, 200);
     }
   );

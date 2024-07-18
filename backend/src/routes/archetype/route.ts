@@ -5,7 +5,7 @@ import { ArchetypeModel, IArchetype } from "./schemas/archetype";
 import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
 import { zCreateArchetype } from "./schemas/createArchetype";
-import { zListRouteQueryInput } from "../../@schemas/listRoute";
+import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { slugify } from "../../helpers/slugify";
 import { EXCEPTIONS } from "@common/static/exceptions";
@@ -178,7 +178,7 @@ const archetypeRoute = new Hono()
     "/list",
     authValidator({ permissionsTo: ["admin", "user", "coach"] }),
     routeValidator({
-      schema: zListRouteQueryInput,
+      schema: zPaginateRouteQueryInput,
       target: "json",
     }),
     async (ctx) => {

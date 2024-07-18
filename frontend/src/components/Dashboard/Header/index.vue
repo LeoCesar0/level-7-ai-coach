@@ -1,6 +1,6 @@
 <script setup lang="ts">
-const useUserStore = useUser();
-const { currentUser } = storeToRefs(useUserStore);
+const userStore = useUserStore();
+const { currentUser } = storeToRefs(userStore);
 </script>
 
 <template>

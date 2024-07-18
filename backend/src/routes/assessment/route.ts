@@ -8,7 +8,7 @@ import { HTTPException } from "hono/http-exception";
 import { IUserFull, UserModel } from "../users/schemas/user";
 import { processChatAssessment } from "../../services/assessment/processChatAssessment";
 import { handleDBSession } from "../../handlers/handleDBSession";
-import { zListRouteQueryInput } from "../../@schemas/listRoute";
+import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { processJournalsAssessment } from "../../services/assessment/processJournalsAssessment";
 import { stringToDate } from "../../helpers/stringToDate";
@@ -127,7 +127,7 @@ const assessmentRoute = new Hono()
     "/list",
     authValidator({ permissionsTo: ["admin", "user", "coach"] }),
     routeValidator({
-      schema: zListRouteQueryInput,
+      schema: zPaginateRouteQueryInput,
       target: "json",
     }),
     async (ctx) => {

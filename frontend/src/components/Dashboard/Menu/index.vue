@@ -9,7 +9,7 @@ import Logout from "../../icons/Logout.vue";
 const dashboardStore = useDashboardStore();
 const { menuIsOpen } = storeToRefs(dashboardStore);
 
-const userStore = useUser();
+const userStore = useUserStore();
 const { currentUser } = storeToRefs(userStore);
 const { logout } = userStore;
 

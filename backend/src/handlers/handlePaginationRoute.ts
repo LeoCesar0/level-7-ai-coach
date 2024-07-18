@@ -1,6 +1,6 @@
 import { FilterQuery, Model } from "mongoose";
-import { IPaginationBodyOutput } from "../@schemas/listRoute";
-import { IPaginationResult } from "../@schemas/pagination";
+import { IPaginationBodyOutput } from "@/@schemas/paginateRoute";
+import { IPaginationResult } from "@common/schemas/pagination";
 import { IUser } from "../routes/users/schemas/user";
 import { AppResponse } from "@common/schemas/app";
 

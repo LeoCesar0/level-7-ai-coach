@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { zSignIn, type ISignIn } from "@/@schemas/auth";
 
-const userStore = useUser();
+const userStore = useUserStore();
 const { currentUser, loading } = storeToRefs(userStore);
 const { login } = userStore;
 

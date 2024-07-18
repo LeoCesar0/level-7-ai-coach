@@ -1,5 +1,5 @@
 import honoApp from "../../src";
-import { IPaginationResult } from "../../src/@schemas/pagination";
+import { IPaginationResult } from "@common/schemas/pagination";
 import { IArchetype } from "../../src/routes/archetype/schemas/archetype";
 import { stubGetUserFromToken } from "../helpers/stubGetUserFromToken";
 import { ISeedResult, TestServer } from "../mongodb-memory-server";

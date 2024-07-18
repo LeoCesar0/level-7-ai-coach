@@ -17,5 +17,12 @@
     "esModuleInterop": true
   },
   "exclude": ["node_modules", "dist"],
-  "include": ["./src/**/*", "./src/**/*.ts", "**/*.ts", "**/*.js"]
+  "include": [
+    "./src/**/*",
+    "./src/**/*.ts",
+    "**/*.ts",
+    "**/*.js",
+    "src/@schemas/paginateRoute.ts",
+    "../common/schemas/pagination.ts"
+  ]
 }
