@@ -11,65 +11,82 @@ export const useChatStore = defineStore(makeStoreKey("chat"), () => {
   const { currentUser } = storeToRefs(userStore);
   const { toast } = useToast();
 
-  const currentOpenChat = ref<IChat | null>(null);
+  const currentChat = ref<IChat | null>(null);
+  const isLoading = ref(false);
+  const aiTyping = ref(false);
 
   const createNewChat = async () => {
     const body: ICreateChat = {
       date: new Date().toISOString(),
       user: currentUser.value?._id ?? "",
     };
-    const { response } = await fetchApi<IChat>({
-      method: "POST",
-      url: "/chats",
-      body: body,
-    });
-    console.log("❗ createNewChat response -->", response);
+    const { response } = await fetchApi<IChat>(
+      {
+        method: "POST",
+        url: "/chats",
+        body: body,
+      },
+      {
+        loadingRefs: [isLoading],
+      }
+    );
+    if (response.data) {
+      currentChat.value = response.data;
+    }
     return response;
   };
-  const sendChatMessage = async ({
-    message,
-    role = "user",
-    user,
-  }: ICreateMessage) => {
-    let chat = currentOpenChat.value?._id;
-
+  const sendChatMessage = async ({ message }: { message: string }) => {
+    const chat = currentChat.value?._id;
     if (!chat) {
-      const chatRes = await createNewChat();
-      if (!chatRes.data) {
-        toast.error("Failed to create chat");
-        return;
-      }
-      chat = chatRes.data._id;
+      toast("Failed to send message, chat was not created");
+      return;
     }
-
     const body: ICreateMessage = {
       chat,
       message,
-      user,
-      role,
+      user: currentUser.value?._id!,
+      role: "user",
     };
-    const { response } = await fetchApi<ISendChatMessageResponse>({
-      method: "POST",
-      url: "/chats/send",
-      body: body,
-    });
+    const { response } = await fetchApi<ISendChatMessageResponse>(
+      {
+        method: "POST",
+        url: "/chats/send",
+        body: body,
+      },
+      {
+        loadingRefs: [aiTyping],
+      }
+    );
+    if (response.data?.chatClosed && currentChat.value) {
+      currentChat.value.closed = true;
+    }
     console.log("❗ sendChatMessage response -->", response);
     return response;
   };
   const getChatHistory = async ({ chatId }: { chatId: string }) => {
-    const { response } = await fetchApi<IChatHistoryMessage[]>({
-      method: "GET",
-      url: "/chats/history/" + chatId,
-    });
+    const { response } = await fetchApi<IChatHistoryMessage[]>(
+      {
+        method: "GET",
+        url: "/chats/history/" + chatId,
+      },
+      {
+        loadingRefs: [isLoading],
+      }
+    );
     console.log("❗ getChatHistory response -->", response);
     return response;
   };
   const paginateChats = async <T = any>(body: IPaginationBody<T>) => {
-    const response = await fetchApi<IPaginationResult<IChat>>({
-      method: "POST",
-      url: "/chats/paginate",
-      body: body,
-    });
+    const response = await fetchApi<IPaginationResult<IChat>>(
+      {
+        method: "POST",
+        url: "/chats/paginate",
+        body: body,
+      },
+      {
+        loadingRefs: [isLoading],
+      }
+    );
     console.log("❗ paginateChats response -->", response);
     return response;
   };
@@ -83,7 +100,9 @@ export const useChatStore = defineStore(makeStoreKey("chat"), () => {
   };
 
   return {
-    currentOpenChat,
+    currentChat,
+    isLoading,
+    aiTyping,
     createNewChat,
     sendChatMessage,
     getChatHistory,

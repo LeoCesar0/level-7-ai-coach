@@ -4,9 +4,11 @@ import { debugLog } from "~/helpers/debugLog";
 import type { AppResponse } from "@common/schemas/app";
 import type { IApiFetcherOptions } from "~/@types/fetcher";
 import { nuxtApiFetcher } from "~/handlers/http/nuxtApiFetcher";
+import { isApiError } from "~/helpers/isApiError";
+import { handleApiError } from "~/handlers/handleApiError";
 
 export type IFetchApiExtraOptions = {
-  loadingRef?: Ref<boolean>;
+  loadingRefs?: Ref<boolean>[];
   showError?: boolean;
 };
 
@@ -17,17 +19,18 @@ export const useFetchApi = () => {
   const { authToken } = storeToRefs(authStore);
   const runtime = useRuntimeConfig();
   const baseUrl = runtime.public.apiBase;
+  const { toast } = useToast();
 
   const fetchApi = async <T>(
     { url, ...rest }: IApiFetcherOptions,
-    { loadingRef, showError = true }: IFetchApiExtraOptions = {}
+    { loadingRefs = [], showError = true }: IFetchApiExtraOptions = {}
   ): Promise<IFetchApiResponse<T>> => {
     const fullUrl = normalizeUrl(`${baseUrl}/${url}`);
     const token = authToken.value;
 
-    if (loadingRef) {
+    loadingRefs.forEach((loadingRef) => {
       loadingRef.value = true;
-    }
+    });
 
     // const fetcher = isServerSide ? serverApiFetcher : axiosApiFetcher;
     const fetcher = nuxtApiFetcher;
@@ -36,17 +39,28 @@ export const useFetchApi = () => {
     // CLIENT FETCHER
     // --------------------------
 
-    const res = await fetcher({
-      ...rest,
-      url: fullUrl,
-      token: token,
-    }).finally(() => {
-      if (loadingRef) {
-        loadingRef.value = false;
+    try {
+      const res = await fetcher({
+        ...rest,
+        url: fullUrl,
+        token: token,
+      });
+      return res;
+    } catch (err) {
+      console.error("❗ fetchApi Error -->", err);
+      const res = handleApiError({ err: err });
+      console.error("❗ fetchApi treated Error -->", res);
+      if (showError) {
+        toast.error(res.error.message);
       }
-    });
-
-    return res;
+      return {
+        response: res,
+      };
+    } finally {
+      loadingRefs.forEach((loadingRef) => {
+        loadingRef.value = false;
+      });
+    }
   };
 
   return {

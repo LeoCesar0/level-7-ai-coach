@@ -1,25 +1,64 @@
+import { ApiType } from '../../../../../backend/src/index';
 <script setup lang="ts">
-import { PaperPlaneIcon } from "@radix-icons/vue";
-import { type IChat } from "../../../@types/chat";
+// --------------------------
+// SETUP
+// --------------------------
 type Props = {};
-
 const props = defineProps<Props>();
+
 const userStore = useUserStore();
 const { currentUser } = storeToRefs(userStore);
 const {} = userStore;
 
 const chatStore = useChatStore();
-const { currentOpenChat } = storeToRefs(chatStore);
+const { currentChat, isLoading, aiTyping } = storeToRefs(chatStore);
+const { getOpenChats, sendChatMessage, createNewChat } = chatStore;
+
+const { toast } = useToast();
 
 const currentPrompt = ref<string>("");
 
+// --------------------------
+// COMPUTED
+// --------------------------
 const nRows = computed(() => {
   const charactersPerRow = 70;
   const rows = Math.ceil(currentPrompt.value.length / charactersPerRow);
   return Math.max(1, rows);
 });
 
-const handleSendMessage = () => {};
+const disabledChat = computed(() => {
+  return (
+    isLoading.value ||
+    aiTyping.value ||
+    !currentChat.value ||
+    currentChat.value.closed
+  );
+});
+
+// --------------------------
+// HANDLERS
+// --------------------------
+
+getOpenChats().then((res) => {
+  if (res.data) {
+    const chat = res.data.list[0];
+    if (chat) {
+      currentChat.value = chat;
+    }
+  }
+});
+
+const handleSendMessage = async () => {
+  if (!currentChat.value) {
+    const chatRes = await createNewChat();
+    if (!chatRes.data) {
+      toast.error("Failed to create chat");
+      return;
+    }
+  }
+  sendChatMessage({ message: currentPrompt.value });
+};
 </script>
 
 <template>
@@ -27,7 +66,7 @@ const handleSendMessage = () => {};
     <main
       class="flex-1 flex flex-col gap-4 container p-4 rounded-2xl items-center"
     >
-      <p>currentOpenChat: {{ currentOpenChat?._id }}</p>
+      <p>currentChat: {{ currentChat?._id }}</p>
       <div class="flex-1 flex flex-col w-full p-8">
         <ChatMessage
           :isCurrentUser="true"
@@ -44,12 +83,14 @@ const handleSendMessage = () => {};
           :rows="nRows"
           :tabindex="0"
           v-model="currentPrompt"
+          :disabled="disabledChat"
         />
         <UiButton
           class=""
           variant="ghost"
           size="icon"
           @click="handleSendMessage"
+          :disabled="disabledChat"
         >
           <!-- <PaperPlaneIcon /> -->
           <ChatSendIcon />

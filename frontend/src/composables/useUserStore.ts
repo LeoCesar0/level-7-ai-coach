@@ -42,7 +42,7 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
         method: "GET",
       },
       {
-        loadingRef: loading,
+        loadingRefs: [loading],
       }
     );
 
