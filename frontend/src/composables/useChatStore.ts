@@ -1,5 +1,6 @@
 import type { IChatHistoryMessage } from "@common/schemas/chatHistory";
 import type { IPaginationBody } from "@common/schemas/paginateRoute";
+import type { IPaginationResult } from "@common/schemas/pagination";
 import type { ISendChatMessageResponse } from "@common/schemas/sendChatMessageResponse";
 import type { IChat, ICreateChat, ICreateMessage } from "~/@types/chat";
 import { makeStoreKey } from "~/helpers/makeStoreKey";
@@ -63,13 +64,21 @@ export const useChatStore = defineStore(makeStoreKey("chat"), () => {
     console.log("❗ getChatHistory response -->", response);
     return response;
   };
-  const paginateChats = async (body: IPaginationBody) => {
-    const { response } = await fetchApi<ISendChatMessageResponse>({
+  const paginateChats = async <T = any>(body: IPaginationBody<T>) => {
+    const response = await fetchApi<IPaginationResult<IChat>>({
       method: "POST",
       url: "/chats/paginate",
       body: body,
     });
     console.log("❗ paginateChats response -->", response);
+    return response;
+  };
+  const getOpenChats = async () => {
+    const { response } = await paginateChats<IChat>({
+      filters: {
+        closed: false,
+      },
+    });
     return response;
   };
 
@@ -79,5 +88,6 @@ export const useChatStore = defineStore(makeStoreKey("chat"), () => {
     sendChatMessage,
     getChatHistory,
     paginateChats,
+    getOpenChats,
   };
 });

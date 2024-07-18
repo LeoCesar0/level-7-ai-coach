@@ -26,6 +26,7 @@ import { ISendChatMessageResponse } from "@common/schemas/sendChatMessageRespons
 import { handlePaginationRoute } from "@/handlers/handlePaginationRoute.js";
 import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute.js";
 
+
 export const chatRouter = new Hono()
   // --------------------------
   // LIST
@@ -71,7 +72,7 @@ export const chatRouter = new Hono()
   )
   .get(
     "/list",
-    // authValidator({ permissionsTo: ["admin", "coach", "user"] }),
+    authValidator({ permissionsTo: ["admin", "coach", "user"] }),
     async (ctx) => {
       // @ts-ignore
       const reqUser = ctx.get("reqUser") as IUser;

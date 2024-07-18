@@ -7,6 +7,7 @@ import { nuxtApiFetcher } from "~/handlers/http/nuxtApiFetcher";
 
 export type IFetchApiExtraOptions = {
   loadingRef?: Ref<boolean>;
+  showError?: boolean;
 };
 
 export type IFetchApiResponse<T> = { response: AppResponse<T> };
@@ -19,7 +20,7 @@ export const useFetchApi = () => {
 
   const fetchApi = async <T>(
     { url, ...rest }: IApiFetcherOptions,
-    { loadingRef }: IFetchApiExtraOptions = {}
+    { loadingRef, showError = true }: IFetchApiExtraOptions = {}
   ): Promise<IFetchApiResponse<T>> => {
     const fullUrl = normalizeUrl(`${baseUrl}/${url}`);
     const token = authToken.value;
@@ -44,6 +45,7 @@ export const useFetchApi = () => {
         loadingRef.value = false;
       }
     });
+
     return res;
   };
 

@@ -35,7 +35,7 @@ export const axiosApiFetcher: ApiFetcher = async <T>({
       const resData: AppResponseError = err.response.data;
       const resError = handleApiError({ error: resData });
       console.error("❗ fetchApi axis error -->", err.response, resError);
-
+      
       return {
         response: resError,
       };

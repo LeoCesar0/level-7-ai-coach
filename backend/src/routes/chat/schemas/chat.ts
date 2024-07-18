@@ -6,8 +6,8 @@ import { IUser } from "../../users/schemas/user";
 
 export const zChatSchema = zCreateChat.merge(zMongoDocument).merge(
   z.object({
-    closed: z.boolean().optional(),
-    assessed: z.boolean().optional(),
+    closed: z.boolean(),
+    assessed: z.boolean(),
   })
 );
 
@@ -26,9 +26,11 @@ const chatSchema = new mongoose.Schema<IChat>(
     },
     closed: {
       type: Boolean,
+      default: false,
     },
     assessed: {
       type: Boolean,
+      default: false,
     },
   },
   {
