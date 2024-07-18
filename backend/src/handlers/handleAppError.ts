@@ -20,6 +20,7 @@ export const handleAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
   // INVALID TOKEN
   // --------------------------
   if (invalidToken) {
+    console.log("❗❗❗ Here Invalid token error");
     status = 401;
     const error: AppResponse = {
       error: {

@@ -1,37 +1,38 @@
 import type { IUserFull } from "@common/schemas/userFull";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import type { ISignIn } from "~/@schemas/auth";
+import { handleUnexpectedError } from "~/handlers/handleUnexpectedError";
 import { makeStoreKey } from "~/helpers/makeStoreKey";
+import { sleep } from "~/helpers/sleep";
+import { ROUTE } from "~/static/routes";
 
 export const useUser = defineStore(makeStoreKey("users"), () => {
   const { firebaseAuth } = useFirebase();
   const currentUser = ref<IUserFull | null>(null);
   const loading = ref(false);
   const { handleToastAnyPromise } = useToast();
-  const tokenCookie = useAuthToken();
   const { fetchApi } = useFetchApi();
   const { toast } = useToast();
+  const route = useRoute();
+
+  const authStore = useAuthToken();
+  const { authToken } = storeToRefs(authStore);
 
   // const isServerSide = getIsServerSide();
   const isServerSide = typeof window === "undefined";
-
-  const login = async (values: ISignIn) => {
-    const { email, password } = values;
-    const response = await handleToastAnyPromise({
-      promise: signInWithEmailAndPassword(firebaseAuth, email, password),
-      loadingRef: loading,
-    });
-  };
 
   const logout = async () => {
     loading.value = true;
     try {
       await firebaseAuth.signOut();
+      authToken.value = "";
     } catch (error) {}
+    navigateTo(ROUTE["sign-in"].href);
     loading.value = false;
   };
 
   const fetchCurrentUser = async () => {
+    console.log("------------- 🟢 START SESSION  -------------");
     const { response } = await fetchApi<IUserFull>(
       {
         url: "/users/me",
@@ -45,12 +46,11 @@ export const useUser = defineStore(makeStoreKey("users"), () => {
     return { response };
   };
 
-  const handleFetchCurrentUser = async (token: string) => {
+  const handleFetchCurrentUser = async () => {
     console.log(
       "------------- 🟢 START SESSION handleFetchCurrentUser -------------"
     );
-    console.log("❗ handleFetchCurrentUser token -->", !!token);
-    // tokenCookie.value = token ?? ""; // SET TOKEN TO COOKIES
+    // authToken.value = token ?? ""; // SET TOKEN TO COOKIES
     const { response } = await fetchCurrentUser();
 
     if (response.data) {
@@ -73,14 +73,33 @@ export const useUser = defineStore(makeStoreKey("users"), () => {
       console.log("❗ onAuthStateChanged user -->", user);
       if (user) {
         const token = await user.getIdToken();
-        tokenCookie.value = token;
+        authToken.value = token;
       } else {
-        tokenCookie.value = "";
+        authToken.value = "";
         currentUser.value = null;
       }
       console.log("------------- 🔴 END onAuthStateChanged -------------");
     });
   }
+
+  const login = async (values: ISignIn) => {
+    const { email, password } = values;
+    loading.value = true;
+    try {
+      const res = await signInWithEmailAndPassword(
+        firebaseAuth,
+        email,
+        password
+      );
+      navigateTo(ROUTE.dashboard.href);
+    } catch (err) {
+      console.log("❗ err -->", err);
+      const error = handleUnexpectedError({ error: err });
+      toast.error(error.error.message);
+    }
+
+    loading.value = false;
+  };
 
   return {
     currentUser,

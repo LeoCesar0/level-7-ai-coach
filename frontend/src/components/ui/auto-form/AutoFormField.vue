@@ -39,6 +39,7 @@ const { isDisabled, isHidden, isRequired, overrideOptions } = useDependencies(pr
     :disabled="isDisabled"
     :config="config"
     v-bind="delegatedProps"
+    class='mb-4'
   >
     <slot />
   </component>

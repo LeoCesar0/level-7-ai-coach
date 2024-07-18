@@ -11,6 +11,7 @@ const { menuIsOpen } = storeToRefs(dashboardStore);
 
 const userStore = useUser();
 const { currentUser } = storeToRefs(userStore);
+const { logout } = userStore;
 
 const routes = computed<IRoute[]>(() => {
   if (!currentUser.value) return [];
@@ -54,6 +55,11 @@ const routes = computed<IRoute[]>(() => {
             label: 'Logout',
             icon: Logout,
           }"
+          :action="
+            () => {
+              logout();
+            }
+          "
         />
       </div>
     </ul>

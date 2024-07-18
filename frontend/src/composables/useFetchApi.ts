@@ -12,18 +12,18 @@ export type IFetchApiExtraOptions = {
 export type IFetchApiResponse<T> = { response: AppResponse<T> };
 
 export const useFetchApi = () => {
-  const tokenCookie = useAuthToken();
+  const authStore = useAuthToken();
+  const { authToken } = storeToRefs(authStore);
   const runtime = useRuntimeConfig();
   const baseUrl = runtime.public.apiBase;
 
   const fetchApi = async <T>(
-    { token: defaultToken, url, ...rest }: IApiFetcherOptions,
+    { url, ...rest }: IApiFetcherOptions,
     { loadingRef }: IFetchApiExtraOptions = {}
   ): Promise<IFetchApiResponse<T>> => {
-    const fullUrl = normalizeUrl(
-      `${baseUrl.replace("localhost", "backend")}/${url}`
-    );
-    const token = defaultToken ?? tokenCookie.value;
+    const fullUrl = normalizeUrl(`${baseUrl}/${url}`);
+    const token = authToken.value;
+    console.log("❗AHOY token -->", token);
 
     if (loadingRef) {
       loadingRef.value = true;

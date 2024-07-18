@@ -4,7 +4,6 @@ import type {
   IApiFetcherOptions,
   IApiFetcherResponse,
 } from "~/@types/fetcher";
-import { handleApiError } from "../handleApiError";
 import { handleUnexpectedError } from "../handleUnexpectedError";
 
 export const nuxtApiFetcher: ApiFetcher = async <T>({
@@ -14,8 +13,16 @@ export const nuxtApiFetcher: ApiFetcher = async <T>({
   contentType,
   token,
 }: IApiFetcherOptions): Promise<IApiFetcherResponse<T>> => {
+  console.log("------------- 🟢 START SESSION nuxtApiFetcher -------------");
   try {
-    const { data, error } = await useFetch<AppResponse<T>>(url, {
+    const isServerSide = typeof window === "undefined";
+    if (isServerSide) {
+      url = url.replace("localhost", "backend");
+    }
+    console.log("❗ isServerSide -->", isServerSide);
+    console.log("❗ url -->", url);
+    console.log("❗ token -->", token);
+    const res = await $fetch<AppResponse<T>>(url, {
       method: method,
       ...(body ? { body: body } : {}),
       headers: {
@@ -24,27 +31,17 @@ export const nuxtApiFetcher: ApiFetcher = async <T>({
       },
     });
 
-    if (data.value) {
-      return {
-        response: data.value,
-      };
-    }
-    if (error.value?.data?.error?._isAppError) {
-      const resData: AppResponseError = error.value.data;
-      const resError = handleApiError({ error: resData });
-
-      return {
-        response: resError,
-      };
-    }
-
-    throw new Error("❗ useFetchApiFetcher unexpected error");
+    return {
+      response: res,
+    };
   } catch (err) {
-    console.error("❗ fetchApi server unexpected error -->", err);
+    console.error("❗ nuxtApi server unexpected error -->", err);
     const error = handleUnexpectedError({ error: err });
+    console.error("❗ nuxtApi server treated error -->", error);
     return {
       response: error,
     };
   } finally {
+    console.log("------------- 🔴 END nuxtApiFetcher -------------");
   }
 };

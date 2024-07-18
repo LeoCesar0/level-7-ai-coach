@@ -17,14 +17,7 @@ const onSubmit = async (values: ISignIn) => {
 </script>
 <template>
   <NuxtLayout name="home-layout">
-    <h2 class="text-2xl font-medium mb-6">
-      Sign In: currentUser: {{ currentUser?.name }}
-    </h2>
-    <p>loading: {{ loading }}</p>
-    <p>token: {{ token }}</p>
-    <NuxtLink to="/dashboard">
-      <UiButton> To dashboard </UiButton>
-    </NuxtLink>
+    <h2 class="text-2xl font-medium mb-6">Sign In</h2>
     <UiAutoForm
       :field-config="{
         email: {
