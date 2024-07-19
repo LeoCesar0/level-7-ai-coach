@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { type IChat } from "@common/schemas/chat";
 import { ROUTE } from "../../../static/routes";
-const { createNewChat, getOpenChats } = useChat();
+import { stringToDate } from "@common/helpers/stringToDate";
+const { createNewChat, getOpenChats, getChats } = useChat();
 
 const openChat = ref<IChat | null>(null);
+const closedChats = ref<IChat[]>([]);
 
 onMounted(() => {
-  getOpenChats().then((res) => {
-    const chat = res.data?.list[0];
-    if (chat) {
-      openChat.value = chat;
+  getChats().then((res) => {
+    closedChats.value = res.data?.list.filter((chat) => chat.closed) ?? [];
+    const open = res.data?.list.find((chat) => !chat.closed);
+    if (open) {
+      openChat.value = open;
     }
   });
 });
@@ -24,25 +27,31 @@ const handleCreateNewChat = async () => {
     navigateTo(ROUTE.chat.href + `/${response.data._id}`);
   }
 };
+
+const getChatTitle = (chat: IChat) => {
+  const date = stringToDate(chat.date);
+  return `Chat ${date.toLocaleString()}`;
+};
 </script>
 
 <template>
   <NuxtLayout name="dashboard-layout">
-    <main class="flex flex-1 items-center justify-center">
-      <UiCard
-        class="size-[250px] p-8 flex-center pointer accent-hover transition-all"
-        @click="handleCreateNewChat"
-        v-if="!openChat"
-      >
-        <h1 class="text-2xl">New Chat</h1>
-      </UiCard>
-      <UiCard
-        class="size-[250px] p-8 flex-center pointer accent-hover transition-all"
-        @click="continueChat"
-        v-if="openChat"
-      >
-        <h1 class="text-2xl">Continue Chat</h1>
-      </UiCard>
+    <main class="flex container flex-col flex-1 justify-center gap-6">
+      <div class="">
+        <ChatCard
+          @click="handleCreateNewChat"
+          v-if="!openChat"
+          title="New Chat"
+        />
+        <ChatCard @click="continueChat" v-if="openChat" title="Continue Chat" />
+      </div>
+      <div class="flex items-center gap-4 flex-wrap">
+        <ChatCard
+          v-for="(chat, index) in closedChats"
+          @click="navigateTo(ROUTE.chat.href + `/${chat._id}`)"
+          :title="getChatTitle(chat)"
+        />
+      </div>
     </main>
   </NuxtLayout>
 </template>

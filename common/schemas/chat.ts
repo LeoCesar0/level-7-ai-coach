@@ -2,7 +2,7 @@ import type { IMessageType } from "./chatHistory";
 
 export type IChat = {
   user: string;
-  date: Date;
+  date: string | Date;
   _id: string;
   createdAt: string;
   updatedAt: string;
