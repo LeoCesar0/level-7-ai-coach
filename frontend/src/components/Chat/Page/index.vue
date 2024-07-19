@@ -115,6 +115,15 @@ onMounted(async () => {
         :key="`${index}-${message.role}-${message.message.slice(0, 10)}`"
         :message="message"
       />
+      <ChatMessage
+        v-if="aiTyping"
+        :message="{
+          chat: '123',
+          message: '',
+          role: 'ai',
+        }"
+        :is-typing="true"
+      />
     </div>
     <UiCard
       class="shadow-lg py-4 px-8 w-full max-w-[800px] rounded-full flex items-center gap-4"
