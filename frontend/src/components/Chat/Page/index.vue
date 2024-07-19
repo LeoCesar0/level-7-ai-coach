@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ROUTE } from "~/static/routes";
+import { type IChatHistoryMessage } from "@common/schemas/chatHistory";
 // --------------------------
 // SETUP
 // --------------------------
@@ -20,7 +21,6 @@ const {
   currentChat,
   isLoading,
   aiTyping,
-  messages,
   sendChatMessage,
   createNewChat,
   getChat,
@@ -30,6 +30,7 @@ const {
 const { toast } = useToast();
 
 const currentPrompt = ref<string>("");
+const messages = ref<IChatHistoryMessage[]>([]);
 
 // --------------------------
 // COMPUTED
@@ -62,18 +63,15 @@ const handleGetHistory = async () => {
 };
 
 const handleSendMessage = async () => {
-  if (disabledChat) return;
+  if (disabledChat.value) return;
 
-  if (!currentChat.value) {
-    const chatRes = await createNewChat();
-    if (!chatRes.data) {
-      toast.error("Failed to create chat");
-      return;
-    }
-  }
   const response = await sendChatMessage({ message: currentPrompt.value });
   if (response?.data?.chatClosed && currentChat.value) {
     currentChat.value.closed = true;
+  }
+  if (response?.data) {
+    const reply = response.data.reply;
+    messages.value.push(reply);
   }
   currentPrompt.value = "";
 };
@@ -106,7 +104,7 @@ onMounted(async () => {
   >
     <p>chatId: {{ chatId }}</p>
     <p>currentChat: {{ currentChat?._id }}</p>
-    <div class="flex-1 flex flex-col w-full p-8">
+    <div class="flex-1 flex flex-col w-full p-8 space-y-4">
       <ChatMessage
         v-for="(message, index) in messages"
         :key="`${index}-${message.role}-${message.message.slice(0, 10)}`"
@@ -122,6 +120,12 @@ onMounted(async () => {
         :tabindex="0"
         v-model="currentPrompt"
         :disabled="disabledChat"
+        @keyup.enter="
+          () => {
+            console.log('❗❗❗ Here ENTER');
+            handleSendMessage();
+          }
+        "
       />
       <UiButton
         class=""

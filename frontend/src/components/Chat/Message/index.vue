@@ -10,8 +10,10 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const userName = props.message.role === 'assistant' ? 'AI Coach' : currentUser.value?.name ?? ''
-
+const userName =
+  props.message.role === "assistant"
+    ? "AI Coach"
+    : currentUser.value?.name ?? "";
 </script>
 
 <template>
@@ -19,7 +21,9 @@ const userName = props.message.role === 'assistant' ? 'AI Coach' : currentUser.v
     <div class="flex flex-col gap-2">
       <ChatMessageUser :userName="userName" :date="''" />
       <div class="bg-muted p-2 rounded-md">
-        <p class="text-sm text-muted-foreground">{{ props.message.message }}</p>
+        <p class="text-sm text-muted-foreground">
+          {{ props.message.message }}
+        </p>
       </div>
     </div>
   </div>
