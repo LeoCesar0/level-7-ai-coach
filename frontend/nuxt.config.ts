@@ -21,6 +21,7 @@ export default defineNuxtConfig({
     // "@common/*": "./../common/*",
     // "@common": resolve(__dirname, "./common"),
     "@common": resolve(__dirname, "./../common"),
+    "@lib": resolve(__dirname, "./src/lib"),
   },
   shadcn: {
     // prefix: "Shad",

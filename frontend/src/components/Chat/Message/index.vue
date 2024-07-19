@@ -27,20 +27,20 @@ const userName = isHuman ? currentUser.value?.name ?? "" : "AI Coach";
     "
   >
     <div :class="cn('flex flex-col gap-2')">
-      <ChatMessageUser :userName="userName" :date="''" />
+      <ChatMessageUser :userName="userName" :date="''" :right="isHuman" />
       <div class="bg-muted p-2 rounded-md">
         <p v-if="!isTyping" class="text-sm text-muted-foreground">
           {{ props.message.message }}
         </p>
         <div v-else class="flex gap-2 items-center">
           <div
-            class="w-4 h-4 bg-muted-foreground rounded-full animate-bounce"
+            class="w-3 h-3 bg-muted-foreground rounded-full animate-bounce"
           ></div>
           <div
-            class="w-4 h-4 bg-muted-foreground rounded-full animate-bounce animate-delay-150"
+            class="w-3 h-3 bg-muted-foreground rounded-full animate-bounce animate-delay-150"
           ></div>
           <div
-            class="w-4 h-4 bg-muted-foreground rounded-full animate-bounce animate-delay-300"
+            class="w-3 h-3 bg-muted-foreground rounded-full animate-bounce animate-delay-300"
           ></div>
         </div>
       </div>

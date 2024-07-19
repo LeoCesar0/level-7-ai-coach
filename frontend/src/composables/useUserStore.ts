@@ -19,21 +19,29 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
   const { authToken } = storeToRefs(authStore);
 
   watch(currentUser, async (newVal) => {
-    console.log("❗ currentUser -->", newVal);
+    console.log("❗ watch currentUser -->", newVal);
+
+    if ((newVal && route.path === "/") || route.path === "/sign-in") {
+      await navigateTo(ROUTE.dashboard.href);
+    }
   });
 
   // const isServerSide = getIsServerSide();
   const isServerSide = typeof window === "undefined";
 
-  const logout = async () => {
+  const logout = async ({ expired }: { expired?: boolean }) => {
     loading.value = true;
     try {
       await firebaseAuth.signOut();
       authToken.value = "";
       currentUser.value = null;
     } catch (error) {}
-    navigateTo(ROUTE["sign-in"].href);
+    await navigateTo(ROUTE["sign-in"].href);
+    if (expired) {
+      toast.error("Your session has expired. Please sign in again.");
+    }
     loading.value = false;
+    await nextTick();
   };
 
   const fetchCurrentUser = async () => {
@@ -107,8 +115,7 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
   };
 
   const handleSessionExpired = () => {
-    logout();
-    toast.error("Your session has expired. Please sign in again.");
+    logout({ expired: true });
   };
 
   return {

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ROUTE } from "~/static/routes";
 import { type IChatHistoryMessage } from "@common/schemas/chatHistory";
+
 // --------------------------
 // SETUP
 // --------------------------
@@ -63,9 +64,9 @@ const handleGetHistory = async () => {
 };
 
 const handleSendMessage = async () => {
-  if (disabledChat.value) return;
   const chatId = currentChat.value?._id;
-  if (!chatId) return;
+  if (!chatId || disabledChat.value || !currentPrompt.value) return;
+
   const mes: IChatHistoryMessage = {
     chat: chatId,
     message: currentPrompt.value,
@@ -107,9 +108,9 @@ onMounted(async () => {
 
 <template>
   <main
-    class="flex-1 flex flex-col gap-4 container p-4 rounded-2xl items-center max-w-[890px]"
+    class="flex-1 flex flex-col gap-4 container p-4 rounded-2xl items-center max-w-[890px] relative"
   >
-    <div class="flex-1 flex flex-col w-full p-8 space-y-4">
+    <div class="flex-1 flex flex-col w-full p-8 space-y-6">
       <ChatMessage
         v-for="(message, index) in messages"
         :key="`${index}-${message.role}-${message.message.slice(0, 10)}`"
@@ -126,7 +127,7 @@ onMounted(async () => {
       />
     </div>
     <UiCard
-      class="shadow-lg py-4 px-8 w-full max-w-[800px] rounded-full flex items-center gap-4"
+      class="shadow-lg py-4 px-8 w-full max-w-[800px] rounded-full flex items-center gap-4 sticky bottom-12"
     >
       <UiTextarea
         class="w-full py-0 font-normal border-none shadow-none focus-visible:ring-0 text-lg resize-none max-h-[80px]"
@@ -134,19 +135,15 @@ onMounted(async () => {
         :tabindex="0"
         v-model="currentPrompt"
         :disabled="disabledChat"
-        @keyup.enter="
-          () => {
-            console.log('❗❗❗ Here ENTER');
-            handleSendMessage();
-          }
-        "
+        @keydown.enter.exact.prevent="handleSendMessage"
       />
       <UiButton
         class=""
         variant="ghost"
         size="icon"
-        @click="handleSendMessage"
         :disabled="disabledChat"
+        type="submit"
+        @click="handleSendMessage"
       >
         <!-- <PaperPlaneIcon /> -->
         <ChatSendIcon />
