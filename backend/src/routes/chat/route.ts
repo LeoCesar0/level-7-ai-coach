@@ -20,12 +20,10 @@ import { handleDBSession } from "../../handlers/handleDBSession.js";
 import { createNullishFilter } from "../../helpers/createNullishFilter";
 import { stringToDate } from "../../helpers/stringToDate.js";
 import { AppResponse } from "@common/schemas/app.js";
-import { IChatRole } from "@common/schemas/roles.js";
-import { IChatHistoryMessage } from "@common/schemas/chatHistory";
+import { IChatHistoryMessage, IMessageType } from "@common/schemas/chatHistory";
 import { ISendChatMessageResponse } from "@common/schemas/sendChatMessageResponse";
 import { handlePaginationRoute } from "@/handlers/handlePaginationRoute.js";
 import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute.js";
-
 
 export const chatRouter = new Hono()
   // --------------------------
@@ -122,7 +120,7 @@ export const chatRouter = new Hono()
           return {
             chat: chatId.toString(),
             message: item.data.content,
-            role: item.type as IChatRole,
+            role: item.type as IMessageType,
           };
         }
       );
@@ -363,7 +361,7 @@ export const chatRouter = new Hono()
           reply: {
             chat: chatId.toString(),
             message: aiAnswer,
-            role: "assistant",
+            role: "ai",
           },
         },
         error: null,

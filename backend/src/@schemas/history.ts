@@ -48,3 +48,5 @@ type PromptTokens = {
 type TotalTokens = {
   $numberInt: string;
 };
+
+

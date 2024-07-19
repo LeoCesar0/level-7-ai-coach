@@ -1,14 +1,21 @@
 import { zId } from "@zodyac/zod-mongoose";
 import { z } from "zod";
-import { IEmbeddingData, zEmbedding } from "./embeddings";
-import { Types } from "mongoose";
-import { MessageType } from "@langchain/core/messages";
+import { zEmbedding } from "./embeddings";
+
+export const zMessageType = z.enum([
+  "function",
+  "human",
+  "ai",
+  "generic",
+  "system",
+  "tool",
+]);
 
 export const zCreateMemoryMessage = z.object({
   user_id: z.string(),
   chat_id: z.string(),
   created_at: z.string(),
-  type: z.enum(["function", "human", "ai", "generic", "system", "tool"]),
+  type: zMessageType,
 });
 
 export const zMemoryMessage = z.object({
@@ -18,7 +25,7 @@ export const zMemoryMessage = z.object({
   created_at: z.string(),
   embedding: zEmbedding.nullish(),
   loc: z.any().nullish(),
-  type: z.enum(["function", "human", "ai", "generic", "system", "tool"]),
+  type: zMessageType,
   text: z.string(),
 });
 
