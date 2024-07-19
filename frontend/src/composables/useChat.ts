@@ -2,7 +2,7 @@ import type { IChatHistoryMessage } from "@common/schemas/chatHistory";
 import type { IPaginationBody } from "@common/schemas/paginateRoute";
 import type { IPaginationResult } from "@common/schemas/pagination";
 import type { ISendChatMessageResponse } from "@common/schemas/sendChatMessageResponse";
-import type { IChat, ICreateChat, ICreateMessage } from "~/@types/chat";
+import type { IChat, ICreateChat, ICreateMessage } from "@common/schemas/chat";
 
 export const useChat = () => {
   const { fetchApi } = useFetchApi();
@@ -13,7 +13,6 @@ export const useChat = () => {
   const currentChat = ref<IChat | null>(null);
   const isLoading = ref(false);
   const aiTyping = ref(false);
-
 
   // --------------------------
   // CRUD API
@@ -49,7 +48,7 @@ export const useChat = () => {
       chat,
       message,
       user: currentUser.value?._id!,
-      role: "user",
+      role: "human",
     };
     console.log("❗ sendChatMessage body -->", body);
     const { response } = await fetchApi<ISendChatMessageResponse>(

@@ -64,7 +64,14 @@ const handleGetHistory = async () => {
 
 const handleSendMessage = async () => {
   if (disabledChat.value) return;
-
+  const chatId = currentChat.value?._id;
+  if (!chatId) return;
+  const mes: IChatHistoryMessage = {
+    chat: chatId,
+    message: currentPrompt.value,
+    role: "human",
+  };
+  messages.value.push(mes);
   const response = await sendChatMessage({ message: currentPrompt.value });
   if (response?.data?.chatClosed && currentChat.value) {
     currentChat.value.closed = true;
@@ -100,10 +107,8 @@ onMounted(async () => {
 
 <template>
   <main
-    class="flex-1 flex flex-col gap-4 container p-4 rounded-2xl items-center"
+    class="flex-1 flex flex-col gap-4 container p-4 rounded-2xl items-center max-w-[890px]"
   >
-    <p>chatId: {{ chatId }}</p>
-    <p>currentChat: {{ currentChat?._id }}</p>
     <div class="flex-1 flex flex-col w-full p-8 space-y-4">
       <ChatMessage
         v-for="(message, index) in messages"

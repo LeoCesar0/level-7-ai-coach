@@ -4,6 +4,11 @@ import { handleUnexpectedError } from "./handleUnexpectedError";
 import { isApiError } from "~/helpers/isApiError";
 
 export const handleApiError = ({ err }: { err: any }): AppResponseError => {
+  if (err.response && err.response._data) {
+    err = err.response._data;
+  }
+  console.error("❗ handleApi Error -->", err);
+
   const isAPiError = isApiError(err);
   if (!isAPiError) {
     console.log("❗❗ Unexpected error in handleApiError");

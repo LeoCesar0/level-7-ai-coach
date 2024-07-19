@@ -154,13 +154,13 @@ const run = async () => {
   // --------------------------
 
   const organization1 = await OrganizationModel.create({
-    name: "Team Fire Dev",
+    name: "Team Liquid Fire",
     active: true,
     slug: slugify("Team Fire Dev"),
     _id: "6689cd9963d2aa5bbcffc9f4",
   });
   const normalUserEmail = "dev_user@level7.com";
-  const normalUserName = "User dev 1";
+  const normalUserName = "John Doe";
   let firebaseUser = await firebaseAuth
     .getUserByEmail(normalUserEmail)
     .catch((err) => {});
@@ -224,32 +224,34 @@ const run = async () => {
   // CHAT
   // --------------------------
 
-  const chat = (
-    await ChatModel.create({
-      user: normalUser._id,
-      date: new Date().toISOString(),
-      _id: "6689d09602953bab4d753649",
-    })
-  ).toObject();
+  // const chat = (
+  //   await ChatModel.create({
+  //     user: normalUser._id,
+  //     date: new Date().toISOString(),
+  //     _id: "6689d09602953bab4d753649",
+  //   })
+  // ).toObject();
 
-  const historyItem: Omit<IHistory, "_id"> = {
-    ...historySeed,
-    sessionId: chat._id.toString(),
-  };
-  await historyCol.insertOne(historyItem);
+  // const historyItem: Omit<IHistory, "_id"> = {
+  //   ...historySeed,
+  //   sessionId: chat._id.toString(),
+  // };
+  // await historyCol.insertOne(historyItem);
 
-  const memoryMessages: Omit<IMemoryMessage, "_id">[] = memorySeed.map(
-    (item: any) => {
-      // delete item._id;
-      return {
-        ...item,
-        chat_id: chat._id.toString(),
-        user_id: normalUser._id.toString(),
-        _id: ObjectId.createFromHexString(item._id),
-      };
-    }
-  );
-  await memoryCol.insertMany(memoryMessages);
+  // const memoryMessages: Omit<IMemoryMessage, "_id">[] = memorySeed.map(
+  //   (item: any) => {
+  //     // delete item._id;
+  //     return {
+  //       ...item,
+  //       chat_id: chat._id.toString(),
+  //       user_id: normalUser._id.toString(),
+  //       _id: ObjectId.createFromHexString(item._id),
+  //     };
+  //   }
+  // );
+  // await memoryCol.insertMany(memoryMessages);
+
+  // --------------------------
 
   await MongooseServer.disconnectServer();
   await mongoDBClient.close();

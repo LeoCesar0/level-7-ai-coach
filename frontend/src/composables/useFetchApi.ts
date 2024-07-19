@@ -45,9 +45,9 @@ export const useFetchApi = () => {
         url: fullUrl,
         token: token,
       });
+      console.log("❗ fetcher res -->", res);
       return res;
     } catch (err) {
-      console.error("❗ fetchApi Error -->", err);
       const res = handleApiError({ err: err });
       console.error("❗ fetchApi treated Error -->", res);
       if (showError) {

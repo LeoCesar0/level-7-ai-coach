@@ -1,3 +1,5 @@
+import type { IMessageType } from "./chatHistory";
+
 export type IChat = {
   user: string;
   date: Date;
@@ -16,6 +18,6 @@ export type ICreateChat = {
 export type ICreateMessage = {
   user: string;
   message: string;
-  role: "user" | "system" | "assistant";
+  role: IMessageType;
   chat: string;
 };
