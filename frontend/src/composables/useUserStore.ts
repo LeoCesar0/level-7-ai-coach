@@ -30,6 +30,7 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
     try {
       await firebaseAuth.signOut();
       authToken.value = "";
+      currentUser.value = null;
     } catch (error) {}
     navigateTo(ROUTE["sign-in"].href);
     loading.value = false;

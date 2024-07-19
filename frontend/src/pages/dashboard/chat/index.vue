@@ -1,100 +1,47 @@
-import { ApiType } from '../../../../../backend/src/index';
 <script setup lang="ts">
-// --------------------------
-// SETUP
-// --------------------------
-type Props = {};
-const props = defineProps<Props>();
+import { type IChat } from "@/@types/chat";
+import { ROUTE } from "../../../static/routes";
+const { createNewChat, getOpenChats } = useChat();
 
-const userStore = useUserStore();
-const { currentUser } = storeToRefs(userStore);
-const {} = userStore;
+const openChat = ref<IChat | null>(null);
 
-const chatStore = useChatStore();
-const { currentChat, isLoading, aiTyping } = storeToRefs(chatStore);
-const { getOpenChats, sendChatMessage, createNewChat } = chatStore;
-
-const { toast } = useToast();
-
-const currentPrompt = ref<string>("");
-
-// --------------------------
-// COMPUTED
-// --------------------------
-const nRows = computed(() => {
-  const charactersPerRow = 70;
-  const rows = Math.ceil(currentPrompt.value.length / charactersPerRow);
-  return Math.max(1, rows);
-});
-
-const disabledChat = computed(() => {
-  return (
-    isLoading.value ||
-    aiTyping.value ||
-    !currentChat.value ||
-    currentChat.value.closed
-  );
-});
-
-// --------------------------
-// HANDLERS
-// --------------------------
-
-getOpenChats().then((res) => {
-  if (res.data) {
-    const chat = res.data.list[0];
+onMounted(() => {
+  getOpenChats().then((res) => {
+    const chat = res.data?.list[0];
     if (chat) {
-      currentChat.value = chat;
+      openChat.value = chat;
     }
-  }
+  });
 });
-
-const handleSendMessage = async () => {
-  if (!currentChat.value) {
-    const chatRes = await createNewChat();
-    if (!chatRes.data) {
-      toast.error("Failed to create chat");
-      return;
-    }
+const continueChat = () => {
+  if (openChat.value) {
+    navigateTo(ROUTE.chat.href + `/${openChat.value._id}`);
   }
-  sendChatMessage({ message: currentPrompt.value });
+};
+const handleCreateNewChat = async () => {
+  const response = await createNewChat();
+  if (response.data) {
+    navigateTo(ROUTE.chat.href + `/${response.data._id}`);
+  }
 };
 </script>
 
 <template>
   <NuxtLayout name="dashboard-layout">
-    <main
-      class="flex-1 flex flex-col gap-4 container p-4 rounded-2xl items-center"
-    >
-      <p>currentChat: {{ currentChat?._id }}</p>
-      <div class="flex-1 flex flex-col w-full p-8">
-        <ChatMessage
-          :isCurrentUser="true"
-          message="Hello, how can I help you today?"
-          time="12:00 PM"
-          user="John Doe"
-        />
-      </div>
+    <main class="flex flex-1 items-center justify-center">
       <UiCard
-        class="shadow-lg py-4 px-8 w-full max-w-[800px] rounded-full flex items-center gap-4"
+        class="size-[250px] p-8 flex-center pointer accent-hover transition-all"
+        @click="handleCreateNewChat"
+        v-if="!openChat"
       >
-        <UiTextarea
-          class="w-full py-0 font-normal border-none shadow-none focus-visible:ring-0 text-lg resize-none max-h-[80px]"
-          :rows="nRows"
-          :tabindex="0"
-          v-model="currentPrompt"
-          :disabled="disabledChat"
-        />
-        <UiButton
-          class=""
-          variant="ghost"
-          size="icon"
-          @click="handleSendMessage"
-          :disabled="disabledChat"
-        >
-          <!-- <PaperPlaneIcon /> -->
-          <ChatSendIcon />
-        </UiButton>
+        <h1 class="text-2xl">New Chat</h1>
+      </UiCard>
+      <UiCard
+        class="size-[250px] p-8 flex-center pointer accent-hover transition-all"
+        @click="continueChat"
+        v-if="openChat"
+      >
+        <h1 class="text-2xl">Continue Chat</h1>
       </UiCard>
     </main>
   </NuxtLayout>

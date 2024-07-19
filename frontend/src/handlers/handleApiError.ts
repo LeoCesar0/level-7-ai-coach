@@ -6,17 +6,19 @@ import { isApiError } from "~/helpers/isApiError";
 export const handleApiError = ({ err }: { err: any }): AppResponseError => {
   const isAPiError = isApiError(err);
   if (!isAPiError) {
-    console.log("❗❗ Unexpected error in handApiError");
+    console.log("❗❗ Unexpected error in handleApiError");
     return handleUnexpectedError({ error: err });
   }
 
   let resError: AppResponseError = { ...err };
   const authStore = useAuthToken();
   const { authToken } = storeToRefs(authStore);
+  const { logout } = useUserStore();
   const { toast } = useToast();
 
   if (err.error.code === EXCEPTION_CODE.EXPIRED_TOKEN) {
     toast.error("Your session has expired. Please sign in again.");
+    logout();
     resError = {
       data: null,
       error: {
