@@ -7,13 +7,12 @@ type Props = {
 };
 
 const props = defineProps<Props>();
-cn;
 </script>
 
 <template>
   <div
     class="flex items-center gap-2"
-    :class="cn({ 'justify-end': props.right })"
+    :class="cn({ 'flex-row-reverse': right })"
   >
     <div class="w-8 h-8 bg-muted rounded-full"></div>
     <div class="flex flex-col">
