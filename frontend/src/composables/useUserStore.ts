@@ -29,7 +29,7 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
   // const isServerSide = getIsServerSide();
   const isServerSide = typeof window === "undefined";
 
-  const logout = async ({ expired }: { expired?: boolean }) => {
+  const logout = async ({ expired }: { expired?: boolean } = {}) => {
     loading.value = true;
     try {
       await firebaseAuth.signOut();
@@ -37,11 +37,11 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
       currentUser.value = null;
     } catch (error) {}
     await navigateTo(ROUTE["sign-in"].href);
+    loading.value = false;
+    await nextTick();
     if (expired) {
       toast.error("Your session has expired. Please sign in again.");
     }
-    loading.value = false;
-    await nextTick();
   };
 
   const fetchCurrentUser = async () => {
@@ -115,6 +115,7 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
   };
 
   const handleSessionExpired = () => {
+    console.log("❗ handleSessionExpired -->");
     logout({ expired: true });
   };
 

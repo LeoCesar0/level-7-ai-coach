@@ -14,10 +14,6 @@ const userStore = useUserStore();
 const { currentUser } = storeToRefs(userStore);
 const {} = userStore;
 
-// const chatStore = useChatStore();
-// const { currentChat, isLoading, aiTyping } = storeToRefs(chatStore);
-// const { getOpenChats, sendChatMessage, createNewChat } = chatStore;
-
 const {
   currentChat,
   isLoading,
@@ -32,6 +28,8 @@ const { toast } = useToast();
 
 const currentPrompt = ref<string>("");
 const messages = ref<IChatHistoryMessage[]>([]);
+const messagesContainerRef = ref<HTMLDivElement | undefined>(undefined);
+const inputRef = ref<HTMLTextAreaElement | undefined>(undefined);
 
 // --------------------------
 // COMPUTED
@@ -63,6 +61,10 @@ const handleGetHistory = async () => {
   }
 };
 
+const focusInput = () => {
+  inputRef.value?.focus()
+};
+
 const handleSendMessage = async () => {
   const chatId = currentChat.value?._id;
   if (!chatId || disabledChat.value || !currentPrompt.value) return;
@@ -73,7 +75,8 @@ const handleSendMessage = async () => {
     role: "human",
   };
   messages.value.push(mes);
-  const response = await sendChatMessage({ message: currentPrompt.value });
+  currentPrompt.value = "";
+  const response = await sendChatMessage({ message: mes.message });
   if (response?.data?.chatClosed && currentChat.value) {
     currentChat.value.closed = true;
   }
@@ -81,7 +84,15 @@ const handleSendMessage = async () => {
     const reply = response.data.reply;
     messages.value.push(reply);
   }
-  currentPrompt.value = "";
+  focusInput();
+};
+
+const scrollToLastMessage = () => {
+  const lastMessage = messagesContainerRef.value?.lastElementChild;
+  if (lastMessage) {
+    lastMessage.scrollIntoView({ behavior: "smooth" });
+  }
+  focusInput();
 };
 
 // --------------------------
@@ -95,22 +106,30 @@ onMounted(async () => {
     return;
   }
 
+  messagesContainerRef.value?.addEventListener("DOMNodeInserted", () => {
+    scrollToLastMessage();
+  });
+
   const { data } = await getChat({ chatId: props.chatId });
 
   if (data) {
     currentChat.value = data;
-    handleGetHistory();
+    await handleGetHistory();
   } else {
-    navigateTo(ROUTE.chat.href);
+    await navigateTo(ROUTE.chat.href);
   }
 });
+// :ref="el => messagesContainerRef.push(el)"
 </script>
 
 <template>
   <main
     class="flex-1 flex flex-col gap-4 container p-4 rounded-2xl items-center max-w-[890px] relative"
   >
-    <div class="flex-1 flex flex-col w-full p-8 space-y-6">
+    <div
+      class="flex-1 flex flex-col w-full p-8 space-y-6"
+      ref="messagesContainerRef"
+    >
       <ChatMessage
         v-for="(message, index) in messages"
         :key="`${index}-${message.role}-${message.message.slice(0, 10)}`"
@@ -136,6 +155,7 @@ onMounted(async () => {
         v-model="currentPrompt"
         :disabled="disabledChat"
         @keydown.enter.exact.prevent="handleSendMessage"
+        ref="inputRef"
       />
       <UiButton
         class=""

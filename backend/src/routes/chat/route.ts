@@ -336,22 +336,30 @@ export const chatRouter = new Hono()
         // --------------------------
         // CLOSE CHAT
         // --------------------------
-        handleDBSession(async (session) => {
-          await ChatModel.updateOne(
-            {
-              _id: chatId,
-            },
-            {
-              closed: true,
-            }
-          );
-          await processChatAssessment({
-            chatId,
-            date: stringToDate(foundChat.createdAt),
-            session,
-            user,
-          });
-        });
+        await ChatModel.updateOne(
+          {
+            _id: chatId,
+          },
+          {
+            closed: true,
+          }
+        );
+        // handleDBSession(async (session) => {
+        //   await ChatModel.updateOne(
+        //     {
+        //       _id: chatId,
+        //     },
+        //     {
+        //       closed: true,
+        //     }
+        //   );
+        //   await processChatAssessment({
+        //     chatId,
+        //     date: stringToDate(foundChat.createdAt),
+        //     session,
+        //     user,
+        //   });
+        // });
       }
 
       resData = {

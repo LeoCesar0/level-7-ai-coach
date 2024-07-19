@@ -14,10 +14,12 @@ type Props = {
 const props = defineProps<Props>();
 
 let htmlMessage = ref("");
+let message = props.message.message;
+message = message.replaceAll('\n', '\n\n\n\n')
 try {
-  htmlMessage.value = await parse(props.message.message);
+  htmlMessage.value = await parse(message);
 } catch (err) {
-  htmlMessage.value = props.message.message;
+  htmlMessage.value = message;
 }
 
 const isHuman = props.message.role === "human";

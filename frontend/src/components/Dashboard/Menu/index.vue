@@ -36,7 +36,7 @@ const routes = computed<IRoute[]>(() => {
     <header class="mb-8 py-4 px-4 space-y-4">
       <NuxtLink :to="ROUTE.dashboard.href">
         <span class="flex items-center gap-4 transition-colors py-4">
-          <Logo />
+          <Logo class="text-primary" />
           <span class="text-2xl tracking-wide font-bold">{{
             APP_CONFIG.title
           }}</span>
