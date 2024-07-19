@@ -13,7 +13,15 @@ type Props = {
 const props = defineProps<Props>();
 
 const isSelected = computed(() => {
-  return props.route.href && compareRoute(router.path, props.route.href);
+  const href = props.route.href;
+  console.log("❗ router.path -->", router.path);
+  if (href === "/") {
+    return router.path === "/";
+  }
+  if (href === "/dashboard") {
+    return router.path === "/dashboard";
+  }
+  return href && router.path.includes(href);
 });
 </script>
 

@@ -40,6 +40,10 @@ const nRows = computed(() => {
   return Math.max(1, rows);
 });
 
+const closedChat = computed(() => {
+  return currentChat.value && currentChat.value.closed;
+});
+
 const disabledChat = computed(() => {
   const hasCurrentChatButIsDisabled =
     currentChat.value && currentChat.value.closed;
@@ -62,7 +66,7 @@ const handleGetHistory = async () => {
 };
 
 const focusInput = () => {
-  inputRef.value?.focus()
+  inputRef.value?.focus();
 };
 
 const handleSendMessage = async () => {
@@ -144,6 +148,9 @@ onMounted(async () => {
         }"
         :is-typing="true"
       />
+      <div v-if="closedChat" class="text-center p-4">
+        <p class="text-muted-foreground text-lg ">This chat is closed!</p>
+      </div>
     </div>
     <UiCard
       class="shadow-lg py-4 px-8 w-full max-w-[800px] rounded-full flex items-center gap-4 sticky bottom-12"
