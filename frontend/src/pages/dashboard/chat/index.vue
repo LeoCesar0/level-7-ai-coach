@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type IChat } from "@/@types/chat";
+import { type IChat } from "@common/schemas/chat";
 import { ROUTE } from "../../../static/routes";
 const { createNewChat, getOpenChats } = useChat();
 

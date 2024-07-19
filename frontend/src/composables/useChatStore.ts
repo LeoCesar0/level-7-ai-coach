@@ -2,7 +2,7 @@ import type { IChatHistoryMessage } from "@common/schemas/chatHistory";
 import type { IPaginationBody } from "@common/schemas/paginateRoute";
 import type { IPaginationResult } from "@common/schemas/pagination";
 import type { ISendChatMessageResponse } from "@common/schemas/sendChatMessageResponse";
-import type { IChat, ICreateChat, ICreateMessage } from "~/@types/chat";
+import type { IChat, ICreateChat, ICreateMessage } from "@common/schemas/chat";
 import { makeStoreKey } from "~/helpers/makeStoreKey";
 
 export const useChatStore = defineStore(makeStoreKey("chat"), () => {

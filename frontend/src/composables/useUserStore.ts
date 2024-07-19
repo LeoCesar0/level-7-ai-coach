@@ -67,6 +67,16 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
   if (!isServerSide) {
     firebaseAuth.onAuthStateChanged(async (user) => {
       console.log("❗ onAuthStateChanged -->", user);
+      // if (user) {
+      //   const token = await user.getIdToken();
+      //   authToken.value = token;
+      // } else {
+      //   authToken.value = "";
+      //   currentUser.value = null;
+      // }
+    });
+    firebaseAuth.onIdTokenChanged(async (user) => {
+      console.log("❗ onIdTokenChanged -->", user);
       if (user) {
         const token = await user.getIdToken();
         authToken.value = token;
@@ -96,6 +106,11 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
     loading.value = false;
   };
 
+  const handleSessionExpired = () => {
+    logout();
+    toast.error("Your session has expired. Please sign in again.");
+  };
+
   return {
     currentUser,
     loading,
@@ -103,5 +118,6 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
     logout,
     fetchCurrentUser,
     handleFetchCurrentUser,
+    handleSessionExpired,
   };
 });
