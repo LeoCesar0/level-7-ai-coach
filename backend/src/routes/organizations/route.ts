@@ -1,25 +1,18 @@
 import { Hono } from "hono";
-import {
-  OrganizationModel,
-  IOrganization,
-  zOrganization,
-} from "./schemas/organization";
+import { IOrganizationDoc, OrganizationModel } from "./schemas/organization";
 import { routeValidator } from "../../middlewares/routeValidator";
 import { authValidator } from "../../middlewares/authValidator";
 import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute";
-import {
-  ICreateOrganization,
-  zCreateOrganization,
-} from "./schemas/createOrganization";
 import { z } from "zod";
 import { zStringNotEmpty } from "../../@schemas/primitives/stringNotEmpty";
 import { HTTPException } from "hono/http-exception";
 import { EXCEPTIONS } from "@common/static/exceptions";
-import { IUser, UserModel } from "../users/schemas/user";
+import { IUserDoc, UserModel } from "../users/schemas/user";
 import { firebaseAuth } from "../../lib/firebase";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
-import { zValidator } from "@hono/zod-validator";
 import { AppResponse } from "@common/schemas/app";
+import { zCreateOrganization } from "@common/schemas/organization/createOrganization";
+import { zOrganization } from "@common/schemas/organization/organization";
 
 const organizationsRoute = new Hono()
   // --------------------------
@@ -37,7 +30,7 @@ const organizationsRoute = new Hono()
       // @ts-ignore
       const reqUser: IUser = ctx.get("reqUser");
 
-      const resData = await handlePaginationRoute<IOrganization>({
+      const resData = await handlePaginationRoute<IOrganizationDoc>({
         model: OrganizationModel,
         body,
         reqUser,
@@ -66,7 +59,7 @@ const organizationsRoute = new Hono()
         throw new HTTPException(404, { message: "Organization not found" });
       }
 
-      const resData: AppResponse<IOrganization> = {
+      const resData: AppResponse<IOrganizationDoc> = {
         data: item,
         error: null,
       };
@@ -83,12 +76,11 @@ const organizationsRoute = new Hono()
     authValidator({ permissionsTo: ["admin"] }),
     async (ctx) => {
       const input = ctx.req.valid("json");
-      const createdDoc = await OrganizationModel.create<ICreateOrganization>(
-        input
-      );
+
+      const createdDoc = await OrganizationModel.create(input);
 
       const createdItem = createdDoc.toObject();
-      const resData: AppResponse<IOrganization> = {
+      const resData: AppResponse<IOrganizationDoc> = {
         data: createdItem,
         error: null,
       };
@@ -145,7 +137,7 @@ const organizationsRoute = new Hono()
       }
 
       const updatedItem = updatedDoc.toObject();
-      const resData: AppResponse<IOrganization> = {
+      const resData: AppResponse<IOrganizationDoc> = {
         data: updatedItem,
         error: null,
       };
@@ -163,7 +155,7 @@ const organizationsRoute = new Hono()
     }
 
     const orgToDelete = await OrganizationModel.findById<
-      Omit<IOrganization, "users"> & { users: IUser[] }
+      Omit<IOrganizationDoc, "users"> & { users: IUserDoc[] }
     >(orgId).populate("users");
 
     if (!orgToDelete) {

@@ -1,6 +1,5 @@
 import { Hono } from "hono";
-import { IUser } from "../users/schemas/user.js";
-import { ChatModel } from "./schemas/chat.js";
+import { ChatModel, IChatDoc } from "./schemas/chat.js";
 import { routeValidator } from "../../middlewares/routeValidator.js";
 import { authValidator } from "../../middlewares/authValidator.js";
 import { z } from "zod";
@@ -21,10 +20,10 @@ import { AppResponse } from "@common/schemas/app.js";
 import { ISendChatMessageResponse } from "@common/schemas/chat/message";
 import { handlePaginationRoute } from "@/handlers/handlePaginationRoute.js";
 import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute.js";
-import { IChat, IChatDoc } from "@common/schemas/chat/chat";
 import { zCreateChat } from "@common/schemas/chat/create";
 import { IFormattedMessage, IMessageType } from "@common/schemas/chat/message";
 import { zCreateMessage } from "@common/schemas/chat/createMessage";
+import { IUserDoc } from "../users/schemas/user.js";
 
 export const chatRouter = new Hono()
   // --------------------------
@@ -40,7 +39,7 @@ export const chatRouter = new Hono()
     async (ctx) => {
       const body = ctx.req.valid("json");
       // @ts-ignore
-      const reqUser: IUser = ctx.get("reqUser");
+      const reqUser: IUserDoc = ctx.get("reqUser");
 
       let filters: (typeof body)["filters"] = body.filters ?? {};
 
@@ -74,8 +73,8 @@ export const chatRouter = new Hono()
     authValidator({ permissionsTo: ["admin", "coach", "user"] }),
     async (ctx) => {
       // @ts-ignore
-      const reqUser = ctx.get("reqUser") as IUser;
-      let list: IChat[] = [];
+      const reqUser = ctx.get("reqUser") as IUserDoc;
+      let list: IChatDoc[] = [];
 
       if (reqUser.role === "admin") {
         list = await ChatModel.find();
@@ -85,7 +84,7 @@ export const chatRouter = new Hono()
         list = await ChatModel.find({ user: reqUser._id.toString() });
       }
 
-      const resData: AppResponse<IChat[]> = {
+      const resData: AppResponse<IChatDoc[]> = {
         data: list,
         error: null,
       };

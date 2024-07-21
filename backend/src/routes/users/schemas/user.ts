@@ -21,7 +21,6 @@ export const zUserDoc = zUserBase
   })
   .merge(
     z.object({
-      _id: z.string().optional(),
       organization: zId.describe("ObjectId:Organization"),
       archetype: zId.describe("ObjectId:Archetype").nullish(),
       birthday: z.date().nullish(),
@@ -32,7 +31,6 @@ export const zUserFullDoc = zUserDoc
   .omit({ organization: true, archetype: true })
   .merge(
     z.object({
-      firebaseId: z.string(),
       archetype: zArchetype,
       organization: zOrganization,
     })

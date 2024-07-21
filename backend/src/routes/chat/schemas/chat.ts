@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { zChatBase } from "@common/schemas/chat/chat";
 import { z } from "zod";
 import { zId } from "@zodyac/zod-mongoose";
+import { zMongoDocument } from "@common/schemas/mongo";
 
 export const zChatDoc = zChatBase
   .omit({
@@ -13,7 +14,8 @@ export const zChatDoc = zChatBase
       user: zId.describe("ObjectId:User"),
       date: z.date(),
     })
-  );
+  )
+  .merge(zMongoDocument);
 
 export type IChatDoc = z.infer<typeof zChatDoc>;
 

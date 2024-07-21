@@ -1,20 +1,22 @@
 import mongoose from "mongoose";
 import { z } from "zod";
-import { zCreateJournal } from "./createJournal";
-import { zMongoDocument } from "../../../@schemas/mongoose";
 import { zId } from "@zodyac/zod-mongoose";
+import { zMongoDocument } from "@common/schemas/mongo";
+import { zJournalBase } from "@common/schemas/journal/journal";
 
-export const zJournal = zCreateJournal.merge(zMongoDocument).merge(
-  z.object({
-    user: zId.describe("ObjectId:User"),
-    assessed: z.boolean().nullish(),
-    shouldAssess: z.boolean().nullish(),
-  })
-);
+export const zJournalDoc = zJournalBase
+  .omit({ date: true })
+  .merge(
+    z.object({
+      user: zId.describe("ObjectId:User"),
+      date: z.date(),
+    })
+  )
+  .merge(zMongoDocument);
 
-export type IJournal = z.infer<typeof zJournal>;
+export type IJournalDoc = z.infer<typeof zJournalDoc>;
 
-const journalSchema = new mongoose.Schema<IJournal>(
+const journalSchema = new mongoose.Schema<IJournalDoc>(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     text: { type: String, default: "" },
@@ -40,4 +42,7 @@ const journalSchema = new mongoose.Schema<IJournal>(
   }
 );
 
-export const JournalModel = mongoose.model("Journal", journalSchema);
+export const JournalModel = mongoose.model<IJournalDoc>(
+  "Journal",
+  journalSchema
+);

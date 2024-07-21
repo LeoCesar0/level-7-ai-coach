@@ -1,15 +1,15 @@
 import { Hono } from "hono";
 import { routeValidator } from "../../middlewares/routeValidator";
 import { authValidator } from "../../middlewares/authValidator";
-import { ArchetypeModel, IArchetype } from "./schemas/archetype";
+import { ArchetypeModel, IArchetypeDoc } from "./schemas/archetype";
 import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
-import { zCreateArchetype } from "./schemas/createArchetype";
 import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { slugify } from "../../helpers/slugify";
 import { EXCEPTIONS } from "@common/static/exceptions";
 import { AppResponse } from "@common/schemas/app";
+import { zCreateArchetype } from "@common/schemas/archetype/createArchetype";
 
 const archetypeRoute = new Hono()
   // --------------------------
@@ -28,7 +28,7 @@ const archetypeRoute = new Hono()
 
       const slug = slugify(name);
 
-      let resData: AppResponse<IArchetype>;
+      let resData: AppResponse<IArchetypeDoc>;
 
       const exists = await ArchetypeModel.findOne({ slug });
       if (exists) {
@@ -78,7 +78,7 @@ const archetypeRoute = new Hono()
         throw new HTTPException(404, { message: "Archetype not found" });
       }
 
-      const resData: AppResponse<IArchetype> = {
+      const resData: AppResponse<IArchetypeDoc> = {
         data: result,
         error: null,
       };
@@ -129,7 +129,7 @@ const archetypeRoute = new Hono()
         throw new HTTPException(404, { message: "Archetype not found" });
       }
 
-      const resData: AppResponse<IArchetype> = {
+      const resData: AppResponse<IArchetypeDoc> = {
         data: result,
         error: null,
       };
@@ -186,7 +186,7 @@ const archetypeRoute = new Hono()
       // @ts-ignore
       const reqUser: IUser = ctx.get("reqUser");
 
-      const resData = await handlePaginationRoute<IArchetype>({
+      const resData = await handlePaginationRoute<IArchetypeDoc>({
         model: ArchetypeModel,
         body,
         reqUser,

@@ -5,7 +5,7 @@ import { zIsoDate } from "../primitives/isoDate";
 export const zCreateJournal = z.object({
   text: z.string().default(""),
   images: z.array(zStringNotEmpty).optional(),
-  date: zIsoDate.or(z.date()),
+  date: zIsoDate,
   draft: z.boolean().optional(),
 });
 

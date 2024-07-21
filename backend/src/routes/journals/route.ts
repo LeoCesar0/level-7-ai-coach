@@ -1,8 +1,6 @@
 import { Hono } from "hono";
-import { IUser } from "../users/schemas/user.js";
-import { JournalModel, IJournal, zJournal } from "./schemas/journal.js";
+import { IJournalDoc, JournalModel } from "./schemas/journal.js";
 import { routeValidator } from "../../middlewares/routeValidator.js";
-import { zCreateJournal } from "./schemas/createJournal.js";
 import { authValidator } from "../../middlewares/authValidator.js";
 import { HTTPException } from "hono/http-exception";
 import { getUserFull } from "../../services/getUserFull.js";
@@ -10,8 +8,10 @@ import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute.js";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute.js";
 import { z } from "zod";
 import { zStringNotEmpty } from "../../@schemas/primitives/stringNotEmpty.js";
-import { stringToDate } from "../../helpers/stringToDate.js";
 import { AppResponse } from "@common/schemas/app.js";
+import { zCreateJournal } from "@common/schemas/journal/createJournal.js";
+import { zJournal } from "@common/schemas/journal/journal.js";
+import { IUserDoc } from "../users/schemas/user.js";
 
 // --------------------------
 // GET
@@ -26,9 +26,9 @@ export const journalRoute = new Hono()
     authValidator({ permissionsTo: ["admin", "coach", "user"] }),
     async (ctx) => {
       // @ts-ignore
-      const reqUser = ctx.get("reqUser") as IUser;
+      const reqUser = ctx.get("reqUser") as IUserDoc;
 
-      let resData: AppResponse<IJournal>;
+      let resData: AppResponse<IJournalDoc>;
 
       const { id: journalId } = ctx.req.valid("param");
 
@@ -70,7 +70,7 @@ export const journalRoute = new Hono()
       // @ts-ignore
       const reqUser: IUser = ctx.get("reqUser");
 
-      const resData = await handlePaginationRoute<IJournal>({
+      const resData = await handlePaginationRoute<IJournalDoc>({
         model: JournalModel,
         body,
         reqUser,
@@ -96,7 +96,7 @@ export const journalRoute = new Hono()
       const { date, images, draft, text } = body;
 
       // @ts-ignore
-      const reqUser = ctx.get("reqUser") as IUser;
+      const reqUser = ctx.get("reqUser") as IUserDoc;
 
       const userId = reqUser._id.toString();
 
@@ -115,7 +115,7 @@ export const journalRoute = new Hono()
       });
       const journal = newJournal.toObject();
 
-      const resData: AppResponse<IJournal> = {
+      const resData: AppResponse<IJournalDoc> = {
         data: journal,
         error: null,
       };
@@ -143,10 +143,10 @@ export const journalRoute = new Hono()
         throw new HTTPException(400, { message: "No data to update" });
       }
 
-      let resData: AppResponse<IJournal>;
+      let resData: AppResponse<IJournalDoc>;
 
       // @ts-ignore
-      const reqUser = ctx.get("reqUser") as IUser;
+      const reqUser = ctx.get("reqUser") as IUserDoc;
 
       const userId = reqUser._id.toString();
 
@@ -196,7 +196,7 @@ export const journalRoute = new Hono()
       let resData: AppResponse<boolean>;
 
       // @ts-ignore
-      const reqUser = ctx.get("reqUser") as IUser;
+      const reqUser = ctx.get("reqUser") as IUserDoc;
 
       const userId = reqUser._id.toString();
 
@@ -235,8 +235,8 @@ export const journalRoute = new Hono()
 //   authValidator({ permissionsTo: ["admin", "coach", "user"] }),
 //   async (ctx) => {
 //     // @ts-ignore
-//     const reqUser = ctx.get("reqUser") as IUser;
-//     let list: IJournal[] = [];
+//     const reqUser = ctx.get("reqUser") as IUserDoc;
+//     let list: IJournalDoc[] = [];
 
 //     if (reqUser.role === "admin") {
 //       list = await JournalModel.find();
@@ -246,7 +246,7 @@ export const journalRoute = new Hono()
 //       list = await JournalModel.find({ user: reqUser._id });
 //     }
 
-//     const resData: AppResponse<IJournal[]> = {
+//     const resData: AppResponse<IJournalDoc[]> = {
 //       data: list,
 //       error: null,
 //     };

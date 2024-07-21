@@ -1,11 +1,11 @@
 import { Hono } from "hono";
 import { routeValidator } from "../../middlewares/routeValidator";
 import { authValidator } from "../../middlewares/authValidator";
-import { AssessmentModel, IAssessment } from "./schemas/assessment";
+import { AssessmentModel, IAssessmentDoc } from "./schemas/assessment";
 import { z } from "zod";
-import { ChatModel, IChat } from "../chat/schemas/chat";
+import { ChatModel, IChatDoc } from "../chat/schemas/chat";
 import { HTTPException } from "hono/http-exception";
-import { IUserFull, UserModel } from "../users/schemas/user";
+import { IUserFullDoc, UserModel } from "../users/schemas/user";
 import { processChatAssessment } from "../../services/assessment/processChatAssessment";
 import { handleDBSession } from "../../handlers/handleDBSession";
 import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute";
@@ -59,7 +59,7 @@ const assessmentRoute = new Hono()
 
       const userId = foundChat.user.toString();
 
-      const user = await UserModel.findById<IUserFull>(userId).populate(
+      const user = await UserModel.findById<IUserFullDoc>(userId).populate(
         USER_POPULATES
       );
 
@@ -78,8 +78,8 @@ const assessmentRoute = new Hono()
       });
 
       const resData: AppResponse<{
-        assessment: IAssessment[];
-        chat: IChat | null;
+        assessment: IAssessmentDoc[];
+        chat: IChatDoc | null;
       }> = {
         data: {
           assessment,
@@ -112,7 +112,7 @@ const assessmentRoute = new Hono()
 
       const assessment = await AssessmentModel.find({ chat: chatId });
 
-      const resData: AppResponse<IAssessment[]> = {
+      const resData: AppResponse<IAssessmentDoc[]> = {
         data: assessment,
         error: null,
       };
@@ -135,7 +135,7 @@ const assessmentRoute = new Hono()
       // @ts-ignore
       const reqUser: IUser = ctx.get("reqUser");
 
-      const resData = await handlePaginationRoute<IAssessment>({
+      const resData = await handlePaginationRoute<IAssessmentDoc>({
         model: AssessmentModel,
         body,
         reqUser,

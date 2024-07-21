@@ -1,7 +1,7 @@
 import { Model } from "mongoose";
-import { IUser, UserModel } from "../routes/users/schemas/user";
+import { IUserDoc, UserModel } from "../routes/users/schemas/user";
 
-export const USER_POPULATES: (keyof IUser)[] = ["archetype", "organization"];
+export const USER_POPULATES: (keyof IUserDoc)[] = ["archetype", "organization"];
 
 export const POPULATES = [
   {

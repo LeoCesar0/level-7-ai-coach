@@ -1,13 +1,10 @@
 import { Hono } from "hono";
-import { UserModel, IUser, IUserFull } from "./schemas/user";
 import { routeValidator } from "../../middlewares/routeValidator";
 import { EXCEPTIONS } from "@common/static/exceptions";
 import { firebaseAuth } from "../../lib/firebase";
 import { authValidator } from "../../middlewares/authValidator";
 import { createAppUser } from "../../services/createAppUser";
-import { zCreateUserRoute } from "./schemas/createUserRoute";
 import { HTTPException } from "hono/http-exception";
-import { updateUserRoute } from "./schemas/updateUserRoute";
 import cloneDeep from "lodash.clonedeep";
 import { OrganizationModel } from "../organizations/schemas/organization";
 import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute";
@@ -15,6 +12,9 @@ import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { getUserFull } from "../../services/getUserFull";
 import { USER_POPULATES } from "@/static/populates";
 import { AppResponse } from "@common/schemas/app";
+import { IUserDoc, IUserFullDoc, UserModel } from "./schemas/user";
+import { zCreateUserRoute } from "@common/schemas/user/createUserRoute";
+import { updateUserRoute } from "../../../../common/schemas/user/updateUserRoute";
 
 const userRoute = new Hono()
   // --------------------------
@@ -30,9 +30,9 @@ const userRoute = new Hono()
     async (ctx) => {
       const body = ctx.req.valid("json");
       // @ts-ignore
-      const reqUser: IUser = ctx.get("reqUser");
+      const reqUser: IUserDoc = ctx.get("reqUser");
 
-      const resData = await handlePaginationRoute<IUser>({
+      const resData = await handlePaginationRoute<IUserDoc>({
         model: UserModel,
         body,
         reqUser,
@@ -45,7 +45,7 @@ const userRoute = new Hono()
   )
   .get("/me", authValidator(), async (ctx) => {
     // @ts-ignore
-    const reqUser: IUser = ctx.get("reqUser");
+    const reqUser: IUserDoc = ctx.get("reqUser");
 
     if (!reqUser) {
       throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
@@ -61,7 +61,7 @@ const userRoute = new Hono()
       throw new HTTPException(401, { message: EXCEPTIONS.USER_NOT_ACTIVE });
     }
 
-    const resData: AppResponse<IUserFull> = {
+    const resData: AppResponse<IUserFullDoc> = {
       data: user,
       error: null,
     };
@@ -78,7 +78,7 @@ const userRoute = new Hono()
       const userId = ctx.req.param("id");
 
       // @ts-ignore
-      const reqUser: IUser = ctx.get("reqUser");
+      const reqUser: IUserDoc = ctx.get("reqUser");
 
       const user = await getUserFull({ userId: userId });
 
@@ -90,7 +90,7 @@ const userRoute = new Hono()
         throw new HTTPException(401, { message: EXCEPTIONS.USER_NOT_ACTIVE });
       }
 
-      const resData: AppResponse<IUserFull> = {
+      const resData: AppResponse<IUserFullDoc> = {
         data: user,
         error: null,
       };
@@ -107,15 +107,15 @@ const userRoute = new Hono()
     authValidator({ permissionsTo: ["admin", "coach"] }),
     async (ctx) => {
       const inputs = ctx.req.valid("json");
-      let resData: AppResponse<IUser>;
+      let resData: AppResponse<IUserDoc>;
 
       // @ts-ignore
-      const reqUser: IUser = ctx.get("reqUser");
+      const reqUser: IUserDoc = ctx.get("reqUser");
 
       const userValues = cloneDeep(inputs.user);
 
       if (reqUser.role !== "admin") {
-        userValues.organization = reqUser.organization;
+        userValues.organization = reqUser.organization.toString();
       }
 
       const orgExists = await OrganizationModel.exists({
@@ -211,7 +211,7 @@ const userRoute = new Hono()
         throw new HTTPException(400, { message: "No data to update" });
       }
 
-      let resData: AppResponse<IUserFull>;
+      let resData: AppResponse<IUserFullDoc>;
 
       const userValues = cloneDeep(inputs);
 
@@ -222,7 +222,7 @@ const userRoute = new Hono()
       }
 
       // @ts-ignore
-      const reqUser: IUser | undefined = ctx.get("reqUser");
+      const reqUser: IUserDoc | undefined = ctx.get("reqUser");
 
       const isSameOrg =
         reqUser?.organization.toString() ===
@@ -311,7 +311,7 @@ const userRoute = new Hono()
       let resData: AppResponse<boolean>;
 
       // @ts-ignore
-      const contextUser: IUser | undefined = ctx.get("reqUser");
+      const contextUser: IUserDoc | undefined = ctx.get("reqUser");
 
       const userToChange = await UserModel.findById(userId);
 
