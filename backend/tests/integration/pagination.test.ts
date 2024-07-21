@@ -1,15 +1,13 @@
 import { AppResponse } from "@common/schemas/app";
 import honoApp from "../../src";
-import { IPaginationBody } from "@/@schemas/paginateRoute";
 import { IPaginationResult } from "@common/schemas/pagination";
-import { ICreateOrganization } from "../../src/routes/organizations/schemas/createOrganization";
-import {
-  IOrganization,
-  OrganizationModel,
-} from "../../src/routes/organizations/schemas/organization";
+import { OrganizationModel } from "../../src/routes/organizations/schemas/organization";
 import { stubGetUserFromToken } from "../helpers/stubGetUserFromToken";
 import { ISeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";
+import { ICreateOrganization } from "@common/schemas/organization/createOrganization";
+import { IPaginationBody } from "@common/schemas/paginateRoute";
+import { IOrganization } from "@common/schemas/organization/organization";
 
 describe("pagination integration suite", () => {
   console.log("🔻 Enter PAGINATION integration suite  -->");

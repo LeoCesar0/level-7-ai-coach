@@ -2,7 +2,7 @@ import { z } from "zod";
 import { EXCEPTIONS } from "../../static/exceptions";
 import { zStringNotEmpty } from "../primitives/stringNotEmpty";
 
-export type ICreateOrganization = z.infer<typeof zCreateOrganization>;
+export type ICreateOrganization = z.input<typeof zCreateOrganization>;
 
 export const zCreateOrganization = z.object({
   name: z

@@ -1,12 +1,12 @@
 import honoApp from "../../src";
 import { IPaginationResult } from "@common/schemas/pagination";
-import { IArchetype } from "../../src/routes/archetype/schemas/archetype";
 import { stubGetUserFromToken } from "../helpers/stubGetUserFromToken";
 import { ISeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";
-import { ICreateArchetype } from "../../src/routes/archetype/schemas/createArchetype";
 import { AppResponse } from "@common/schemas/app";
 import { EXCEPTIONS } from "@common/static/exceptions";
+import { IArchetype } from "@common/schemas/archetype/archetype";
+import { ICreateArchetype } from "@common/schemas/archetype/createArchetype";
 
 describe("archetypes integration suite", () => {
   console.log("🔻 Enter ARCHETYPES integration suite  -->");

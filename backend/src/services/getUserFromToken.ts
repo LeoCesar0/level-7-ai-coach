@@ -1,15 +1,19 @@
 import { FirebaseAuthError } from "firebase-admin/auth";
 import { firebaseAuth } from "../lib/firebase";
-import { UserModel } from "../routes/users/schemas/user";
+import { IUserDoc, UserModel } from "../routes/users/schemas/user";
 import { Context } from "hono";
 import { EXCEPTION_CODE } from "@common/static/exceptions";
+import { IUser } from "@common/schemas/user";
 
 export type IGetUserFromToken = {
   token: string;
   ctx?: Context;
 };
 
-const exec = async ({ token, ctx }: IGetUserFromToken) => {
+const exec = async ({
+  token,
+  ctx,
+}: IGetUserFromToken): Promise<IUser | IUserDoc | null> => {
   // if(process.env.NODE_ENV === ENV.TEST){
   //   const user = await
   // }

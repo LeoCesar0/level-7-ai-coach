@@ -3,7 +3,6 @@ import { handleDBSession } from "../../src/handlers/handleDBSession";
 import { slugify } from "../../src/helpers/slugify";
 import { MongooseServer } from "../../src/lib/mongoose";
 import { ArchetypeModel } from "../../src/routes/archetype/schemas/archetype";
-import { ISeedResult, TestServer } from "../mongodb-memory-server";
 
 describe("handleDBSession unit suite", () => {
   let itemName = "handleDBSession TEST";

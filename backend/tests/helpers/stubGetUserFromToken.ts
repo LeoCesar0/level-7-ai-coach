@@ -1,7 +1,8 @@
+import { IUserDoc } from "@/routes/users/schemas/user";
+import { IUser } from "@common/schemas/user";
 import sinon from "sinon";
-import { IUser } from "../../src/routes/users/schemas/user";
 
-export const stubGetUserFromToken = async (resolves: IUser) => {
+export const stubGetUserFromToken = async (resolves: IUser | IUserDoc) => {
   const module = (await import("../../src/services/getUserFromToken"))
     .getUserFromToken;
   const stub = sinon.stub(module, "exec");

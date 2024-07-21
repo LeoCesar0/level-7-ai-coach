@@ -7,11 +7,11 @@ import { getUserFull } from "../../services/getUserFull.js";
 import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute.js";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute.js";
 import { z } from "zod";
-import { zStringNotEmpty } from "../../@schemas/primitives/stringNotEmpty.js";
 import { AppResponse } from "@common/schemas/app.js";
 import { zCreateJournal } from "@common/schemas/journal/createJournal.js";
 import { zJournal } from "@common/schemas/journal/journal.js";
 import { IUserDoc } from "../users/schemas/user.js";
+import { zStringNotEmpty } from "@common/schemas/primitives/stringNotEmpty.js";
 
 // --------------------------
 // GET

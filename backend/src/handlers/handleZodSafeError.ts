@@ -1,7 +1,7 @@
 import { Context } from "hono";
 import { AppResponse } from "@common/schemas/app";
 import { getZodErrorMessage } from "../helpers/getZodErrorMessage";
-import { SafeParseError, ZodError } from "zod";
+import { SafeParseError } from "zod";
 
 export type IHandleZodSafeError = {
   ctx: Context;

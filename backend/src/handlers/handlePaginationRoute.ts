@@ -1,13 +1,14 @@
 import { FilterQuery, Model } from "mongoose";
-import { IPaginationBodyOutput } from "@/@schemas/paginateRoute";
 import { IPaginationResult } from "@common/schemas/pagination";
-import { IUser } from "../routes/users/schemas/user";
 import { AppResponse } from "@common/schemas/app";
+import { IPaginationBodyOutput } from "@common/schemas/paginateRoute";
+import { IUserDoc } from "@/routes/users/schemas/user";
+import { IUser } from "@common/schemas/user";
 
 export type IHandlePaginationRoute<T> = {
   body: IPaginationBodyOutput;
   model: Model<T>;
-  reqUser: IUser;
+  reqUser: IUserDoc | IUser;
   modelHasActive: boolean;
   populates?: (keyof T extends string ? keyof T : never)[];
 };

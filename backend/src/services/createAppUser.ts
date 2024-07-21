@@ -1,8 +1,8 @@
 import { ENV } from "@common/static/envs";
 import { OrganizationModel } from "../routes/organizations/schemas/organization";
-import { ICreateUserRoute } from "../routes/users/schemas/createUserRoute";
 import { UserModel } from "../routes/users/schemas/user";
 import { createFirebaseUser } from "./createFirebaseUser";
+import { ICreateUserRoute } from "@common/schemas/user/createUserRoute";
 
 export const createAppUser = async ({
   inputs,

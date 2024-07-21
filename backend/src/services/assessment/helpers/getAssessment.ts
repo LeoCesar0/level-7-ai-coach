@@ -1,6 +1,5 @@
 // import { IAssessment } from "../../routes/assessment/schemas/assessment";
 import { getChatHistory } from "../../langchain/getChatHistory";
-import { IAssessment } from "../../../routes/assessment/schemas/assessment";
 import {
   ICreateAssessment,
   zAssessmentAIResponse,
@@ -15,14 +14,14 @@ import {
   PromptTemplate,
 } from "@langchain/core/prompts";
 import { chatOpenAI } from "../../../lib/langchain/chatOpenAi";
-import { getAssessmentTopicsText } from "../../../routes/assessment/schemas/enums";
-import { IArchetype } from "../../../routes/archetype/schemas/archetype";
-import { IUserFull } from "../../../routes/users/schemas/user";
 import { ChatTemplateInput } from "../../../@schemas/langchain";
+import { IAssessmentDoc } from "@/routes/assessment/schemas/assessment";
+import { IUserFullDoc } from "@/routes/users/schemas/user";
+import { getAssessmentTopicsText } from "@common/schemas/assessment/enums";
 
 export type IGetAssessment = {
-  user: IUserFull;
-  userPreviousData: IAssessment[];
+  user: IUserFullDoc;
+  userPreviousData: IAssessmentDoc[];
   messages: string;
   type: "journal" | "chat";
   extraTemplate?: ChatTemplateInput;

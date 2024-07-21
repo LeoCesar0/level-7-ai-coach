@@ -1,16 +1,16 @@
 import { AppResponse } from "@common/schemas/app";
 import honoApp from "../../src";
 import { slugify } from "../../src/helpers/slugify";
-import { ICreateOrganization } from "../../src/routes/organizations/schemas/createOrganization";
-import {
-  IOrganization,
-  OrganizationModel,
-  zOrganization,
-} from "../../src/routes/organizations/schemas/organization";
+import { OrganizationModel } from "../../src/routes/organizations/schemas/organization";
 import { UserModel } from "../../src/routes/users/schemas/user";
 import { stubGetUserFromToken } from "../helpers/stubGetUserFromToken";
 import { ISeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";
+import {
+  IOrganization,
+  zOrganization,
+} from "@common/schemas/organization/organization";
+import { ICreateOrganization } from "@common/schemas/organization/createOrganization";
 
 describe("organizations integration suite", () => {
   console.log("🔻 Enter ORGANIZATIONS integration suite  -->");

@@ -1,14 +1,12 @@
 import { AppResponse } from "@common/schemas/app";
 import honoApp from "../../src";
 import { IPaginationResult } from "@common/schemas/pagination";
-import { ICreateJournal } from "../../src/routes/journals/schemas/createJournal";
-import {
-  JournalModel,
-  IJournal,
-} from "../../src/routes/journals/schemas/journal";
+
 import { stubGetUserFromToken } from "../helpers/stubGetUserFromToken";
 import { ISeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";
+import { IJournal } from "@common/schemas/journal/journal";
+import { ICreateJournal } from "@common/schemas/journal/createJournal";
 
 describe("journal integration suite", () => {
   console.log("🔻 Enter JOURNAL integration suite  -->");
@@ -40,7 +38,7 @@ describe("journal integration suite", () => {
       stub = await stubGetUserFromToken(_seed.normalUser);
       const date = new Date();
       const body: ICreateJournal = {
-        date: date,
+        date: date.toISOString(),
         text: _journalText,
         draft: false,
         images: [],

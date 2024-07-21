@@ -4,7 +4,6 @@ import { routeValidator } from "../../middlewares/routeValidator";
 import { authValidator } from "../../middlewares/authValidator";
 import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute";
 import { z } from "zod";
-import { zStringNotEmpty } from "../../@schemas/primitives/stringNotEmpty";
 import { HTTPException } from "hono/http-exception";
 import { EXCEPTIONS } from "@common/static/exceptions";
 import { IUserDoc, UserModel } from "../users/schemas/user";
@@ -13,6 +12,7 @@ import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { AppResponse } from "@common/schemas/app";
 import { zCreateOrganization } from "@common/schemas/organization/createOrganization";
 import { zOrganization } from "@common/schemas/organization/organization";
+import { zStringNotEmpty } from "@common/schemas/primitives/stringNotEmpty";
 
 const organizationsRoute = new Hono()
   // --------------------------

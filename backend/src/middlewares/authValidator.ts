@@ -1,9 +1,10 @@
 import { Context } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
 import { getUserFromToken } from "../services/getUserFromToken";
-import { IRole } from "../@schemas/roles";
-import { IUser, UserModel } from "../routes/users/schemas/user";
+import { IUserDoc, UserModel } from "../routes/users/schemas/user";
 import { ENV } from "@common/static/envs";
+import { IRole } from "@common/schemas/roles";
+import { IUser } from "@common/schemas/user";
 
 type IAuthValidator =
   | {
@@ -23,7 +24,7 @@ export const createVerifyAuthToken = ({
     console.log("❗❗❗ Here path", ctx.req.path);
     try {
       console.log("❗ token in auth -->", !!token);
-      let user: IUser | null = null;
+      let user: IUserDoc | IUser | null = null;
 
       if (
         process.env.NODE_ENV === ENV.DEVELOPMENT ||

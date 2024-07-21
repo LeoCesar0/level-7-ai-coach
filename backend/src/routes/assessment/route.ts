@@ -11,9 +11,9 @@ import { handleDBSession } from "../../handlers/handleDBSession";
 import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { processJournalsAssessment } from "../../services/assessment/processJournalsAssessment";
-import { stringToDate } from "../../helpers/stringToDate";
 import { USER_POPULATES } from "@/static/populates";
 import { AppResponse } from "@common/schemas/app";
+import { stringToDate } from '@common/helpers/stringToDate';
 
 const assessmentRoute = new Hono()
   // --------------------------

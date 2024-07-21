@@ -3,26 +3,22 @@ import honoApp from "../../src";
 import { IPaginationResult } from "@common/schemas/pagination";
 import { slugify } from "../../src/helpers/slugify";
 import { ArchetypeModel } from "../../src/routes/archetype/schemas/archetype";
-import {
-  ASSESSMENT_QUESTION,
-  zAssessmentSection,
-} from "../../src/routes/assessment/schemas/enums";
-import {
-  IOrganization,
-  OrganizationModel,
-} from "../../src/routes/organizations/schemas/organization";
-import { ICreateUser } from "../../src/routes/users/schemas/createUser";
-import { ICreateUserRoute } from "../../src/routes/users/schemas/createUserRoute";
-import { IUpdateUserRoute } from "../../src/routes/users/schemas/updateUserRoute";
-import {
-  IUser,
-  IUserFull,
-  UserModel,
-} from "../../src/routes/users/schemas/user";
+import { OrganizationModel } from "../../src/routes/organizations/schemas/organization";
+import { UserModel } from "../../src/routes/users/schemas/user";
 import { stubGetUserFromToken } from "../helpers/stubGetUserFromToken";
 import { ISeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";
 import { AppResponse } from "@common/schemas/app";
+import { IOrganization } from "@common/schemas/organization/organization";
+import { IUser } from "@common/schemas/user";
+import { ICreateUser } from "@common/schemas/user/createUser";
+import { ICreateUserRoute } from "@common/schemas/user/createUserRoute";
+import { IUserFull } from "@common/schemas/user/user";
+import { IUpdateUserRoute } from "@common/schemas/user/updateUserRoute";
+import {
+  ASSESSMENT_QUESTION,
+  zAssessmentSection,
+} from "@common/schemas/assessment/enums";
 
 describe("users integration suite", () => {
   console.log("🔻 Enter USERS integration suite  -->");
@@ -311,7 +307,7 @@ describe("users integration suite", () => {
             section: zAssessmentSection.enum.goals,
           },
         },
-        archetype: archetype._id,
+        archetype: archetype._id.toString(),
       };
 
       const res = await honoApp.request(

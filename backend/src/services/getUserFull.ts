@@ -1,9 +1,9 @@
 import { USER_POPULATES } from "@/static/populates";
-import { ModelId } from "../@schemas/mongoose";
-import { IUserFull, UserModel } from "../routes/users/schemas/user";
+import { IUserFullDoc, UserModel } from "../routes/users/schemas/user";
+import { ModelId } from "@common/schemas/mongo";
 
 export const getUserFull = async ({ userId }: { userId: ModelId }) => {
-  const user = await UserModel.findById<IUserFull>(userId).populate(
+  const user = await UserModel.findById<IUserFullDoc>(userId).populate(
     USER_POPULATES
   );
   return user;

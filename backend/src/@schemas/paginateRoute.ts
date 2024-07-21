@@ -14,6 +14,3 @@ export const zPaginateRouteQueryInput = z
     limit: 10,
     page: 1,
   });
-
-export type IPaginationBody = z.input<typeof zPaginateRouteQueryInput>;
-export type IPaginationBodyOutput = z.output<typeof zPaginateRouteQueryInput>;

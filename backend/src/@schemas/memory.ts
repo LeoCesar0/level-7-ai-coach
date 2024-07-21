@@ -1,15 +1,7 @@
 import { zId } from "@zodyac/zod-mongoose";
 import { z } from "zod";
 import { zEmbedding } from "./embeddings";
-
-export const zMessageType = z.enum([
-  "function",
-  "human",
-  "ai",
-  "generic",
-  "system",
-  "tool",
-]);
+import { zMessageType } from "@common/schemas/chat/message";
 
 export const zCreateMemoryMessage = z.object({
   user_id: z.string(),
@@ -32,14 +24,3 @@ export const zMemoryMessage = z.object({
 export type IMemoryMessage = z.infer<typeof zMemoryMessage>;
 
 export type ICreateMemoryMessage = z.infer<typeof zCreateMemoryMessage>;
-
-// export type IHistoryMessage = {
-//   _id: Types.ObjectId;
-//   user_id: string;
-//   chat_id: string;
-//   created_at: string;
-//   embedding?: IEmbeddingData;
-//   loc?: any;
-//   type: MessageType;
-//   text: string;
-// };

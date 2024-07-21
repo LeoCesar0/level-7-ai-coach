@@ -1,21 +1,19 @@
-import { Mongoose } from "mongoose";
-import { ModelId } from "../../@schemas/mongoose";
 import { JournalModel } from "../../routes/journals/schemas/journal";
-import { IUserFull, UserModel } from "../../routes/users/schemas/user";
 import { getUserFull } from "../getUserFull";
 import { getAssessment } from "./helpers/getAssessment";
 import { processAssessmentEntries } from "./helpers/processAssessmentEntries";
 import { handleDBSession } from "../../handlers/handleDBSession";
 import { createNullishFilter } from "../../helpers/createNullishFilter";
 import { subHours } from "date-fns";
-import { stringToDate } from "../../helpers/stringToDate";
+import { IUserFullDoc } from "@/routes/users/schemas/user";
+import { stringToDate } from "@common/helpers/stringToDate";
 
 // --------------------------
 // Process all journals that should be assessed. To be used globally and scheduled.
 // --------------------------
 
 export const processJournalsAssessment = async () => {
-  const usersMap = new Map<string, IUserFull>();
+  const usersMap = new Map<string, IUserFullDoc>();
 
   const now = new Date();
 
@@ -36,7 +34,7 @@ export const processJournalsAssessment = async () => {
         const userId = journal.user.toString();
         const journalId = journal._id.toString();
 
-        let user: IUserFull | undefined = usersMap.get(userId);
+        let user: IUserFullDoc | undefined = usersMap.get(userId);
         if (!user) {
           user = (await getUserFull({ userId })) ?? undefined;
           if (user) {
