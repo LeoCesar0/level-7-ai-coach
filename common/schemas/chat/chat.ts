@@ -1,7 +1,6 @@
 import { z } from "zod";
-import { zId } from "@zodyac/zod-mongoose";
-import { ClientParser, zMongoDocument, zMongoDocumentClient } from "../mongo";
-import { IUser } from "../user";
+import { zMongoDocument, zMongoDocumentClient } from "../mongo";
+import { IUser } from "../user/user";
 
 // user: zId.describe("ObjectId:User"),
 

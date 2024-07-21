@@ -4,7 +4,8 @@
  */
 
 // import type { Config } from "jest";
-import type { JestConfigWithTsJest } from "ts-jest";
+import { pathsToModuleNameMapper, type JestConfigWithTsJest } from "ts-jest";
+import { compilerOptions } from "./tsconfig.json";
 
 const config: JestConfigWithTsJest = {
   // preset: "ts-jest",
@@ -94,7 +95,10 @@ const config: JestConfigWithTsJest = {
   // ],
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
-  // moduleNameMapper: {},
+  // moduleNameMapper: {
+  //   "^@/(.*)$": "<rootDir>/src/$1",
+  //   "^@common/(.*)$": "<rootDir>/../common/$1",
+  // },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],
@@ -180,10 +184,20 @@ const config: JestConfigWithTsJest = {
 
   // A map from regular expressions to paths to transformers
   // transform: {},
-  preset: "ts-jest/presets/default-esm", // or other ESM presets
-  moduleNameMapper: {
-    "^(\\.{1,2}/.*)\\.js$": "$1",
-  },
+  // preset: "ts-jest/presets/default-esm", // or other ESM presets
+  // moduleNameMapper: {
+  //   "^@common/(.*)$": "<rootDir>/../common/$1",
+  //   "^(\\.{1,2}/.*)\\.js$": "$1",
+  //   // "^@/(.*)$": "<rootDir>/src/$1",
+  // },
+
+  // roots: ["<rootDir>"],
+  modulePaths: [compilerOptions.baseUrl],
+  preset: "ts-jest",
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
+    useESM: true,
+    prefix: '<rootDir>/'
+  }),
   transform: {
     // '^.+\\.[tj]sx?$' to process ts,js,tsx,jsx with `ts-jest`
     // '^.+\\.m?[tj]sx?$' to process ts,js,tsx,jsx,mts,mjs,mtsx,mjsx with `ts-jest`

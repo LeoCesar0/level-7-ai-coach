@@ -11,7 +11,7 @@ import { memoryVectorStore } from "../../lib/langchain/memoryVectorStore";
 import { CHAT_MODEL, CHAT_TEMPERATURE } from "../../lib/langchain/@static";
 import { formatDocumentsAsString } from "langchain/util/document";
 import { ChatTemplateInput } from "../../@schemas/langchain";
-import { IUserFull } from "../../routes/users/schemas/user";
+import { IUserFullDoc } from "@/routes/users/schemas/user";
 
 // https://js.langchain.com/v0.1/docs/integrations/chat_memory/mongodb/#usage
 // https://js.langchain.com/v0.2/docs/integrations/chat_memory/zep_memory_cloud/#zepcloudchatmessagehistory--runnablewithmessagehistory-usage
@@ -20,7 +20,7 @@ import { IUserFull } from "../../routes/users/schemas/user";
 export type IGetChatChain = {
   chatId: string;
   message: string;
-  user: IUserFull;
+  user: IUserFullDoc;
 };
 
 export const getChatChain = async ({

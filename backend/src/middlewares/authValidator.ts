@@ -21,10 +21,10 @@ export const createVerifyAuthToken = ({
     token: string,
     ctx: Context
   ) => boolean | Promise<boolean> = async (token, ctx) => {
-    console.log("------------- 🟢 START SESSION verifyAuthToken -------------");
-    console.log("❗❗❗ Here path", ctx.req.path);
+    // console.log("------------- 🟢 START SESSION verifyAuthToken -------------");
+    // console.log("❗❗❗ Here path", ctx.req.path);
     try {
-      console.log("❗ token in auth -->", !!token);
+      // console.log("❗ token in auth -->", !!token);
       let user: IUserDoc | IUser | null = null;
 
       if (

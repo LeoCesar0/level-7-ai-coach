@@ -1,9 +1,6 @@
 // import { IAssessment } from "../../routes/assessment/schemas/assessment";
-import { getChatHistory } from "../../langchain/getChatHistory";
 import {
-  ICreateAssessment,
   zAssessmentAIResponse,
-  zCreateAssessment,
 } from "../../../routes/assessment/schemas/createAssessment";
 import { StructuredOutputParser } from "langchain/output_parsers";
 import { z } from "zod";
@@ -11,7 +8,6 @@ import { RunnableSequence } from "@langchain/core/runnables";
 import {
   ChatPromptTemplate,
   MessagesPlaceholder,
-  PromptTemplate,
 } from "@langchain/core/prompts";
 import { chatOpenAI } from "../../../lib/langchain/chatOpenAi";
 import { ChatTemplateInput } from "../../../@schemas/langchain";

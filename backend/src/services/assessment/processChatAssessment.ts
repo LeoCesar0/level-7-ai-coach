@@ -1,16 +1,16 @@
-import { ModelId } from "../../@schemas/mongoose";
 import { ICreateAssessment } from "../../routes/assessment/schemas/createAssessment";
 import { ChatModel } from "../../routes/chat/schemas/chat";
-import { IUserFull } from "../../routes/users/schemas/user";
 import { ClientSession } from "mongoose";
 import { getChatHistory } from "../langchain/getChatHistory";
 import { getAssessment } from "./helpers/getAssessment";
 import { processAssessmentEntries } from "./helpers/processAssessmentEntries";
 import { HTTPException } from "hono/http-exception";
+import { IUserFullDoc } from "@/routes/users/schemas/user";
+import { ModelId } from "@common/schemas/mongo";
 
 export type IProcessChatAssessment = {
   chatId: ModelId;
-  user: IUserFull;
+  user: IUserFullDoc;
   session: ClientSession;
   date: Date;
 };
