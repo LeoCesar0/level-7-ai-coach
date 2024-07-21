@@ -1,14 +1,13 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import { MongooseServer } from "../src/lib/mongoose";
-import {
-  IOrganization,
-  OrganizationModel,
-} from "../src/routes/organizations/schemas/organization";
-import { IUser } from "../src/routes/users/schemas/user";
+import { OrganizationModel } from "../src/routes/organizations/schemas/organization";
 import { createAppUser } from "../src/services/createAppUser";
 import { slugify } from "../src/helpers/slugify";
 import { ENV } from "@common/static/envs";
+import { IOrganization } from "@common/schemas/organization/organization";
+import { parseUserDoc } from "@/helpers/parseUserDoc";
+import { IUser } from "@common/schemas/user/user";
 
 type IConnectTestServer = {
   CONNECT_REAL_SERVER?: boolean;
@@ -83,7 +82,7 @@ export class TestServer {
       name: "Organization Master Test",
       active: true,
       slug: slugify("Organization Master Test"),
-      adminOrganization: true
+      adminOrganization: true,
     });
 
     const admin = await createAppUser({
@@ -94,7 +93,7 @@ export class TestServer {
           name: "Admin Test",
           role: "admin",
           email: "test_admin_lvl7@level7.com",
-          organization: organizationMaster._id,
+          organization: organizationMaster._id.toString(),
         },
       },
     });
@@ -117,7 +116,7 @@ export class TestServer {
           name: "user_test " + now,
           role: "user",
           email: now + "test_user@level7.com",
-          organization: organization1._id,
+          organization: organization1._id.toString(),
         },
       },
     });
@@ -129,7 +128,7 @@ export class TestServer {
           name: "coach_test " + now,
           role: "coach",
           email: now + "test_coach@level7.com",
-          organization: organization1._id,
+          organization: organization1._id.toString(),
         },
       },
     });
@@ -137,9 +136,9 @@ export class TestServer {
     const result: ISeedResult = {
       organizationMaster: organizationMaster.toObject(),
       organization1: organization1.toObject(),
-      admin: admin,
-      normalUser,
-      coachUser,
+      admin: parseUserDoc(admin),
+      normalUser: parseUserDoc(normalUser),
+      coachUser: parseUserDoc(coachUser),
       adminTestToken: this.adminTestToken,
       normalUserTestToken: this.normalUserTestToken,
       coachUserTestToken: this.normalUserTestToken,

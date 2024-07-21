@@ -7,6 +7,7 @@ import { ISeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";
 import { IJournal } from "@common/schemas/journal/journal";
 import { ICreateJournal } from "@common/schemas/journal/createJournal";
+import { parseUserToUserDoc } from "@/helpers/parseUserToUserDoc";
 
 describe("journal integration suite", () => {
   console.log("🔻 Enter JOURNAL integration suite  -->");
@@ -35,7 +36,7 @@ describe("journal integration suite", () => {
 
   describe("create", () => {
     it("should create a new journal entry, by user", async () => {
-      stub = await stubGetUserFromToken(_seed.normalUser);
+      stub = await stubGetUserFromToken(parseUserToUserDoc(_seed.normalUser));
       const date = new Date();
       const body: ICreateJournal = {
         date: date.toISOString(),
@@ -71,7 +72,7 @@ describe("journal integration suite", () => {
 
   describe("list", () => {
     it("should list and find created journal entry", async () => {
-      stub = await stubGetUserFromToken(_seed.normalUser);
+      stub = await stubGetUserFromToken(parseUserToUserDoc(_seed.normalUser));
 
       const res = await honoApp.request("/api/journals/list", {
         method: "POST",
@@ -98,7 +99,7 @@ describe("journal integration suite", () => {
       if (!_createdJournal) {
         throw new Error("Journal not created");
       }
-      stub = await stubGetUserFromToken(_seed.normalUser);
+      stub = await stubGetUserFromToken(parseUserToUserDoc(_seed.normalUser));
 
       const res = await honoApp.request(
         `/api/journals/${_createdJournal._id}`,
@@ -128,7 +129,7 @@ describe("journal integration suite", () => {
       if (!_createdJournal) {
         throw new Error("Journal not created");
       }
-      stub = await stubGetUserFromToken(_seed.normalUser);
+      stub = await stubGetUserFromToken(parseUserToUserDoc(_seed.normalUser));
 
       const body: Partial<ICreateJournal> = {
         text: _journalUpdatedText,
@@ -161,7 +162,7 @@ describe("journal integration suite", () => {
       if (!_createdJournal) {
         throw new Error("Journal not created");
       }
-      stub = await stubGetUserFromToken(_seed.normalUser);
+      stub = await stubGetUserFromToken(parseUserToUserDoc(_seed.normalUser));
 
       const res = await honoApp.request(
         `/api/journals/${_createdJournal._id}`,

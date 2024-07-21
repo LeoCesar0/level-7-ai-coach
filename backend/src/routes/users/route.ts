@@ -14,7 +14,7 @@ import { USER_POPULATES } from "@/static/populates";
 import { AppResponse } from "@common/schemas/app";
 import { IUserDoc, IUserFullDoc, UserModel } from "./schemas/user";
 import { zCreateUserRoute } from "@common/schemas/user/createUserRoute";
-import { updateUserRoute } from "../../../../common/schemas/user/updateUserRoute";
+import { updateUserRoute } from "@common/schemas/user/updateUserRoute";
 
 const userRoute = new Hono()
   // --------------------------

@@ -1,4 +1,4 @@
-import type { IUserFull } from "@common/schemas/userFull";
+import type { IUserFull } from "@common/schemas/user/user";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import type { ISignIn } from "~/@schemas/auth";
 import { handleUnexpectedError } from "~/handlers/handleUnexpectedError";

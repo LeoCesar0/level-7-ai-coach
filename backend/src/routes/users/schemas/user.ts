@@ -1,8 +1,8 @@
 import { Schema, model } from "mongoose";
 import { z } from "zod";
 import { ROLES_LIST } from "@common/static/roles";
-import { zMongoDocument } from "../../../../../common/schemas/mongo";
-import { zUserBase } from "../../../../../common/schemas/user/user";
+import { zMongoDocument } from "@common/schemas/mongo";
+import { zUserBase } from "@common/schemas/user/user";
 import { zId } from "@zodyac/zod-mongoose";
 import { zArchetype } from "@common/schemas/archetype/archetype";
 import { zOrganization } from "@common/schemas/organization/organization";

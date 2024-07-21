@@ -3,7 +3,7 @@ import { IPaginationResult } from "@common/schemas/pagination";
 import { AppResponse } from "@common/schemas/app";
 import { IPaginationBodyOutput } from "@common/schemas/paginateRoute";
 import { IUserDoc } from "@/routes/users/schemas/user";
-import { IUser } from "@common/schemas/user";
+import { IUser } from "@common/schemas/user/user";
 
 export type IHandlePaginationRoute<T> = {
   body: IPaginationBodyOutput;

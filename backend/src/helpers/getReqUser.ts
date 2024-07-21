@@ -1,5 +1,4 @@
 import { IUserDoc } from "@/routes/users/schemas/user";
-import { IUser } from "@common/schemas/user";
 import { Context } from "hono";
 
 export const getReqUser = (ctx: Context) => {

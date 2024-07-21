@@ -4,7 +4,7 @@ import { getUserFromToken } from "../services/getUserFromToken";
 import { IUserDoc, UserModel } from "../routes/users/schemas/user";
 import { ENV } from "@common/static/envs";
 import { IRole } from "@common/schemas/roles";
-import { IUser } from "@common/schemas/user";
+import { IUser } from "@common/schemas/user/user";
 
 type IAuthValidator =
   | {

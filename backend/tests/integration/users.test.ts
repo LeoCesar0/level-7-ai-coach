@@ -10,10 +10,9 @@ import { ISeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";
 import { AppResponse } from "@common/schemas/app";
 import { IOrganization } from "@common/schemas/organization/organization";
-import { IUser } from "@common/schemas/user";
 import { ICreateUser } from "@common/schemas/user/createUser";
 import { ICreateUserRoute } from "@common/schemas/user/createUserRoute";
-import { IUserFull } from "@common/schemas/user/user";
+import { IUser, IUserFull } from "@common/schemas/user/user";
 import { IUpdateUserRoute } from "@common/schemas/user/updateUserRoute";
 import {
   ASSESSMENT_QUESTION,
