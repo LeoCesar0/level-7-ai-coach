@@ -1,12 +1,10 @@
-import { zId } from "@zodyac/zod-mongoose";
-import { zIsoDate } from "../primitives/isoDate";
 import { z } from "zod";
 
 export const zCreateChat = z.object({
-  user: zId.describe("ObjectId:User"),
-  date: zIsoDate,
+  user: z.string(),
+  date: z.date(),
+  closed: z.boolean().optional().default(false),
+  assessed: z.boolean().optional().default(false),
 });
 
-export type ICreateChatDoc = z.infer<typeof zCreateChat>;
-
-export type ICreateChat = Omit<ICreateChatDoc, "user"> & { user: string };
+export type ICreateChat = z.infer<typeof zCreateChat>;

@@ -15,6 +15,7 @@ import { journalRoute } from "./routes/journals/route";
 import { processUserAnalytics } from "./services/analytics/processUserAnalytics";
 import { processJournalsAssessment } from "./services/assessment/processJournalsAssessment";
 import { cors } from "hono/cors";
+import { UserModel } from "./routes/users/schemas/user";
 
 dotenv.config({ path: "../.env" });
 
@@ -47,7 +48,15 @@ const routes = honoApp
   .route(
     "hello",
     new Hono().get("/", async (ctx) => {
-      return ctx.json({ hello: "world" }, 200);
+      const users = await UserModel.find();
+
+      const user = users[0];
+
+      console.log("❗ user -->", user);
+      console.log('typeof id', typeof user._id);
+      console.log('typeof createdAt', typeof user.createdAt);
+
+      return ctx.json({ hello: user }, 200);
     })
   );
 

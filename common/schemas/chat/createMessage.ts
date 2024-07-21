@@ -4,15 +4,10 @@ import { IMessageType, zMessageType } from "./message";
 import { z } from "zod";
 
 export const zCreateMessage = z.object({
-  chat: zId.describe("ObjectId:Chat"),
-  user: zId.describe("ObjectId:User"),
+  chat: zStringNotEmpty,
+  user: zStringNotEmpty,
   message: zStringNotEmpty,
   role: zMessageType.optional().default("human"),
 });
 
-export type ICreateMessage = {
-  user: string;
-  message: string;
-  role: IMessageType;
-  chat: string;
-};
+export type ICreateMessage = z.infer<typeof zCreateMessage>

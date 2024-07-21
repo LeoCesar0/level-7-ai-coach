@@ -1,23 +1,7 @@
 import mongoose from "mongoose";
-import { z } from "zod";
-import { zCreateChat } from "./createChat";
-import { zMongoDocument } from "../../../@schemas/mongoose";
-import { IUser } from "../../users/schemas/user";
+import { type IChatDoc } from "@common/schemas/chat/chat";
 
-export const zChatSchema = zCreateChat.merge(zMongoDocument).merge(
-  z.object({
-    closed: z.boolean(),
-    assessed: z.boolean(),
-  })
-);
-
-export type IChat = z.infer<typeof zChatSchema>;
-
-export type IChatFull = Omit<IChat, "user"> & {
-  user: IUser;
-};
-
-const chatSchema = new mongoose.Schema<IChat>(
+const chatSchema = new mongoose.Schema<IChatDoc>(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     date: {

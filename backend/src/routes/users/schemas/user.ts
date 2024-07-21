@@ -1,11 +1,11 @@
-import { Schema, model } from "mongoose";
+import { InferRawDocType, Schema, model } from "mongoose";
 import { z } from "zod";
-import { zMongoDocument } from "../../../@schemas/mongoose";
 import { ROLES_LIST } from "@common/static/roles";
 import { zCreateUser } from "./createUser";
 import { IAddress, zAddress } from "./address";
 import { zArchetype } from "../../archetype/schemas/archetype";
 import { zOrganization } from "../../organizations/schemas/organization";
+import { zMongoDocument } from "../../../../../common/schemas/mongo";
 
 export type IUser = z.infer<typeof zUser> & {
   firebaseId: string;

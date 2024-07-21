@@ -1,7 +1,4 @@
-import { zId } from "@zodyac/zod-mongoose";
 import { z } from "zod";
-import { zStringNotEmpty } from "../primitives/stringNotEmpty";
-import { ClientParser } from "../mongo";
 
 export const zMessageType = z.enum([
   "function",
@@ -18,4 +15,3 @@ export type IFormattedMessage = {
   message: string;
   role: IMessageType;
 };
-

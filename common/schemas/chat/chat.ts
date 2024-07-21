@@ -1,13 +1,21 @@
 import { z } from "zod";
 import { zId } from "@zodyac/zod-mongoose";
-import { zIsoDate } from "../primitives/isoDate";
+import { ClientParser, zMongoDocument } from "../mongo";
+import { IUser } from "../user";
 
-export type IChat = {
-  user: string;
-  date: string | Date;
-  _id: string;
-  createdAt: string;
-  updatedAt: string;
-  closed?: boolean | undefined;
-  assessed?: boolean | undefined;
+export const zChatDoc = z
+  .object({
+    user: zId.describe("ObjectId:User"),
+    date: z.date(),
+    closed: z.boolean(),
+    assessed: z.boolean(),
+  })
+  .merge(zMongoDocument);
+
+export type IChatDoc = z.infer<typeof zChatDoc>;
+
+export type IChat = ClientParser<IChatDoc>;
+
+export type IChatFull = Omit<IChat, "user"> & {
+  user: IUser;
 };

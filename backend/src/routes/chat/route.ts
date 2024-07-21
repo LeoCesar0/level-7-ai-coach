@@ -1,9 +1,7 @@
 import { Hono } from "hono";
-import { IUser, UserModel } from "../users/schemas/user.js";
-import { ChatModel, IChat } from "./schemas/chat.js";
+import { IUser } from "../users/schemas/user.js";
+import { ChatModel } from "./schemas/chat.js";
 import { routeValidator } from "../../middlewares/routeValidator.js";
-import { zCreateChat } from "./schemas/createChat.js";
-import { zCreateMessage } from "./schemas/createMessage.js";
 import { authValidator } from "../../middlewares/authValidator.js";
 import { z } from "zod";
 import { zStringNotEmpty } from "../../@schemas/primitives/stringNotEmpty.js";
@@ -20,10 +18,13 @@ import { handleDBSession } from "../../handlers/handleDBSession.js";
 import { createNullishFilter } from "../../helpers/createNullishFilter";
 import { stringToDate } from "../../helpers/stringToDate.js";
 import { AppResponse } from "@common/schemas/app.js";
-import { IChatHistoryMessage, IMessageType } from "@common/schemas/chatHistory";
 import { ISendChatMessageResponse } from "@common/schemas/sendChatMessageResponse";
 import { handlePaginationRoute } from "@/handlers/handlePaginationRoute.js";
 import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute.js";
+import { IChat, IChatDoc } from "@common/schemas/chat/chat";
+import { zCreateChat } from "@common/schemas/chat/create";
+import { IFormattedMessage, IMessageType } from "@common/schemas/chat/message";
+import { zCreateMessage } from "@common/schemas/chat/createMessage";
 
 export const chatRouter = new Hono()
   // --------------------------
@@ -55,7 +56,7 @@ export const chatRouter = new Hono()
         };
       }
 
-      const resData = await handlePaginationRoute<IChat>({
+      const resData = await handlePaginationRoute<IChatDoc>({
         model: ChatModel,
         body: {
           ...body,
@@ -115,7 +116,7 @@ export const chatRouter = new Hono()
 
       const messages = baseMessages.map((item) => item.toDict());
 
-      const historyMessages: IChatHistoryMessage[] = messages.map(
+      const historyMessages: IFormattedMessage[] = messages.map(
         (item, index) => {
           return {
             chat: chatId.toString(),
@@ -125,7 +126,7 @@ export const chatRouter = new Hono()
         }
       );
 
-      const resData: AppResponse<IChatHistoryMessage[]> = {
+      const resData: AppResponse<IFormattedMessage[]> = {
         data: historyMessages,
         error: null,
       };
@@ -149,7 +150,7 @@ export const chatRouter = new Hono()
       const chat = await ChatModel.findById(chatId);
 
       if (!chat) {
-        const res: AppResponse<IChat> = {
+        const res: AppResponse<IChatDoc> = {
           data: null,
           error: {
             _isAppError: true,
@@ -159,7 +160,7 @@ export const chatRouter = new Hono()
         return ctx.json(res, 404);
       }
 
-      const resData: AppResponse<IChat> = {
+      const resData: AppResponse<IChatDoc> = {
         data: chat,
         error: null,
       };
@@ -199,7 +200,7 @@ export const chatRouter = new Hono()
         );
         const chat = newChat[0].toObject();
 
-        const resData: AppResponse<IChat> = {
+        const resData: AppResponse<IChatDoc> = {
           data: chat,
           error: null,
         };
