@@ -16,6 +16,7 @@ import { processUserAnalytics } from "./services/analytics/processUserAnalytics"
 import { processJournalsAssessment } from "./services/assessment/processJournalsAssessment";
 import { cors } from "hono/cors";
 import { UserModel } from "./routes/users/schemas/user";
+import testRoute from "./routes/test/route";
 
 dotenv.config({ path: "../.env" });
 
@@ -45,20 +46,7 @@ const routes = honoApp
   .route("/archetypes", archetypeRoute)
   .route("/journals", journalRoute)
   .route("/playground", playgroundRoute)
-  .route(
-    "hello",
-    new Hono().get("/", async (ctx) => {
-      const users = await UserModel.find();
-
-      const user = users[0];
-
-      console.log("❗ user -->", user);
-      console.log('typeof id', typeof user._id);
-      console.log('typeof createdAt', typeof user.createdAt);
-
-      return ctx.json({ hello: user }, 200);
-    })
-  );
+  .route("/test", testRoute);
 
 export type ApiType = typeof routes;
 

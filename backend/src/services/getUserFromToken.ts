@@ -3,7 +3,6 @@ import { firebaseAuth } from "../lib/firebase";
 import { IUserDoc, UserModel } from "../routes/users/schemas/user";
 import { Context } from "hono";
 import { EXCEPTION_CODE } from "@common/static/exceptions";
-import { IUser } from "@common/schemas/user";
 
 export type IGetUserFromToken = {
   token: string;
@@ -13,11 +12,7 @@ export type IGetUserFromToken = {
 const exec = async ({
   token,
   ctx,
-}: IGetUserFromToken): Promise<IUser | IUserDoc | null> => {
-  // if(process.env.NODE_ENV === ENV.TEST){
-  //   const user = await
-  // }
-
+}: IGetUserFromToken): Promise<IUserDoc | null> => {
   try {
     const res = await firebaseAuth.verifyIdToken(token);
 

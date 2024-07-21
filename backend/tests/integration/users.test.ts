@@ -205,7 +205,8 @@ describe("users integration suite", () => {
       if (!_createdUser) {
         throw new Error("User not created");
       }
-      stub = await stubGetUserFromToken(_createdUser);
+      const userDoc = await UserModel.findById(_createdUser._id);
+      stub = await stubGetUserFromToken(userDoc!);
 
       const res = await honoApp.request(`/api/users/${_createdUser._id}`, {
         method: "GET",
@@ -284,7 +285,8 @@ describe("users integration suite", () => {
       if (!_createdUser) {
         throw new Error("User not created");
       }
-      stub = await stubGetUserFromToken(_createdUser);
+      const userDoc = await UserModel.findById(_createdUser._id);
+      stub = await stubGetUserFromToken(userDoc!);
       const archetypeName = "A brand new Arch";
       const archetype = await ArchetypeModel.create({
         description: "desc",
