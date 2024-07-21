@@ -325,6 +325,8 @@ describe("users integration suite", () => {
 
       const json: AppResponse<IUserFull> = await res.json();
 
+      console.log("❗ RES UPDATE -->", json);
+
       const user = json.data;
 
       // @ts-ignore
@@ -384,6 +386,8 @@ describe("users integration suite", () => {
       );
 
       const json: AppResponse<IUserFull> = await res.json();
+
+      console.log("❗ RES UPDATE 2 -->", json);
 
       const user = json.data;
 

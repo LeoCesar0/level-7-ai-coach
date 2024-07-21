@@ -231,10 +231,10 @@ const userRoute = new Hono()
       if (!userId) {
         throw new HTTPException(400, { message: "User id is required" });
       }
-
       if (
         !reqUser || // NO REQ USER
-        (reqUser.role === "user" && reqUser._id !== userId) || // REQ USER IS USER AND NOT THE SAME USER
+        (reqUser.role === "user" &&
+          reqUser._id.toString() !== userId.toString()) || // REQ USER IS USER AND NOT THE SAME USER
         (reqUser.role === "coach" && !isSameOrg) // REQ USER IS COACH AND NOT THE SAME ORG
       ) {
         throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });

@@ -124,13 +124,6 @@ const organizationsRoute = new Hono()
         inputs
       );
       const updatedDoc = await OrganizationModel.findById(orgId);
-      // const updatedDoc = await OrganizationModel.findByIdAndUpdate(
-      //   orgId,
-      //   inputs,
-      //   {
-      //     new: true,
-      //   }
-      // );
 
       if (!updatedDoc) {
         throw new HTTPException(404, { message: "Organization not found" });
