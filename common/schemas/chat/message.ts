@@ -15,3 +15,9 @@ export type IFormattedMessage = {
   message: string;
   role: IMessageType;
 };
+
+export type ISendChatMessageResponse = {
+  chatClosed: boolean;
+  reply: IFormattedMessage;
+  fullResponse: any;
+};

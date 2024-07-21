@@ -1,13 +1,13 @@
 import { Schema, model } from "mongoose";
+import { zAssessmentBase } from "@common/schemas/assessment/assessment";
+import { zMongoDocument } from "@common/schemas/mongo";
 import { z } from "zod";
-import { zMongoDocument } from "../../../@schemas/mongoose";
-import { zCreateAssessment } from "./createAssessment";
 
-export type IAssessment = z.infer<typeof zAssessment>;
+export type IAssessmentDoc = z.infer<typeof zAssessmentDoc>;
 
-export const zAssessment = zCreateAssessment.merge(zMongoDocument);
+export const zAssessmentDoc = zAssessmentBase.merge(zMongoDocument);
 
-export const athleteEntry = new Schema<IAssessment>(
+export const athleteEntry = new Schema<IAssessmentDoc>(
   {
     key: {
       type: String,
@@ -46,4 +46,7 @@ export const athleteEntry = new Schema<IAssessment>(
   { timestamps: true }
 );
 
-export const AssessmentModel = model<IAssessment>("Assessment", athleteEntry);
+export const AssessmentModel = model<IAssessmentDoc>(
+  "Assessment",
+  athleteEntry
+);

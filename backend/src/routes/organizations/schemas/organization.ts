@@ -1,24 +1,17 @@
 import { Schema, model } from "mongoose";
 import { z } from "zod";
 import { zId } from "@zodyac/zod-mongoose";
-import { zMongoDocument } from "../../../@schemas/mongoose";
-import { zCreateOrganization } from "./createOrganization";
 import { slugify } from "../../../helpers/slugify";
+import { zOrganizationBase } from "@common/schemas/organization/organization";
 
-export type IOrganization = z.infer<typeof zOrganization>;
+export const zOrganizationDoc = zOrganizationBase.omit({ users: true }).merge(
+  z.object({
+    users: z.array(zId.describe("ObjectId:User")),
+  })
+);
+export type IOrganizationDoc = z.infer<typeof zOrganizationDoc>;
 
-export const zOrganization = zCreateOrganization
-  .merge(
-    z.object({
-      active: z.boolean().default(true),
-      slug: z.string(),
-      users: z.array(zId.describe("ObjectId:User")),
-      adminOrganization: z.boolean().optional(),
-    })
-  )
-  .merge(zMongoDocument);
-
-export const organizationSchema = new Schema<IOrganization>(
+export const organizationSchema = new Schema<IOrganizationDoc>(
   {
     name: {
       type: String,
@@ -93,7 +86,7 @@ organizationSchema.pre("updateOne", async function (next) {
 // MODEL
 // --------------------------
 
-export const OrganizationModel = model<IOrganization>(
+export const OrganizationModel = model<IOrganizationDoc>(
   "Organization",
   organizationSchema
 );

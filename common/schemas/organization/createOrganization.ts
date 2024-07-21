@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { EXCEPTIONS } from "@common/static/exceptions";
+import { EXCEPTIONS } from "../../static/exceptions";
+import { zStringNotEmpty } from "../primitives/stringNotEmpty";
 
 export type ICreateOrganization = z.infer<typeof zCreateOrganization>;
 
@@ -9,4 +10,5 @@ export const zCreateOrganization = z.object({
     .min(1, { message: EXCEPTIONS.FIELD_REQUIRED("name") })
     .max(255),
   imageUrl: z.string().nullish(),
+  users: z.array(zStringNotEmpty).optional().default([]),
 });

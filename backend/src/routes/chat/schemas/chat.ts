@@ -1,5 +1,21 @@
 import mongoose from "mongoose";
-import { type IChatDoc } from "@common/schemas/chat/chat";
+import { zChatBase } from "@common/schemas/chat/chat";
+import { z } from "zod";
+import { zId } from "@zodyac/zod-mongoose";
+
+export const zChatDoc = zChatBase
+  .omit({
+    user: true,
+    date: true,
+  })
+  .merge(
+    z.object({
+      user: zId.describe("ObjectId:User"),
+      date: z.date(),
+    })
+  );
+
+export type IChatDoc = z.infer<typeof zChatDoc>;
 
 const chatSchema = new mongoose.Schema<IChatDoc>(
   {

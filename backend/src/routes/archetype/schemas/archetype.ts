@@ -1,13 +1,13 @@
+import { zArchetypeBase } from "@common/schemas/archetype/archetype";
+import { zMongoDocument } from "@common/schemas/mongo";
 import { Schema, model } from "mongoose";
 import { z } from "zod";
-import { zMongoDocument } from "../../../@schemas/mongoose";
-import { zCreateArchetype } from "./createArchetype";
 
-export type IArchetype = z.infer<typeof zArchetype>;
+export type IArchetypeDoc = z.infer<typeof zArchetypeDoc>;
 
-export const zArchetype = zCreateArchetype.merge(zMongoDocument);
+export const zArchetypeDoc = zArchetypeBase.merge(zMongoDocument);
 
-export const archetypeSchema = new Schema<IArchetype>(
+export const archetypeSchema = new Schema<IArchetypeDoc>(
   {
     name: {
       type: String,
@@ -26,4 +26,7 @@ export const archetypeSchema = new Schema<IArchetype>(
   { timestamps: true }
 );
 
-export const ArchetypeModel = model<IArchetype>("Archetype", archetypeSchema);
+export const ArchetypeModel = model<IArchetypeDoc>(
+  "Archetype",
+  archetypeSchema
+);

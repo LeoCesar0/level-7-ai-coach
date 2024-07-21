@@ -1,8 +1,5 @@
 import { z } from "zod";
-import {
-  zAssessmentKey,
-  zAssessmentSection,
-} from "../../assessment/schemas/enums";
+import { zAssessmentKey, zAssessmentSection } from "../assessment/enums";
 
 export type IAthleteInfo = z.output<typeof zAthleteInfo>;
 

@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { zAthleteInfoItem } from "../../users/schemas/athleteInfo";
 import { zId } from "@zodyac/zod-mongoose";
-import { zAssessmentKey } from "./enums";
+import { zAssessmentKey } from "@common/schemas/assessment/enums";
+import { zAthleteInfoItem } from "@common/schemas/user/athleteInfo";
 
 export type ICreateAssessment = z.infer<typeof zCreateAssessment>;
 

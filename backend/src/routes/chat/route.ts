@@ -18,7 +18,7 @@ import { handleDBSession } from "../../handlers/handleDBSession.js";
 import { createNullishFilter } from "../../helpers/createNullishFilter";
 import { stringToDate } from "../../helpers/stringToDate.js";
 import { AppResponse } from "@common/schemas/app.js";
-import { ISendChatMessageResponse } from "@common/schemas/sendChatMessageResponse";
+import { ISendChatMessageResponse } from "@common/schemas/chat/message";
 import { handlePaginationRoute } from "@/handlers/handlePaginationRoute.js";
 import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute.js";
 import { IChat, IChatDoc } from "@common/schemas/chat/chat";

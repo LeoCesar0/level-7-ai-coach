@@ -1,21 +1,34 @@
-import { InferRawDocType, Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 import { z } from "zod";
 import { ROLES_LIST } from "@common/static/roles";
-import { zCreateUser } from "./createUser";
-import { IAddress, zAddress } from "./address";
-import { zArchetype } from "../../archetype/schemas/archetype";
-import { zOrganization } from "../../organizations/schemas/organization";
 import { zMongoDocument } from "../../../../../common/schemas/mongo";
+import { zUserBase } from "../../../../../common/schemas/user/user";
+import { zId } from "@zodyac/zod-mongoose";
+import { zArchetype } from "@common/schemas/archetype/archetype";
+import { zOrganization } from "@common/schemas/organization/organization";
+import { IAddress } from "@common/schemas/user/address";
 
-export type IUser = z.infer<typeof zUser> & {
-  firebaseId: string;
-};
+export type IUserDoc = z.infer<typeof zUserDoc>;
 
-export type IUserFull = z.infer<typeof zUserFull>;
+export type IUserFullDoc = z.infer<typeof zUserFullDoc>;
 
-export const zUser = zCreateUser.merge(zMongoDocument);
+export const zUserDoc = zUserBase
+  .merge(zMongoDocument)
+  .omit({
+    organization: true,
+    archetype: true,
+    birthday: true,
+  })
+  .merge(
+    z.object({
+      _id: z.string().optional(),
+      organization: zId.describe("ObjectId:Organization"),
+      archetype: zId.describe("ObjectId:Archetype").nullish(),
+      birthday: z.date().nullish(),
+    })
+  );
 
-export const zUserFull = zUser
+export const zUserFullDoc = zUserDoc
   .omit({ organization: true, archetype: true })
   .merge(
     z.object({
@@ -32,7 +45,7 @@ const addressSchema = new Schema<IAddress>({
   address: { type: String, required: true },
 });
 
-export const userSchema = new Schema<IUser>(
+export const userSchema = new Schema<IUserDoc>(
   {
     firebaseId: {
       type: String,
@@ -98,4 +111,4 @@ export const userSchema = new Schema<IUser>(
 //   next();
 // });
 
-export const UserModel = model<IUser>("User", userSchema);
+export const UserModel = model<IUserDoc>("User", userSchema);

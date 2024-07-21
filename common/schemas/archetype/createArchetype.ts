@@ -7,6 +7,3 @@ export const zCreateArchetype = z.object({
   slug: z.string().optional(),
   description: z.string(),
 });
-
-
-
