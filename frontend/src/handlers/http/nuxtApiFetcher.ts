@@ -4,6 +4,7 @@ import type {
   IApiFetcherOptions,
   IApiFetcherResponse,
 } from "~/@types/fetcher";
+import { normalizeUrl } from "~/helpers/normalizeUrl";
 
 export const nuxtApiFetcher: ApiFetcher = async <T>({
   method,
@@ -14,6 +15,10 @@ export const nuxtApiFetcher: ApiFetcher = async <T>({
 }: IApiFetcherOptions): Promise<IApiFetcherResponse<T>> => {
   const authStore = useAuthToken();
   const { authToken } = storeToRefs(authStore);
+  const runtime = useRuntimeConfig();
+  const baseUrl = runtime.public.apiBase;
+
+  const fullUrl = normalizeUrl(`${baseUrl}/${url}`);
 
   if (!token) {
     token = authToken.value;
@@ -23,11 +28,11 @@ export const nuxtApiFetcher: ApiFetcher = async <T>({
   if (isServerSide) {
     url = url.replace("localhost", "backend");
   }
-  console.log("❗nuxt fetcher url -->", url);
+  console.log("❗nuxt fetcher fullUrl -->", fullUrl);
   console.log("❗ !!token -->", !!token);
   console.log("❗ body -->", body);
   console.log("❗ method -->", method);
-  const res = await $fetch<AppResponse<T>>(url, {
+  const res = await $fetch<AppResponse<T>>(fullUrl, {
     method: method,
     ...(body ? { body: body } : {}),
     headers: {

@@ -21,8 +21,14 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
   watch(currentUser, async (newVal) => {
     console.log("❗ watch currentUser -->", newVal);
 
+    if (newVal && !newVal.active) {
+      await logout();
+      toast.error("Your account is not active. Please contact support.");
+      return;
+    }
+
     if ((newVal && route.path === "/") || route.path === "/sign-in") {
-      await navigateTo(ROUTE.dashboard.href);
+      return await navigateTo(ROUTE.dashboard.href);
     }
   });
 

@@ -1,10 +1,5 @@
 import type { IRole } from "@common/schemas/roles";
-import {
-  ChatBubbleIcon,
-  GearIcon,
-  PaperPlaneIcon,
-  DashboardIcon,
-} from "@radix-icons/vue";
+import { DashboardIcon, PersonIcon } from "@radix-icons/vue";
 import IconChat from "@/components/icons/Chat.vue";
 import IconJournal from "@/components/icons/Journal.vue";
 import IconSettings from "@/components/icons/Settings.vue";
@@ -17,6 +12,7 @@ export const ROUTES = [
   "settings",
   "profile",
   "journal",
+  "users",
 ] as const;
 
 export type Route = (typeof ROUTES)[number];
@@ -44,6 +40,13 @@ export const ROUTE: Record<Route, IRoute> = {
     permissions: ["admin", "coach", "user"],
     inMenuFor: ["admin", "coach", "user"],
     icon: DashboardIcon,
+  },
+  users: {
+    href: "/dashboard/users",
+    label: "Users",
+    permissions: ["admin", "coach"],
+    inMenuFor: ["admin", "coach"],
+    icon: PersonIcon,
   },
   chat: {
     href: "/dashboard/chat",

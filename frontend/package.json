@@ -28,6 +28,7 @@
   "dependencies": {
     "@nuxtjs/tailwindcss": "^6.12.1",
     "@pinia/nuxt": "^0.5.1",
+    "@tanstack/vue-table": "^8.19.3",
     "@unovis/ts": "^1.4.2",
     "@unovis/vue": "^1.4.2",
     "@vee-validate/zod": "^4.13.2",

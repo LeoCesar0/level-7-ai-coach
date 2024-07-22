@@ -17,15 +17,15 @@ export type IFetchApiResponse<T> = AppResponse<T>;
 export const useFetchApi = () => {
   const authStore = useAuthToken();
   const { authToken } = storeToRefs(authStore);
-  const runtime = useRuntimeConfig();
-  const baseUrl = runtime.public.apiBase;
+  // const runtime = useRuntimeConfig();
+  // const baseUrl = runtime.public.apiBase;
   const { toast } = useToast();
 
   const fetchApi = async <T>(
     { url, ...rest }: IApiFetcherOptions,
     { loadingRefs = [], showError = true }: IFetchApiExtraOptions = {}
   ): Promise<IFetchApiResponse<T>> => {
-    const fullUrl = normalizeUrl(`${baseUrl}/${url}`);
+    // const fullUrl = normalizeUrl(`${baseUrl}/${url}`);
     const token = authToken.value;
 
     loadingRefs.forEach((loadingRef) => {
@@ -42,7 +42,7 @@ export const useFetchApi = () => {
     try {
       const res = await fetcher({
         ...rest,
-        url: fullUrl,
+        url: url,
         token: token,
       });
       console.log("❗ fetcher res -->", res);
