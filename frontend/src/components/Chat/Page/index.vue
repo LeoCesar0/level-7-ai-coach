@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ROUTE } from "~/static/routes";
-import { type IChatHistoryMessage } from "@common/schemas/chatHistory";
+import { type IFormattedMessage } from "@common/schemas/chat/message";
+
 
 // --------------------------
 // SETUP
@@ -27,7 +28,7 @@ const {
 const { toast } = useToast();
 
 const currentPrompt = ref<string>("");
-const messages = ref<IChatHistoryMessage[]>([]);
+const messages = ref<IFormattedMessage[]>([]);
 const messagesContainerRef = ref<HTMLDivElement | undefined>(undefined);
 const inputRef = ref<HTMLTextAreaElement | undefined>(undefined);
 
@@ -73,7 +74,7 @@ const handleSendMessage = async () => {
   const chatId = currentChat.value?._id;
   if (!chatId || disabledChat.value || !currentPrompt.value) return;
 
-  const mes: IChatHistoryMessage = {
+  const mes: IFormattedMessage = {
     chat: chatId,
     message: currentPrompt.value,
     role: "human",
@@ -149,7 +150,7 @@ onMounted(async () => {
         :is-typing="true"
       />
       <div v-if="closedChat" class="text-center p-4">
-        <p class="text-muted-foreground text-lg ">This chat is closed!</p>
+        <p class="text-muted-foreground text-lg">This chat is closed!</p>
       </div>
     </div>
     <UiCard

@@ -15,8 +15,6 @@ import {
   MEMORY_COLLECTION,
 } from "../src/lib/langchain/@static";
 import { mongoDBClient } from "../src/lib/mongodb";
-import { ICreateArchetype } from "../src/routes/archetype/schemas/createArchetype";
-import { ArchetypeModel } from "../src/routes/archetype/schemas/archetype";
 import { AssessmentModel } from "../src/routes/assessment/schemas/assessment";
 import historySeed from "./data/dev/history.json";
 import memorySeed from "./data/dev/memory.json";
@@ -25,6 +23,8 @@ import { IMemoryMessage } from "../src/@schemas/memory";
 import { ObjectId } from "mongodb";
 import { JournalModel } from "../src/routes/journals/schemas/journal";
 import { ENV } from "@common/static/envs";
+import { ICreateArchetype } from "@common/schemas/archetype/createArchetype";
+import { ArchetypeModel } from "@/routes/archetype/schemas/archetype";
 
 dotenv.config({ path: "../.env" });
 
@@ -142,7 +142,7 @@ const run = async () => {
         name: adminName,
         role: "admin",
         email: adminEmail,
-        organization: organizationMaster._id,
+        organization: organizationMaster._id.toString(),
         _id: "6689cceacc04b2814e51629b",
       },
     },
@@ -180,8 +180,8 @@ const run = async () => {
         name: normalUserName,
         role: "user",
         email: normalUserEmail,
-        organization: organization1._id,
-        archetype: defaultArch._id,
+        organization: organization1._id.toString(),
+        archetype: defaultArch._id.toString(),
         _id: "6689cd9963d2aa5bbcffc9f6",
       },
     },
@@ -211,7 +211,7 @@ const run = async () => {
         name: coachUserName,
         role: "coach",
         email: coachUserEmail,
-        organization: organization1._id,
+        organization: organization1._id.toString(),
         _id: "6689cd9a63d2aa5bbcffc9f9",
       },
     },

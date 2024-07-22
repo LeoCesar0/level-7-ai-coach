@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { zId } from "@zodyac/zod-mongoose";
 import { zAthleteInfo } from "./athleteInfo";
 import { zAddress } from "./address";
 import { EXCEPTIONS } from "../../static/exceptions";
@@ -9,6 +8,7 @@ import { zIsoDateOptional } from "../primitives/isoDate";
 export type ICreateUser = z.input<typeof zCreateUser>;
 
 export const zCreateUser = z.object({
+  _id: z.string().optional(),
   name: z
     .string()
     .min(1, { message: EXCEPTIONS.FIELD_REQUIRED("name") })

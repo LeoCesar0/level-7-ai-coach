@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { type IChatHistoryMessage } from "@common/schemas/chatHistory";
 import { cn } from "@lib/utils";
 import { parse } from "marked";
+import { type IFormattedMessage } from "@common/schemas/chat/message";
 const userStore = useUserStore();
 
 const { currentUser } = storeToRefs(userStore);
 
 type Props = {
-  message: IChatHistoryMessage;
+  message: IFormattedMessage;
   isTyping?: boolean;
 };
 
@@ -15,7 +15,7 @@ const props = defineProps<Props>();
 
 let htmlMessage = ref("");
 let message = props.message.message;
-message = message.replaceAll('\n', '\n\n\n\n')
+message = message.replaceAll("\n", "\n\n\n\n");
 try {
   htmlMessage.value = await parse(message);
 } catch (err) {

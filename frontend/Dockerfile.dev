@@ -18,7 +18,7 @@ COPY ../common ./common
 
 WORKDIR /app/frontend
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json ./
 
 RUN pnpm install
 

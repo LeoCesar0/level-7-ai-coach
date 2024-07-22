@@ -1,21 +1,28 @@
 import { getReqUser } from "@/helpers/getReqUser";
 import { Hono } from "hono";
-import { UserModel } from "../users/schemas/user";
 import { authValidator } from "@/middlewares/authValidator";
+import { zMongoDocument } from "@common/schemas/mongo";
 
 const testRoute = new Hono()
   .get("/", authValidator(), async (ctx) => {
     const reqUser = getReqUser(ctx);
 
-    console.log("❗ reqUser -->", reqUser);
+    const test = zMongoDocument.parse({
+      _id: "60b1a7d7b7e6b8001f3f9c1c",
+      __v: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
-    const users = await UserModel.find();
+    // console.log("❗ reqUser -->", reqUser);
 
-    const firstUser = users[0];
+    // const users = await UserModel.find();
 
-    console.log("❗ firstUser -->", firstUser);
+    // const firstUser = users[0];
 
-    return ctx.json({ reqUser, firstUser }, 200);
+    // console.log("❗ firstUser -->", firstUser);
+
+    return ctx.json({ reqUser, test }, 200);
   })
   .get("/hello", async (ctx) => {
     return ctx.json({ hello: "world" }, 200);

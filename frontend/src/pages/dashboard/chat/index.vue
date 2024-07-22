@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { type IChat } from "@common/schemas/chat";
 import { ROUTE } from "../../../static/routes";
 import { stringToDate } from "@common/helpers/stringToDate";
+import { type IChat } from "@common/schemas/chat/chat";
 const { createNewChat, getOpenChats, getChats } = useChat();
 
 const openChat = ref<IChat | null>(null);

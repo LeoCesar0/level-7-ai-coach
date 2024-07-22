@@ -4,7 +4,7 @@ import { zMongoDocumentClient } from "../mongo";
 import { zArchetype } from "../archetype/archetype";
 import { zOrganization } from "../organization/organization";
 
-export const zUserBase = zCreateUser.merge(
+export const zUserBase = zCreateUser.omit({ _id: true }).merge(
   z.object({
     firebaseId: z.string(),
   })

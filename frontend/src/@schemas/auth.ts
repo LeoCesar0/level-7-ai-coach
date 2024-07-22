@@ -1,5 +1,5 @@
+import { zStringNotEmpty } from "@common/schemas/primitives/stringNotEmpty";
 import z from "zod";
-import { zStringNotEmpty } from "./primitives";
 
 export const zSignIn = z.object({
   email: zStringNotEmpty.email(),
