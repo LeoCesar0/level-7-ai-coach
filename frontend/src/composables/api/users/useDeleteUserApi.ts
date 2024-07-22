@@ -1,6 +1,5 @@
 import type { AppResponse, AppResponseError } from "@common/schemas/app";
 import type { ICreateUser } from "@common/schemas/user/createUser";
-import type { IUser } from "@common/schemas/user/user";
 import { nuxtApiFetcher } from "~/handlers/http/nuxtApiFetcher";
 
 interface Options {

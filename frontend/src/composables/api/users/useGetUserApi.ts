@@ -1,23 +1,21 @@
 import type { AppResponse, AppResponseError } from "@common/schemas/app";
 import type { ICreateUser } from "@common/schemas/user/createUser";
-import type { IUserFull } from "@common/schemas/user/user";
+import type { IUser, IUserFull } from "@common/schemas/user/user";
 import { nuxtApiFetcher } from "~/handlers/http/nuxtApiFetcher";
 
 interface Options {
-  values: MaybeRefOrGetter<ICreateUser>;
+  id: MaybeRefOrGetter<string>;
 }
 
-export default function useCreateUserApi(opts: Options) {
+export default function useGetUserApi(opts: Options) {
   return useLazyAsyncData<AppResponse<IUserFull>, AppResponseError>(
-    "create-user",
+    "get-user",
     () => {
-      const user = toValue(opts.values);
+      const id = toValue(opts.id);
       return nuxtApiFetcher({
-        method: "POST",
-        body: user,
-        url: "/users",
+        method: "GET",
+        url: "/users/" + id,
       });
-    },
-    { immediate: false }
+    }
   );
 }

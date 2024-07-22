@@ -1,8 +1,10 @@
 import type { AppResponse } from "@common/schemas/app";
 
+export type FetcherMethod = "POST" | "GET" | "PUT" | "DELETE" | "PATCH";
+
 export type IApiFetcherOptions = {
   url: string;
-  method: "POST" | "GET" | "PUT" | "DELETE" | "PATCH";
+  method: FetcherMethod;
   body?: any;
   contentType?: string;
   token?: string | null;

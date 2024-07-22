@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { type ICreateArchetype } from "@common/schemas/archetype/createArchetype";
 type Props = {};
 
 const props = defineProps<Props>();
