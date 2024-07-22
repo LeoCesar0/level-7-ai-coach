@@ -74,7 +74,7 @@ describe("journal integration suite", () => {
     it("should list and find created journal entry", async () => {
       stub = await stubGetUserFromToken(parseUserToUserDoc(_seed.normalUser));
 
-      const res = await honoApp.request("/api/journals/list", {
+      const res = await honoApp.request("/api/journals/paginate", {
         method: "POST",
         body: JSON.stringify({}),
         headers: {

@@ -172,10 +172,10 @@ describe("users integration suite", () => {
     // --------------------------
     // LIST USER
     // --------------------------
-    it("should list and find created user", async () => {
+    it("should paginate and find created user", async () => {
       stub = await stubGetUserFromToken(_seed.admin);
 
-      const res = await honoApp.request("/api/users/list", {
+      const res = await honoApp.request("/api/users/paginate", {
         method: "POST",
         body: JSON.stringify({}),
         headers: {

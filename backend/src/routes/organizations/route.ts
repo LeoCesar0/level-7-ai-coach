@@ -16,10 +16,10 @@ import { zStringNotEmpty } from "@common/schemas/primitives/stringNotEmpty";
 
 const organizationsRoute = new Hono()
   // --------------------------
-  // LIST
+  // PAGINATE
   // --------------------------
   .post(
-    "/list",
+    "/paginate",
     authValidator({ permissionsTo: ["admin", "user", "coach"] }),
     routeValidator({
       schema: zPaginateRouteQueryInput,

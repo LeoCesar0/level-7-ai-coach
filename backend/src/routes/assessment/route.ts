@@ -124,7 +124,7 @@ const assessmentRoute = new Hono()
   // PAGINATE
   // --------------------------
   .post(
-    "/list",
+    "/paginate",
     authValidator({ permissionsTo: ["admin", "user", "coach"] }),
     routeValidator({
       schema: zPaginateRouteQueryInput,

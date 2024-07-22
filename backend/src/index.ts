@@ -15,7 +15,6 @@ import { journalRoute } from "./routes/journals/route";
 import { processUserAnalytics } from "./services/analytics/processUserAnalytics";
 import { processJournalsAssessment } from "./services/assessment/processJournalsAssessment";
 import { cors } from "hono/cors";
-import { UserModel } from "./routes/users/schemas/user";
 import testRoute from "./routes/test/route";
 
 dotenv.config({ path: "../.env" });

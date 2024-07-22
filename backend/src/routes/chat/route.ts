@@ -27,7 +27,7 @@ import { stringToDate } from "@common/helpers/stringToDate.js";
 
 export const chatRouter = new Hono()
   // --------------------------
-  // LIST
+  // PAGINATE
   // --------------------------
   .post(
     "/paginate",

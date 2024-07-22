@@ -122,7 +122,7 @@ describe("archetypes integration suite", () => {
     it("should list and find created archetype", async () => {
       stub = await stubGetUserFromToken(_seed.coachUser);
 
-      const res = await honoApp.request("/api/archetypes/list", {
+      const res = await honoApp.request("/api/archetypes/paginate", {
         method: "POST",
         body: JSON.stringify({}),
         headers: {

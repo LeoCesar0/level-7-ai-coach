@@ -172,10 +172,10 @@ const archetypeRoute = new Hono()
     }
   )
   // --------------------------
-  // LIST
+  // PAGINATE
   // --------------------------
   .post(
-    "/list",
+    "/paginate",
     authValidator({ permissionsTo: ["admin", "user", "coach"] }),
     routeValidator({
       schema: zPaginateRouteQueryInput,

@@ -20,10 +20,10 @@ import { handleUpdateUser } from "./handler/handleUpdateUser";
 
 const userRoute = new Hono()
   // --------------------------
-  // LIST
+  // PAGINATE
   // --------------------------
   .post(
-    "/list",
+    "/paginate",
     authValidator({ permissionsTo: ["admin", "coach"] }),
     routeValidator({
       schema: zPaginateRouteQueryInput,

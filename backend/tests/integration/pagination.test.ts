@@ -48,7 +48,7 @@ describe("pagination integration suite", () => {
     // ACT
     // --------------------------
 
-    const res = await honoApp.request("/api/organizations/list", {
+    const res = await honoApp.request("/api/organizations/paginate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -77,7 +77,7 @@ describe("pagination integration suite", () => {
       page: 1,
     };
 
-    const res = await honoApp.request("/api/organizations/list", {
+    const res = await honoApp.request("/api/organizations/paginate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -143,7 +143,7 @@ describe("pagination integration suite", () => {
     // ACT
     // --------------------------
 
-    const res = await honoApp.request("/api/organizations/list", {
+    const res = await honoApp.request("/api/organizations/paginate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
