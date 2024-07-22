@@ -1,4 +1,3 @@
-import { ICreateAssessment } from "../../routes/assessment/schemas/createAssessment";
 import { ChatModel } from "../../routes/chat/schemas/chat";
 import { ClientSession } from "mongoose";
 import { getChatHistory } from "../langchain/getChatHistory";
@@ -6,7 +5,8 @@ import { getAssessment } from "./helpers/getAssessment";
 import { processAssessmentEntries } from "./helpers/processAssessmentEntries";
 import { HTTPException } from "hono/http-exception";
 import { IUserFullDoc } from "@/routes/users/schemas/user";
-import { ModelId } from "@common/schemas/mongo";
+import { ICreateAssessment } from "@/routes/assessment/schemas/createAssessement";
+import { ModelId } from "@/@schemas/mongo";
 
 export type IProcessChatAssessment = {
   chatId: ModelId;

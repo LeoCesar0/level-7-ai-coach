@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@zodyac/zod-mongoose':
-        specifier: ^1.1.2
-        version: 1.1.3
       mongoose:
         specifier: ^8.4.3
         version: 8.5.1
@@ -28,9 +25,6 @@ packages:
 
   '@types/whatwg-url@11.0.5':
     resolution: {integrity: sha512-coYR071JRaHa+xoEvvYqvnIHaVqaYrLPbsufM9BF63HkwI5Lgmy2QR8Q5K/lYDYo5AK82wOvSOS0UsLTpTG7uQ==}
-
-  '@zodyac/zod-mongoose@1.1.3':
-    resolution: {integrity: sha512-Yi6tkgvy8LrJkNqBXYYITcTCKowpvw+7NDIh4Sjh5JLdYnuhAWt6a2dfs0l+X7+uCktSTPvKhV4ZetIBFBvOdw==}
 
   bson@6.8.0:
     resolution: {integrity: sha512-iOJg8pr7wq2tg/zSlCCHMi3hMm5JTOxLTagf3zxhcenHsFp+c6uOs6K7W5UE7A4QIJGtqh/ZovFNMP4mOPJynQ==}
@@ -136,20 +130,6 @@ snapshots:
   '@types/whatwg-url@11.0.5':
     dependencies:
       '@types/webidl-conversions': 7.0.3
-
-  '@zodyac/zod-mongoose@1.1.3':
-    dependencies:
-      mongoose: 8.5.1
-      zod: 3.23.8
-    transitivePeerDependencies:
-      - '@aws-sdk/credential-providers'
-      - '@mongodb-js/zstd'
-      - gcp-metadata
-      - kerberos
-      - mongodb-client-encryption
-      - snappy
-      - socks
-      - supports-color
 
   bson@6.8.0: {}
 

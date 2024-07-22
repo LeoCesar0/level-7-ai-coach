@@ -1,9 +1,8 @@
 import { ClientSession } from "mongoose";
-import {
-  IAssessmentAIResponse,
-  ICreateAssessment,
-} from "../../../routes/assessment/schemas/createAssessment";
+
 import { AssessmentModel } from "../../../routes/assessment/schemas/assessment";
+import { ICreateAssessment } from "@/routes/assessment/schemas/createAssessement";
+import { IAssessmentAIResponse } from "@common/schemas/assessment/assessment";
 
 export type IProcessAssessmentEntries = {
   entries: IAssessmentAIResponse[];

@@ -1,6 +1,5 @@
-import { zId } from "@zodyac/zod-mongoose";
 import { zStringNotEmpty } from "../primitives/stringNotEmpty";
-import { IMessageType, zMessageType } from "./message";
+import { zMessageType } from "./message";
 import { z } from "zod";
 
 export const zCreateMessage = z.object({

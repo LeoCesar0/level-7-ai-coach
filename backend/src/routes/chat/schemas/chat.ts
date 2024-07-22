@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { zChatBase } from "@common/schemas/chat/chat";
 import { z } from "zod";
 import { zId } from "@zodyac/zod-mongoose";
-import { zMongoDocument } from "@common/schemas/mongo";
+import { zMongoDocument } from "@/@schemas/mongo";
 
 export const zChatDoc = zChatBase
   .omit({

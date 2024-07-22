@@ -1,7 +1,7 @@
 import { getReqUser } from "@/helpers/getReqUser";
 import { Hono } from "hono";
 import { authValidator } from "@/middlewares/authValidator";
-import { zMongoDocument } from "@common/schemas/mongo";
+import { zMongoDocument } from "@/@schemas/mongo";
 
 const testRoute = new Hono()
   .get("/", authValidator(), async (ctx) => {

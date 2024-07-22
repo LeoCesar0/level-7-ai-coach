@@ -1,4 +1,4 @@
-import { IMongoDocument } from "@common/schemas/mongo";
+import { IMongoDocument } from "./mongo";
 
 export type IDateFields = {
   year: number;

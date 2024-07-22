@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { zMongoDocument, zMongoDocumentClient } from "../mongo";
+import { zMongoDocumentClient } from "../mongo";
 import type { IUser } from "../user/user";
 import { zCreateChat } from "./create";
 

@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { zId } from "@zodyac/zod-mongoose";
 import { zCreateOrganization } from "./createOrganization";
 import { zMongoDocumentClient } from "../mongo";
 

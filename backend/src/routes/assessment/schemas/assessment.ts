@@ -1,11 +1,11 @@
 import { Schema, model } from "mongoose";
-import { zAssessmentBase } from "@common/schemas/assessment/assessment";
-import { zMongoDocument } from "@common/schemas/mongo";
 import { z } from "zod";
+import { zMongoDocument } from "@/@schemas/mongo";
+import { zCreateAssessment } from "./createAssessement";
 
 export type IAssessmentDoc = z.infer<typeof zAssessmentDoc>;
 
-export const zAssessmentDoc = zAssessmentBase.merge(zMongoDocument);
+export const zAssessmentDoc = zCreateAssessment.merge(zMongoDocument);
 
 export const athleteEntry = new Schema<IAssessmentDoc>(
   {

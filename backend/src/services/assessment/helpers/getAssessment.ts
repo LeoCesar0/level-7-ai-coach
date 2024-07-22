@@ -11,7 +11,7 @@ import { ChatTemplateInput } from "../../../@schemas/langchain";
 import { IAssessmentDoc } from "@/routes/assessment/schemas/assessment";
 import { IUserFullDoc } from "@/routes/users/schemas/user";
 import { getAssessmentTopicsText } from "@common/schemas/assessment/enums";
-import { zAssessmentAIResponse } from "@common/schemas/assessment/createAssessement";
+import { zAssessmentAIResponse } from "@common/schemas/assessment/assessment";
 
 export type IGetAssessment = {
   user: IUserFullDoc;

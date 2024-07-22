@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import { z } from "zod";
 import { zId } from "@zodyac/zod-mongoose";
-import { zMongoDocument } from "@common/schemas/mongo";
 import { zJournalBase } from "@common/schemas/journal/journal";
+import { zMongoDocument } from "@/@schemas/mongo";
 
 export const zJournalDoc = zJournalBase
   .omit({ date: true })

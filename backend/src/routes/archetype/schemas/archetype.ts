@@ -1,5 +1,5 @@
+import { zMongoDocument } from "@/@schemas/mongo";
 import { zArchetypeBase } from "@common/schemas/archetype/archetype";
-import { zMongoDocument } from "@common/schemas/mongo";
 import { Schema, model } from "mongoose";
 import { z } from "zod";
 
