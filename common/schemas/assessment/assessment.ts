@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { zCreateAssessment } from "../../../backend/src/routes/assessment/schemas/createAssessment";
 import { zMongoDocumentClient } from "../mongo";
+import { zCreateAssessment } from "./createAssessement";
 
 export type IAssessment = z.infer<typeof zAssessment>;
 

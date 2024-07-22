@@ -12,7 +12,7 @@ export type IFetchApiExtraOptions = {
   showError?: boolean;
 };
 
-export type IFetchApiResponse<T> = { response: AppResponse<T> };
+export type IFetchApiResponse<T> = AppResponse<T>;
 
 export const useFetchApi = () => {
   const authStore = useAuthToken();
@@ -53,9 +53,7 @@ export const useFetchApi = () => {
       if (showError) {
         toast.error(res.error.message);
       }
-      return {
-        response: res,
-      };
+      return res;
     } finally {
       loadingRefs.forEach((loadingRef) => {
         loadingRef.value = false;

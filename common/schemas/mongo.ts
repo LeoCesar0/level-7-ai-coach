@@ -1,6 +1,6 @@
-import { ObjectId } from "mongoose";
 import { z } from "zod";
 import { zId } from "@zodyac/zod-mongoose";
+import type { ObjectId } from "mongoose";
 
 export type ModelId = z.infer<typeof zId>;
 

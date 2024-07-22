@@ -1,7 +1,4 @@
 // import { IAssessment } from "../../routes/assessment/schemas/assessment";
-import {
-  zAssessmentAIResponse,
-} from "../../../routes/assessment/schemas/createAssessment";
 import { StructuredOutputParser } from "langchain/output_parsers";
 import { z } from "zod";
 import { RunnableSequence } from "@langchain/core/runnables";
@@ -14,6 +11,7 @@ import { ChatTemplateInput } from "../../../@schemas/langchain";
 import { IAssessmentDoc } from "@/routes/assessment/schemas/assessment";
 import { IUserFullDoc } from "@/routes/users/schemas/user";
 import { getAssessmentTopicsText } from "@common/schemas/assessment/enums";
+import { zAssessmentAIResponse } from "@common/schemas/assessment/createAssessement";
 
 export type IGetAssessment = {
   user: IUserFullDoc;

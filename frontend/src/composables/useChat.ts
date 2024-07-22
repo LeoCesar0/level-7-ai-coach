@@ -1,8 +1,12 @@
-import type { IChatHistoryMessage } from "@common/schemas/chatHistory";
+import type { IChat } from "@common/schemas/chat/chat";
+import type { ICreateChat } from "@common/schemas/chat/create";
+import type { ICreateMessage } from "@common/schemas/chat/createMessage";
+import type {
+  IFormattedMessage,
+  ISendChatMessageResponse,
+} from "@common/schemas/chat/message";
 import type { IPaginationBody } from "@common/schemas/paginateRoute";
 import type { IPaginationResult } from "@common/schemas/pagination";
-import type { ISendChatMessageResponse } from "@common/schemas/sendChatMessageResponse";
-import type { IChat, ICreateChat, ICreateMessage } from "@common/schemas/chat";
 
 export const useChat = () => {
   const { fetchApi } = useFetchApi();
@@ -23,7 +27,7 @@ export const useChat = () => {
       date: new Date().toISOString(),
       user: currentUser.value?._id ?? "",
     };
-    const { response } = await fetchApi<IChat>(
+    const response = await fetchApi<IChat>(
       {
         method: "POST",
         url: "/chats",
@@ -51,7 +55,7 @@ export const useChat = () => {
       role: "human",
     };
     console.log("❗ sendChatMessage body -->", body);
-    const { response } = await fetchApi<ISendChatMessageResponse>(
+    const response = await fetchApi<ISendChatMessageResponse>(
       {
         method: "POST",
         url: "/chats/send",
@@ -82,7 +86,7 @@ export const useChat = () => {
   };
 
   const getChatHistory = async ({ chatId }: { chatId: string }) => {
-    const { response } = await fetchApi<IChatHistoryMessage[]>(
+    const response = await fetchApi<IFormattedMessage[]>(
       {
         method: "GET",
         url: "/chats/history/" + chatId,
@@ -96,7 +100,7 @@ export const useChat = () => {
     return response;
   };
   const getChat = async ({ chatId }: { chatId: string }) => {
-    const { response } = await fetchApi<IChat>(
+    const response = await fetchApi<IChat>(
       {
         method: "GET",
         url: "/chats/" + chatId,
@@ -111,14 +115,14 @@ export const useChat = () => {
   };
 
   const getChats = async () => {
-    const { response } = await paginateChats<IChat>({
+    const response = await paginateChats<IChat>({
       limit: 100,
     });
     return response;
   };
 
   const getOpenChats = async () => {
-    const { response } = await paginateChats<IChat>({
+    const response = await paginateChats<IChat>({
       filters: {
         closed: false,
       },

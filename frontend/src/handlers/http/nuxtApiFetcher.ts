@@ -12,6 +12,13 @@ export const nuxtApiFetcher: ApiFetcher = async <T>({
   contentType,
   token,
 }: IApiFetcherOptions): Promise<IApiFetcherResponse<T>> => {
+  const authStore = useAuthToken();
+  const { authToken } = storeToRefs(authStore);
+
+  if (!token) {
+    token = authToken.value;
+  }
+
   const isServerSide = typeof window === "undefined";
   if (isServerSide) {
     url = url.replace("localhost", "backend");
@@ -36,27 +43,5 @@ export const nuxtApiFetcher: ApiFetcher = async <T>({
     },
   });
 
-  // const { data, error } = await useAsyncData<AppResponse<T>, AppResponseError>(
-  //   url,
-  //   () =>
-  //     $fetch<AppResponse<T>>(url, {
-  //       method: method,
-  //       ...(body ? { body: body } : {}),
-  //       headers: {
-  //         "Content-Type": contentType ?? "application/json",
-  //         ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  //       },
-  //     })
-  // );
-  // console.log('❗here error -->', error);
-  // if (error.value) {
-  //   throw error.value;
-  // }
-  // if (!data.value) {
-  //   throw new Error("No data returned from API");
-  // }
-
-  return {
-    response: res,
-  };
+  return res;
 };

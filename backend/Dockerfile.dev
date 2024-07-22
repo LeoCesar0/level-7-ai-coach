@@ -1,28 +1,30 @@
 # Use an official Node.js runtime as a parent image
 FROM node:20-alpine
 
-# Set the working directory in the container
-# WORKDIR /usr/src/app
-WORKDIR /app
-
-# Copy package.json and package-lock.json before other files
-# Utilize Docker cache to save re-installing dependencies if unchanged
-COPY package*.json ./
-
 RUN npm install -g pnpm
 
-# Install dependencies
+# # rootdir
+
+WORKDIR /app
+
+COPY ../package.json ./
+
 RUN pnpm install
 
-# Copy all files
+COPY ../common ./common
+
+# backend dir
+
+WORKDIR /app/backend
+
+COPY package.json ./
+
+RUN pnpm install
+
 COPY . .
 
-# Build the NestJS application
-# RUN pnpm build
+ENV NODE_ENV=development
 
-# Expose the port the app runs on
 EXPOSE 8000
 
-# Define the command to run the application
-# CMD ["node", "dist/main"]
 CMD ["pnpm", "dev"]

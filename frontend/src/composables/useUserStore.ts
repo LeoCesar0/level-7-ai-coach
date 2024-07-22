@@ -45,7 +45,7 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
   };
 
   const fetchCurrentUser = async () => {
-    const { response } = await fetchApi<IUserFull>(
+    const response = await fetchApi<IUserFull>(
       {
         url: "/users/me",
         method: "GET",
@@ -55,11 +55,11 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
       }
     );
 
-    return { response };
+    return response;
   };
 
   const handleFetchCurrentUser = async () => {
-    const { response } = await fetchCurrentUser();
+    const response = await fetchCurrentUser();
 
     if (response.data) {
       currentUser.value = response.data;

@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { zStringNotEmpty } from "../../../frontend/src/@schemas/primitives";
 import { zIsoDate } from "../primitives/isoDate";
+import { zStringNotEmpty } from "../primitives/stringNotEmpty";
 
 export const zCreateJournal = z.object({
   text: z.string().default(""),

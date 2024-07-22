@@ -8,9 +8,7 @@ export type IApiFetcherOptions = {
   token?: string | null;
 };
 
-export type IApiFetcherResponse<T> = {
-  response: AppResponse<T>;
-};
+export type IApiFetcherResponse<T> = AppResponse<T>;
 
 export type ApiFetcher = (
   options: IApiFetcherOptions

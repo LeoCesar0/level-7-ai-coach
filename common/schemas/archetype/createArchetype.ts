@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export type ICreateArchetype = z.infer<typeof zCreateArchetype>;
+export type ICreateArchetype = z.input<typeof zCreateArchetype>;
 
 export const zCreateArchetype = z.object({
   name: z.string(),

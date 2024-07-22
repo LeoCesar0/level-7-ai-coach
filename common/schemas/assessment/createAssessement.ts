@@ -1,7 +1,7 @@
 import { z } from "zod";
+import { zAthleteInfoItem } from "../user/athleteInfo";
+import { zAssessmentKey } from "./enums";
 import { zId } from "@zodyac/zod-mongoose";
-import { zAssessmentKey } from "@common/schemas/assessment/enums";
-import { zAthleteInfoItem } from "@common/schemas/user/athleteInfo";
 
 export type ICreateAssessment = z.infer<typeof zCreateAssessment>;
 
@@ -31,8 +31,3 @@ export const zCreateAssessment = zAssessmentAIResponse.merge(
     date: z.date(),
   })
 );
-
-export const zCreateAssessmentRoute = z.object({
-  user: zId,
-  entries: z.array(zCreateAssessment),
-});

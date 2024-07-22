@@ -1,23 +1,9 @@
 import { z } from "zod";
 import { zMongoDocument, zMongoDocumentClient } from "../mongo";
-import { IUser } from "../user/user";
+import type { IUser } from "../user/user";
+import { zCreateChat } from "./create";
 
-// user: zId.describe("ObjectId:User"),
-
-export const zChatBase = z.object({
-  user: z.string(),
-  date: z.string(),
-  closed: z.boolean(),
-  assessed: z.boolean(),
-});
-
-export const zChatDocBase = z
-  .object({
-    date: z.date(),
-    closed: z.boolean(),
-    assessed: z.boolean(),
-  })
-  .merge(zMongoDocument);
+export const zChatBase = zCreateChat;
 
 export const zChat = zChatBase.merge(zMongoDocumentClient);
 

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { zCreateJournal } from "./createJournal";
 import { zMongoDocumentClient } from "../mongo";
-import { zStringNotEmpty } from "../../../frontend/src/@schemas/primitives";
+import { zStringNotEmpty } from "../primitives/stringNotEmpty";
 
 export const zJournalBase = zCreateJournal.merge(
   z.object({

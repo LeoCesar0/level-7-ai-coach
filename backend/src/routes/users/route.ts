@@ -15,6 +15,8 @@ import { AppResponse } from "@common/schemas/app";
 import { IUserDoc, IUserFullDoc, UserModel } from "./schemas/user";
 import { zCreateUserRoute } from "@common/schemas/user/createUserRoute";
 import { updateUserRoute } from "@common/schemas/user/updateUserRoute";
+import { getReqUser } from "@/helpers/getReqUser";
+import { handleUpdateUser } from "./handler/handleUpdateUser";
 
 const userRoute = new Hono()
   // --------------------------
@@ -206,101 +208,33 @@ const userRoute = new Hono()
     async (ctx) => {
       const userId = ctx.req.param("id");
       const inputs = ctx.req.valid("json");
+      const reqUser = getReqUser(ctx);
 
-      if (!inputs || !Object.keys(inputs).length) {
-        throw new HTTPException(400, { message: "No data to update" });
-      }
-
-      let resData: AppResponse<IUserFullDoc>;
-
-      const userValues = cloneDeep(inputs);
-
-      const userToChange = await UserModel.findById(userId);
-
-      if (!userToChange) {
-        throw new HTTPException(404, { message: "User not found" });
-      }
-
-      // @ts-ignore
-      const reqUser: IUserDoc | undefined = ctx.get("reqUser");
-
-      const isSameOrg =
-        reqUser?.organization.toString() ===
-        userToChange.organization?.toString();
-
-      if (!userId) {
-        throw new HTTPException(400, { message: "User id is required" });
-      }
-      if (
-        !reqUser || // NO REQ USER
-        (reqUser.role === "user" &&
-          reqUser._id.toString() !== userId.toString()) || // REQ USER IS USER AND NOT THE SAME USER
-        (reqUser.role === "coach" && !isSameOrg) // REQ USER IS COACH AND NOT THE SAME ORG
-      ) {
-        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
-      }
-      const infoKey: keyof typeof userValues = "athleteInfo";
-      const infoObject = Object.entries(userValues[infoKey] || {}).reduce(
-        (acc, [key, value]) => {
-          acc[`${infoKey}.${key}`] = value;
-          return acc;
-        },
-        {} as Record<string, any>
-      );
-
-      let values: typeof userValues = cloneDeep(userValues);
-      delete values.athleteInfo;
-
-      const updatedUserDoc = await UserModel.findByIdAndUpdate(
+      const res = handleUpdateUser({
+        inputs,
+        reqUser,
         userId,
-        {
-          ...values,
-          $set: infoObject,
-        },
-        {
-          new: true,
-        }
-      );
+      });
+      return ctx.json(res, 200);
+    }
+  )
+  .put(
+    "/me",
+    routeValidator({
+      schema: updateUserRoute,
+    }),
+    authValidator({ permissionsTo: ["user", "admin", "coach"] }),
+    async (ctx) => {
+      const inputs = ctx.req.valid("json");
+      const reqUser = getReqUser(ctx);
+      const userId = reqUser?._id.toString();
 
-      if (!updatedUserDoc) {
-        throw new HTTPException(404, { message: "User not found" });
-      }
-      let updatedUser = updatedUserDoc.toObject();
-
-      const prevOrg = userToChange.organization?.toString();
-      const newOrg = updatedUser.organization?.toString();
-      const changedOrg = newOrg && prevOrg !== newOrg;
-      if (changedOrg) {
-        await OrganizationModel.updateMany(
-          {
-            _id: prevOrg,
-          },
-          {
-            $pull: { users: userId },
-          }
-        );
-        await OrganizationModel.updateMany(
-          {
-            _id: newOrg,
-          },
-          {
-            $addToSet: { users: userId },
-          }
-        );
-      }
-
-      const finalRes = await getUserFull({ userId });
-
-      if (!finalRes) {
-        throw new HTTPException(404, { message: "User not found" });
-      }
-
-      resData = {
-        data: finalRes,
-        error: null,
-      };
-
-      return ctx.json(resData, 200);
+      const res = handleUpdateUser({
+        inputs,
+        reqUser,
+        userId,
+      });
+      return ctx.json(res, 200);
     }
   )
   .delete(

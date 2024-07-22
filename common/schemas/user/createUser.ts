@@ -6,7 +6,7 @@ import { EXCEPTIONS } from "../../static/exceptions";
 import { zRole } from "../roles";
 import { zIsoDateOptional } from "../primitives/isoDate";
 
-export type ICreateUser = z.infer<typeof zCreateUser>;
+export type ICreateUser = z.input<typeof zCreateUser>;
 
 export const zCreateUser = z.object({
   name: z
