@@ -24,18 +24,13 @@ export default function usePaginateApi<T>({
   return useLazyAsyncData<AppResponse<IPaginationResult<T>>, AppResponseError>(
     key,
     () => {
-      console.log(
-        "------------- 🟢 START SESSION usePaginateApi -------------"
-      );
       const _url = parsePath({ url: `${url}/paginate` });
       const body = toValue(bodyRef);
-      console.log("❗ body -->", body);
-      console.log("❗ _url -->", _url);
       return nuxtApiFetcher({
         method: method,
         url: _url,
         body: body,
-        toastOptions
+        toastOptions,
       });
     },
     {
