@@ -13,6 +13,7 @@ export const ROUTES = [
   "profile",
   "journal",
   "users",
+  "createUser",
 ] as const;
 
 export type Route = (typeof ROUTES)[number];
@@ -47,6 +48,11 @@ export const ROUTE: Record<Route, IRoute> = {
     permissions: ["admin", "coach"],
     inMenuFor: ["admin", "coach"],
     icon: PersonIcon,
+  },
+  createUser: {
+    href: "/dashboard/users/create",
+    label: "Users",
+    permissions: ["admin", "coach"],
   },
   chat: {
     href: "/dashboard/chat",

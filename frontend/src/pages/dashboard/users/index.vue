@@ -7,12 +7,11 @@ import { type IRole } from "@common/schemas/roles";
 import TableActiveCell from "@/components/Table/ActiveCell.vue";
 import TableRoleCell from "@/components/Table/RoleCell.vue";
 import { formatDate } from "@helpers/formatDate";
-type Props = {};
-
-const props = defineProps<Props>();
+import { ROUTE } from "@static/routes";
 
 const pagination = ref<IPaginationBody<IUser>>({
   limit: 10,
+  page: 1,
 });
 // const data: IUser[] = [];
 
@@ -72,6 +71,11 @@ const columns: ColumnDef<IUser>[] = [
 <template>
   <NuxtLayout name="dashboard-layout">
     <DashboardSection title="Users">
+      <template v-slot:actions-right>
+        <NuxtLink :to="ROUTE.createUser.href">
+          <UiButton>New User</UiButton>
+        </NuxtLink>
+      </template>
       <Table :data="data?.data?.list ?? []" :columns="columns" />
     </DashboardSection>
   </NuxtLayout>
