@@ -1,4 +1,5 @@
 import type { AppResponse, AppResponseError } from "@common/schemas/app";
+import type { ToastOptions } from "~/@types/toast";
 import { nuxtApiFetcher } from "~/handlers/http/nuxtApiFetcher";
 import { parsePath } from "~/helpers/parsePath";
 import { slugify } from "~/helpers/slugify";
@@ -8,6 +9,7 @@ interface Options<T> {
   id: string;
   url: string;
   immediate?: boolean;
+  toastOptions?: ToastOptions;
 }
 
 export default function useUpdateApi<T>({
@@ -15,6 +17,7 @@ export default function useUpdateApi<T>({
   id,
   url,
   immediate = false,
+  toastOptions = { error: true, loading: true, success: true },
 }: Options<T>) {
   const method = "PUT";
   const key = slugify(`${url}-${method}-${id}`).replace("/", "");
@@ -26,6 +29,7 @@ export default function useUpdateApi<T>({
         method: method,
         body: body,
         url: parsePath({ url }),
+        toastOptions,
       });
     },
     { immediate: immediate }

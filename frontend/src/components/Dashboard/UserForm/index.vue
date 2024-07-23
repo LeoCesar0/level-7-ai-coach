@@ -79,14 +79,13 @@ const { execute: createUser } = useCreateApi<ICreateUserRoute, IUser>({
   bodyRef: formValues,
 });
 
-const onSubmit = form.handleSubmit(async (values: ICreateUserRoute) => {
+const onSubmit = form.handleSubmit(async () => {
   await createUser();
 });
 </script>
 
 <template>
   <DashboardSection title="Create User">
-    <div>{{ formValues }}</div>
     <Form @submit="onSubmit">
       <FormField name="user.name" label="Name" />
       <FormField name="user.email" label="Email" />
