@@ -2,6 +2,7 @@
 import { Field } from "vee-validate";
 import { cn } from "../../lib/utils";
 import { type ISelectOption } from "../../@schemas/select";
+import { vAutoAnimate } from "@formkit/auto-animate";
 
 type Props = {
   name: string;
@@ -22,7 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 <template>
   <Field v-slot="{ componentField }" :name="name">
-    <UiFormItem :class="cn(props.class ?? '')">
+    <UiFormItem :class="cn(props.class ?? '')" v-auto-animate>
       <UiFormLabel>{{ label }}</UiFormLabel>
       <UiFormControl>
         <UiInput

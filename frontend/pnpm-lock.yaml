@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@formkit/auto-animate':
+    specifier: ^0.8.2
+    version: 0.8.2
   '@nuxtjs/tailwindcss':
     specifier: ^6.12.1
     version: 6.12.1
@@ -1694,6 +1697,10 @@ packages:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
+
+  /@formkit/auto-animate@0.8.2:
+    resolution: {integrity: sha512-SwPWfeRa5veb1hOIBMdzI+73te5puUBHmqqaF1Bu7FjvxlYSz/kJcZKSa9Cg60zL0uRNeJL2SbRxV6Jp6Q1nFQ==}
+    dev: false
 
   /@grpc/grpc-js@1.9.15:
     resolution: {integrity: sha512-nqE7Hc0AzI+euzUwDAy0aY5hCp10r734gMGRdU+qOPX0XSceI2ULrcXB5U2xSc5VkWwalCj4M7GzCAygZl2KoQ==}
