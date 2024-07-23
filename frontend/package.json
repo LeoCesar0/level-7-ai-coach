@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@formkit/auto-animate": "^0.8.2",
+    "@internationalized/date": "^3.5.5",
     "@nuxtjs/tailwindcss": "^6.12.1",
     "@pinia/nuxt": "^0.5.1",
     "@tanstack/vue-table": "^8.19.3",

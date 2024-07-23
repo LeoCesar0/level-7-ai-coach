@@ -80,16 +80,14 @@ const { execute: createUser } = useCreateApi<ICreateUserRoute, IUser>({
 });
 
 const onSubmit = form.handleSubmit(async (values: ICreateUserRoute) => {
-  console.log("❗ values -->", values);
-  // createUser({});
+  await createUser();
 });
 </script>
 
 <template>
   <DashboardSection title="Create User">
     <div>{{ formValues }}</div>
-    <form class="w-2/3 space-y-6" @submit="onSubmit">
-      <FormField name="password" label="Password" />
+    <Form @submit="onSubmit">
       <FormField name="user.name" label="Name" />
       <FormField name="user.email" label="Email" />
       <FormField
@@ -112,7 +110,13 @@ const onSubmit = form.handleSubmit(async (values: ICreateUserRoute) => {
         />
         <FormField name="user.phone" label="Phone" class="flex-1" />
       </div>
+      <FormField name="user.birthDate" label="Birth Date" inputVariant="date" />
+      <FormField
+        name="password"
+        label="Password"
+        :inputProps="{ type: 'password' }"
+      />
       <UiButton type="submit"> Submit </UiButton>
-    </form>
+    </Form>
   </DashboardSection>
 </template>

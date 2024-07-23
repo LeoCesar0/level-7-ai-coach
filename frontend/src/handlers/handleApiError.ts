@@ -7,6 +7,9 @@ export const handleApiError = ({ err }: { err: any }): AppResponseError => {
   if (err?.response && err?.response._data) {
     err = err.response._data;
   }
+  if (err?._data) {
+    err = err._data;
+  }
   console.error("❗ handleApi Error -->", err);
 
   const isAPiError = isApiError(err);
