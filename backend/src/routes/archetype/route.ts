@@ -12,6 +12,23 @@ import { AppResponse } from "@common/schemas/app";
 import { zCreateArchetype } from "@common/schemas/archetype/createArchetype";
 
 const archetypeRoute = new Hono()
+  .get(
+    "/list",
+    authValidator({ permissionsTo: ["admin", "user", "coach"] }),
+    async (ctx) => {
+      // @ts-ignore
+      const reqUser: IUser = ctx.get("reqUser");
+
+      const list = await ArchetypeModel.find();
+
+      const resData: AppResponse<IArchetypeDoc[]> = {
+        data: list,
+        error: null,
+      };
+
+      return ctx.json(resData, 200);
+    }
+  )
   // --------------------------
   // create
   // --------------------------

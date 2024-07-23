@@ -17,13 +17,13 @@ export const zUserDoc = zUserBase
   .omit({
     organization: true,
     archetype: true,
-    birthday: true,
+    birthDate: true,
   })
   .merge(
     z.object({
       organization: zId.describe("ObjectId:Organization"),
       archetype: zId.describe("ObjectId:Archetype").nullish(),
-      birthday: z.date().nullish(),
+      birthDate: z.date().nullish(),
     })
   );
 
@@ -85,13 +85,7 @@ export const userSchema = new Schema<IUserDoc>(
       type: String,
     },
     athleteInfo: {},
-    birthday: {
-      type: String,
-    },
-    sport: {
-      type: String,
-    },
-    experience: {
+    birthDate: {
       type: String,
     },
     address: addressSchema,

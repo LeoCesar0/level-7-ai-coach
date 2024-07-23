@@ -11,6 +11,6 @@ export const parseUserToUserDoc = (user: IUser): IUserDoc => {
     updatedAt: stringToDate(user.updatedAt),
     organization: new ObjectId(user.organization),
     archetype: user.archetype ? new ObjectId(user.archetype) : undefined,
-    birthday: user.birthday ? stringToDate(user.birthday) : undefined,
+    birthDate: user.birthDate ? stringToDate(user.birthDate) : undefined,
   };
 };

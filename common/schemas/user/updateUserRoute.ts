@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { zUser } from "./user";
 
-export type IUpdateUserRoute = z.input<typeof updateUserRoute>;
+export type IUpdateUser = z.input<typeof zUpdateUser>;
 
-export const updateUserRoute = zUser.partial();
+export const zUpdateUser = zUser.partial();

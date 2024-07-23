@@ -31,7 +31,7 @@ describe("handleDBSession unit suite", () => {
   it("should ensure item is created when expected", async () => {
     await ArchetypeModel.create({
       name: itemName,
-      birthday: 123123,
+      birthDate: 123123,
       slug: slug,
     }).catch(() => {});
 
@@ -100,7 +100,7 @@ describe("handleDBSession unit suite", () => {
           [
             {
               name: itemName2,
-              birthday: 123123,
+              birthDate: 123123,
               slug: "slug-test-handle-db-session",
             },
           ],

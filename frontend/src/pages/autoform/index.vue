@@ -47,7 +47,7 @@ const schema = z.object({
 
   sendMeMails: z.boolean().optional(),
 
-  birthday: z.coerce.date().optional(),
+  birthDate: z.coerce.date().optional(),
 
   color: z.enum(["red", "green", "blue"]).optional(),
 
@@ -97,8 +97,8 @@ function onSubmit(values: Record<string, any>) {}
         },
       },
 
-      birthday: {
-        description: 'We need your birthday to send you a gift.',
+      birthDate: {
+        description: 'We need your birthDate to send you a gift.',
       },
 
       sendMeMails: {

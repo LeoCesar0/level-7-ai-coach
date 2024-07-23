@@ -13,7 +13,7 @@ import { IOrganization } from "@common/schemas/organization/organization";
 import { ICreateUser } from "@common/schemas/user/createUser";
 import { ICreateUserRoute } from "@common/schemas/user/createUserRoute";
 import { IUser, IUserFull } from "@common/schemas/user/user";
-import { IUpdateUserRoute } from "@common/schemas/user/updateUserRoute";
+import { IUpdateUser } from "@common/schemas/user/updateUserRoute";
 import {
   ASSESSMENT_QUESTION,
   zAssessmentSection,
@@ -247,7 +247,7 @@ describe("users integration suite", () => {
       }
       stub = await stubGetUserFromToken(_seed.normalUser);
 
-      const body: IUpdateUserRoute = {
+      const body: IUpdateUser = {
         athleteInfo: {
           goals: {
             answer: "Become the best!",
@@ -280,7 +280,7 @@ describe("users integration suite", () => {
       expect(json.error?.message).toBe(EXCEPTIONS.NOT_AUTHORIZED);
     });
 
-    it("should update user athlete info, name, birthday and archetype", async () => {
+    it("should update user athlete info, name, birthDate and archetype", async () => {
       if (!_createdUser) {
         throw new Error("User not created");
       }
@@ -293,9 +293,9 @@ describe("users integration suite", () => {
         slug: "arch-name",
       });
 
-      const body: IUpdateUserRoute = {
+      const body: IUpdateUser = {
         name: "updated name",
-        birthday: new Date("1990-01-01").toISOString(),
+        birthDate: new Date("1990-01-01").toISOString(),
         athleteInfo: {
           goals: {
             answer: "Become the best!",
@@ -335,8 +335,8 @@ describe("users integration suite", () => {
       expect(res.status).toBe(200);
       expect(user?._id).toBe(_createdUser._id.toString());
       expect(user?.athleteInfo).toBeTruthy();
-      expect(user?.birthday).toBeTruthy();
-      expect(user?.birthday).toBe(body.birthday);
+      expect(user?.birthDate).toBeTruthy();
+      expect(user?.birthDate).toBe(body.birthDate);
 
       expect(user?.athleteInfo).toEqual(body.athleteInfo);
       expect(user?.name).toBe(body.name);
@@ -354,7 +354,7 @@ describe("users integration suite", () => {
 
       const newAnswer = "Win a Silver medal (CHANGED)";
 
-      const body: IUpdateUserRoute = {
+      const body: IUpdateUser = {
         phone: "12345678915",
         athleteInfo: {
           // goals DID NOT TOUCH

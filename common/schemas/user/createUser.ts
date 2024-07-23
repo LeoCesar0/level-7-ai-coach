@@ -9,6 +9,7 @@ export type ICreateUser = z.input<typeof zCreateUser>;
 
 export const zCreateUser = z.object({
   _id: z.string().optional(),
+  active: z.boolean().default(true),
   name: z
     .string()
     .min(1, { message: EXCEPTIONS.FIELD_REQUIRED("name") })
@@ -17,16 +18,13 @@ export const zCreateUser = z.object({
     .string()
     .min(1, { message: EXCEPTIONS.FIELD_REQUIRED("email") })
     .email(),
-  phone: z.string().nullish(),
-  phoneCode: z.string().nullish(),
-  active: z.boolean().default(true),
-  imageUrl: z.string().nullish(),
-  role: zRole.default("user"),
   organization: z.string(),
-  archetype: z.string().nullish(),
+  role: zRole.default("user"),
+  phoneCode: z.string().nullish(),
+  phone: z.string().nullish(),
+  imageUrl: z.string().nullish(),
+  birthDate: zIsoDateOptional.nullish(),
   address: zAddress.nullish(),
-  birthday: zIsoDateOptional.nullish(),
-  sport: z.string().nullish(),
-  experience: z.string().nullish(),
   athleteInfo: zAthleteInfo.nullish(),
+  archetype: z.string().nullish(),
 });

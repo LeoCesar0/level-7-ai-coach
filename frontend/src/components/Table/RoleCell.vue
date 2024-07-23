@@ -8,14 +8,17 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const color = ROLE_COLORS[props.role] ?? "";
+const color = computed(() => {
+  const c = ROLE_COLORS[props.role] ?? "";
+  return c;
+});
 </script>
 
 <template>
   <div class="flex items-center flex-start gap-2">
     <div
-      class="w-4 h-4 rounded-full"
-      :class="cn({ [`bg-${color}`]: true })"
+      :class="cn('w-4 h-4 rounded-full')"
+      :style="{ backgroundColor: color }"
     ></div>
     <span class="capitalize">{{ role ?? "" }}</span>
   </div>

@@ -1,4 +1,4 @@
-import { IUpdateUserRoute } from "@common/schemas/user/updateUserRoute";
+import { IUpdateUser } from "@common/schemas/user/updateUserRoute";
 import { IUserDoc, IUserFullDoc, UserModel } from "../schemas/user";
 import { HTTPException } from "hono/http-exception";
 import { AppResponse } from "@common/schemas/app";
@@ -8,7 +8,7 @@ import { OrganizationModel } from "@/routes/organizations/schemas/organization";
 import { getUserFull } from "@/services/getUserFull";
 
 export type IHandleUpdateUser = {
-  inputs: IUpdateUserRoute;
+  inputs: IUpdateUser;
   reqUser: IUserDoc | null;
   userId?: string;
 };

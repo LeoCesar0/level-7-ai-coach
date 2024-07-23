@@ -14,7 +14,7 @@ import { USER_POPULATES } from "@/static/populates";
 import { AppResponse } from "@common/schemas/app";
 import { IUserDoc, IUserFullDoc, UserModel } from "./schemas/user";
 import { zCreateUserRoute } from "@common/schemas/user/createUserRoute";
-import { updateUserRoute } from "@common/schemas/user/updateUserRoute";
+import { zUpdateUser } from "@common/schemas/user/updateUserRoute";
 import { getReqUser } from "@/helpers/getReqUser";
 import { handleUpdateUser } from "./handler/handleUpdateUser";
 
@@ -202,7 +202,7 @@ const userRoute = new Hono()
   .put(
     "/:id",
     routeValidator({
-      schema: updateUserRoute,
+      schema: zUpdateUser,
     }),
     authValidator({ permissionsTo: ["user", "admin", "coach"] }),
     async (ctx) => {
@@ -221,7 +221,7 @@ const userRoute = new Hono()
   .put(
     "/me",
     routeValidator({
-      schema: updateUserRoute,
+      schema: zUpdateUser,
     }),
     authValidator({ permissionsTo: ["user", "admin", "coach"] }),
     async (ctx) => {

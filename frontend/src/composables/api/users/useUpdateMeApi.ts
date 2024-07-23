@@ -1,10 +1,10 @@
 import type { AppResponse, AppResponseError } from "@common/schemas/app";
-import type { IUpdateUserRoute } from "@common/schemas/user/updateUserRoute";
+import type { IUpdateUser } from "@common/schemas/user/updateUserRoute";
 import type { IUserFull } from "@common/schemas/user/user";
 import { nuxtApiFetcher } from "~/handlers/http/nuxtApiFetcher";
 
 interface Options {
-  values: MaybeRefOrGetter<IUpdateUserRoute>;
+  values: MaybeRefOrGetter<IUpdateUser>;
 }
 
 export default function useUpdateMeApi(opts: Options) {
