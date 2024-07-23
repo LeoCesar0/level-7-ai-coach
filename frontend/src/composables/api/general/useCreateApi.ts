@@ -21,6 +21,7 @@ export default function useCreateApi<T, R>({
     key,
     () => {
       const body = toValue(bodyRef);
+      console.log("❗ here body -->", body);
       return nuxtApiFetcher({
         method: "POST",
         body: body,

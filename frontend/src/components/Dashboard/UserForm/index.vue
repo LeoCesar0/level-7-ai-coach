@@ -1,16 +1,33 @@
 <script setup lang="ts">
 import { type ICreateUser } from "@common/schemas/user/createUser";
 import z from "zod";
-import { zUpdateUser } from "@common/schemas/user/updateUserRoute";
-import { zCreateUser } from "@common/schemas/user/createUser";
 import { zUser } from "@common/schemas/user/user";
 import { type IOrganization } from "@common/schemas/organization/organization";
 import UiAutoFormFieldSelect from "@components/ui/auto-form/AutoFormFieldSelect.vue";
 import { type ISelectOption } from "../../../@schemas/select";
+import {
+  zCreateUserRoute,
+  type ICreateUserRoute,
+} from "@common/schemas/user/createUserRoute";
+import { type IUser } from "@common/schemas/user/user";
+import { useForm } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/zod";
+import { type IRole } from "@common/schemas/roles";
 
 type Props = {
   edit: boolean;
 };
+
+const props = defineProps<Props>();
+
+const schema = zCreateUserRoute;
+
+// --------------------------
+// COMPOSABLES
+// --------------------------
+
+const userStore = useUserStore();
+const { currentUser } = storeToRefs(userStore);
 
 const { data: orgRes } = await useListApi<IOrganization>({
   url: "/organizations",
@@ -26,70 +43,76 @@ const organizationOptions = computed<ISelectOption[]>(() => {
   });
 });
 
-const zTest = computed(() => {
-  let schema = zUser
-    .omit({
-      __v: true,
-      _id: true,
-      birthDate: true,
-      createdAt: true,
-      updatedAt: true,
-      firebaseId: true,
-      archetype: true,
-      organization: true,
-    })
-    .merge(
-      z.object({
-        birthDate: z.coerce.date(),
-        // testFile: z.string(),
-        // @ts-ignore
-        organization: z.string(),
-      })
-    );
-  if (!props.edit) {
-    // @ts-ignore
-    schema = schema.omit({
-      active: true,
-    });
-  }
-  return schema;
+const form = useForm({
+  validationSchema: toTypedSchema(schema),
+  initialValues: {
+    user: {
+      organization: "",
+      email: "",
+      name: "",
+      imageUrl: "",
+      role: "user",
+    },
+    password: "",
+  },
 });
 
-const props = defineProps<Props>();
+const formValues = computed(() => {
+  return form.values as ICreateUserRoute;
+});
+const roleOptions = computed<ISelectOption<IRole>[]>(() => {
+  const roles: ISelectOption<IRole>[] = [
+    { label: "User", value: "user" },
+    { label: "Coach", value: "coach" },
+  ];
+  if (currentUser.value?.role === "admin") {
+    roles.push({ label: "Admin", value: "admin" });
+  }
+  return roles;
+});
 
-const onSubmit = async (values: ICreateUser) => {
+// --------------------------
+// HANDLERS
+// --------------------------
+const { execute: createUser } = useCreateApi<ICreateUserRoute, IUser>({
+  url: "/users",
+  bodyRef: formValues,
+});
+
+const onSubmit = form.handleSubmit(async (values: ICreateUserRoute) => {
   console.log("❗ values -->", values);
-};
+  // createUser({});
+});
 </script>
 
 <template>
   <DashboardSection title="Create User">
-    <UiAutoForm
-      :schema="zTest"
-      class="max-w-[540px]"
-      @submit="
-      (values) => {
-        onSubmit(values as ICreateUser);
-      }
-    "
-      :field-config="{
-        // testFile: {
-        //   inputProps: {
-        //     type: 'file',
-        //   },
-        // },
-        organization: {
-          component: UiAutoFormFieldSelect,
-          _options: organizationOptions,
-          // inputProps: {
-          //   options: organizationOptions,
-          // },
-        },
-      }"
-    >
-      <div class="mt-4">
-        <UiButton type="submit"> Submit </UiButton>
+    <div>{{ formValues }}</div>
+    <form class="w-2/3 space-y-6" @submit="onSubmit">
+      <FormField name="password" label="Password" />
+      <FormField name="user.name" label="Name" />
+      <FormField name="user.email" label="Email" />
+      <FormField
+        name="user.organization"
+        label="Organization"
+        inputVariant="select"
+        :selectOptions="organizationOptions"
+      />
+      <FormField
+        name="user.role"
+        label="Role"
+        inputVariant="select"
+        :selectOptions="roleOptions"
+      />
+      <div class="flex items-center gap-4">
+        <FormField
+          name="user.phoneCode"
+          label="Phone Code"
+          class="max-w-[200px]"
+        />
+        <FormField name="user.phone" label="Phone" class="flex-1" />
       </div>
-    </UiAutoForm>
+      <UiButton type="submit"> Submit </UiButton>
+    </form>
   </DashboardSection>
 </template>

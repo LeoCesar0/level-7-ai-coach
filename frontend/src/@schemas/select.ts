@@ -1,4 +1,4 @@
-export type ISelectOption = {
-  value: string;
+export type ISelectOption<T = string> = {
+  value: T;
   label: string;
 };
