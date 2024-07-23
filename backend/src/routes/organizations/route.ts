@@ -13,8 +13,37 @@ import { AppResponse } from "@common/schemas/app";
 import { zCreateOrganization } from "@common/schemas/organization/createOrganization";
 import { zOrganization } from "@common/schemas/organization/organization";
 import { zStringNotEmpty } from "@common/schemas/primitives/stringNotEmpty";
+import { FilterQuery } from "mongoose";
 
 const organizationsRoute = new Hono()
+  // --------------------------
+  // LIST
+  // --------------------------
+  .get(
+    "/list",
+    authValidator({ permissionsTo: ["admin", "coach"] }),
+    async (ctx) => {
+      // @ts-ignore
+      const reqUser: IUser = ctx.get("reqUser");
+
+      const filters: FilterQuery<IOrganizationDoc> = {};
+
+      if (reqUser.role === "coach") {
+        filters._id = reqUser.organization.toString();
+      }
+
+      const list = await OrganizationModel.find({
+        ...filters,
+      });
+
+      const resData: AppResponse<IOrganizationDoc[]> = {
+        data: list,
+        error: null,
+      };
+
+      return ctx.json(resData, 200);
+    }
+  )
   // --------------------------
   // PAGINATE
   // --------------------------

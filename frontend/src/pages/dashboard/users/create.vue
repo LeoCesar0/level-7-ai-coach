@@ -2,6 +2,6 @@
 
 <template>
   <NuxtLayout name="dashboard-layout">
-    <DashboardUserForm :edit="true" />
+    <DashboardUserForm :edit="false" />
   </NuxtLayout>
 </template>
