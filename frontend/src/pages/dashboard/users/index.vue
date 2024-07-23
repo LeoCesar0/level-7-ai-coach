@@ -8,6 +8,9 @@ import TableActiveCell from "@/components/Table/ActiveCell.vue";
 import TableRoleCell from "@/components/Table/RoleCell.vue";
 import { formatDate } from "@helpers/formatDate";
 import { ROUTE } from "@static/routes";
+import Dropdown from "@/components/Dropdown/index.vue";
+import { type IDropdownItem } from "../../../@schemas/dropdown";
+import { DotsHorizontalIcon } from "@radix-icons/vue";
 
 const pagination = ref<IPaginationBody<IUser>>({
   limit: 10,
@@ -20,6 +23,17 @@ const { data, error } = await usePaginateApi<IUser>({
   url: "/users",
   immediate: true,
 });
+
+const getDropdownItems = ({ id }: { id: string }): IDropdownItem[] => {
+  return [
+    {
+      label: "Edit",
+      action: () => {
+        navigateTo(ROUTE.editUser.href + `/${id}`);
+      },
+    },
+  ];
+};
 
 const columns: ColumnDef<IUser>[] = [
   {
@@ -64,6 +78,23 @@ const columns: ColumnDef<IUser>[] = [
     header: "Updated at",
     cell: ({ row }) =>
       formatDate(row.getValue<Date>("updatedAt"), { time: true }),
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const values = row.original;
+      const items = getDropdownItems({ id: values._id });
+      return h(
+        "div",
+        { class: "relative" },
+        h(Dropdown, {
+          items,
+          trigger: "dots",
+          // onExpand: row.toggleExpanded,
+        })
+      );
+    },
   },
 ];
 </script>
