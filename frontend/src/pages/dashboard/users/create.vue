@@ -2,6 +2,8 @@
 
 <template>
   <NuxtLayout name="dashboard-layout">
-    <DashboardUserForm :edit="false" />
+    <DashboardSection title="Create User">
+      <DashboardUserForm :edit="false" />
+    </DashboardSection>
   </NuxtLayout>
 </template>

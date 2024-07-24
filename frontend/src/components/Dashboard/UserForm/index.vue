@@ -85,37 +85,35 @@ const onSubmit = form.handleSubmit(async () => {
 </script>
 
 <template>
-  <DashboardSection title="Create User">
-    <Form @submit="onSubmit">
-      <FormField name="user.name" label="Name" />
-      <FormField name="user.email" label="Email" />
+  <Form @submit="onSubmit">
+    <FormField name="user.name" label="Name" />
+    <FormField name="user.email" label="Email" />
+    <FormField
+      name="user.organization"
+      label="Organization"
+      inputVariant="select"
+      :selectOptions="organizationOptions"
+    />
+    <FormField
+      name="user.role"
+      label="Role"
+      inputVariant="select"
+      :selectOptions="roleOptions"
+    />
+    <div class="flex items-center gap-4">
       <FormField
-        name="user.organization"
-        label="Organization"
-        inputVariant="select"
-        :selectOptions="organizationOptions"
+        name="user.phoneCode"
+        label="Phone Code"
+        class="max-w-[200px]"
       />
-      <FormField
-        name="user.role"
-        label="Role"
-        inputVariant="select"
-        :selectOptions="roleOptions"
-      />
-      <div class="flex items-center gap-4">
-        <FormField
-          name="user.phoneCode"
-          label="Phone Code"
-          class="max-w-[200px]"
-        />
-        <FormField name="user.phone" label="Phone" class="flex-1" />
-      </div>
-      <FormField name="user.birthDate" label="Birth Date" inputVariant="date" />
-      <FormField
-        name="password"
-        label="Password"
-        :inputProps="{ type: 'password' }"
-      />
-      <UiButton type="submit"> Submit </UiButton>
-    </Form>
-  </DashboardSection>
+      <FormField name="user.phone" label="Phone" class="flex-1" />
+    </div>
+    <FormField name="user.birthDate" label="Birth Date" inputVariant="date" />
+    <FormField
+      name="password"
+      label="Password"
+      :inputProps="{ type: 'password' }"
+    />
+    <UiButton type="submit"> Submit </UiButton>
+  </Form>
 </template>
