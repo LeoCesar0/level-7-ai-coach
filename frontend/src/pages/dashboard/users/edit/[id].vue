@@ -12,9 +12,12 @@ const { fetchApi } = useFetchApi();
 
 const id = getSingleParams("id");
 
+const isLoading = ref(false);
+
 const { data, status } = await useGetApi<IUserFull>({
   id,
   url: `/users`,
+  loadingRefs: [isLoading],
 });
 
 if (!id) {
@@ -23,15 +26,13 @@ if (!id) {
 const user = computed(() => data.value?.data);
 
 const onSubmit = async (values: IUpdateUser) => {
-  await fetchApi(
-    {
-      method: "PUT",
-      url: `/users/${id}`,
-      body: values,
-      toastOptions: makeUpdateToastOptions({ label: "User" }),
-    },
-    { loadingRefs }
-  );
+  await fetchApi({
+    method: "PUT",
+    url: `/users/${id}`,
+    body: values,
+    toastOptions: makeUpdateToastOptions({ label: "User" }),
+    loadingRefs: [isLoading],
+  });
 };
 </script>
 
@@ -49,7 +50,7 @@ const onSubmit = async (values: IUpdateUser) => {
         }"
         :edit="true"
         :onSubmit="onSubmit"
-        :isLoading=""
+        :isLoading="isLoading"
       />
     </DashboardSection>
   </NuxtLayout>

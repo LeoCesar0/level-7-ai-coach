@@ -3,12 +3,9 @@ import type { ToastOptions } from "~/@types/toast";
 import { nuxtApiFetcher } from "~/handlers/http/nuxtApiFetcher";
 import { parsePath } from "~/helpers/parsePath";
 import { slugify } from "~/helpers/slugify";
+import { type LazyFetcherCommonOptions } from "../../../@types/lazyFetcher";
 
-interface Options {
-  url: string;
-  immediate?: boolean;
-  toastOptions?: ToastOptions;
-}
+interface Options extends LazyFetcherCommonOptions {}
 
 export default function useListApi<T>({
   url,

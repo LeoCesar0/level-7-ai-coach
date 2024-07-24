@@ -15,12 +15,17 @@ export const nuxtApiFetcher: ApiFetcher = async <T>({
   contentType,
   token,
   toastOptions = {},
+  loadingRefs = [],
 }: IApiFetcherOptions): Promise<IApiFetcherResponse<T>> => {
   const authStore = useAuthToken();
   const { authToken } = storeToRefs(authStore);
   const runtime = useRuntimeConfig();
   const baseUrl = runtime.public.apiBase;
   const { toast } = useToast();
+
+  loadingRefs.forEach((loadingRef) => {
+    loadingRef.value = true;
+  });
 
   let toastLoadingId: null | LoadingId = null;
 
@@ -83,6 +88,10 @@ export const nuxtApiFetcher: ApiFetcher = async <T>({
       const resError = handleApiError({ err: response._data });
       handleError(resError);
     },
+  }).finally(() => {
+    loadingRefs.forEach((loadingRef) => {
+      loadingRef.value = false;
+    });
   });
 
   console.log("❗ nuxtApiFetcher res -->", res);

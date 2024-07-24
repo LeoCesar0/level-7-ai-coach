@@ -3,13 +3,11 @@ import type { FetcherMethod } from "~/@types/fetcher";
 import type { ToastOptions } from "~/@types/toast";
 import { nuxtApiFetcher } from "~/handlers/http/nuxtApiFetcher";
 import { parsePath } from "~/helpers/parsePath";
+import { type LazyFetcherCommonOptions } from "../../../@types/lazyFetcher";
 import { slugify } from "~/helpers/slugify";
 
-interface Options {
+interface Options extends LazyFetcherCommonOptions {
   paramsRef: MaybeRefOrGetter<string>;
-  url: string;
-  immediate?: boolean;
-  toastOptions?: ToastOptions;
 }
 
 export default function useDeleteApi<R = boolean>({

@@ -10,6 +10,7 @@ export type IApiFetcherOptions = {
   contentType?: string;
   token?: string | null;
   toastOptions?: ToastOptions;
+  loadingRefs?: Ref<boolean>[];
 };
 
 export type IApiFetcherResponse<T> = AppResponse<T>;

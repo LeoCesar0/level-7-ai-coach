@@ -15,6 +15,8 @@ const initialValues: ICreateUserRoute = {
   password: "",
 };
 
+const isLoading = ref(false);
+
 const { fetchApi } = useFetchApi();
 
 const onSubmit = async (values: ICreateUserRoute) => {
@@ -23,6 +25,7 @@ const onSubmit = async (values: ICreateUserRoute) => {
     url: "/users",
     body: values,
     toastOptions: makeCreateToastOptions({ label: "User" }),
+    loadingRefs: [isLoading],
   });
 };
 </script>
@@ -34,6 +37,7 @@ const onSubmit = async (values: ICreateUserRoute) => {
         :initialValues="initialValues"
         :edit="false"
         :onSubmit="onSubmit"
+        :isLoading="isLoading"
       />
     </DashboardSection>
   </NuxtLayout>

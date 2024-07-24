@@ -4,12 +4,10 @@ import type { ToastOptions } from "~/@types/toast";
 import { nuxtApiFetcher } from "~/handlers/http/nuxtApiFetcher";
 import { parsePath } from "~/helpers/parsePath";
 import { slugify } from "~/helpers/slugify";
+import { type LazyFetcherCommonOptions } from "../../../@types/lazyFetcher";
 
-interface Options<T> {
+interface Options<T> extends LazyFetcherCommonOptions {
   bodyRef: MaybeRefOrGetter<T>;
-  url: string;
-  immediate?: boolean;
-  toastOptions?: ToastOptions;
 }
 
 export default function useCreateApi<T, R>({

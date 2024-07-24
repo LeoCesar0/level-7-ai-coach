@@ -1,16 +1,13 @@
 import type { AppResponse, AppResponseError } from "@common/schemas/app";
 import type { IPaginationBody } from "@common/schemas/paginateRoute";
 import type { IPaginationResult } from "@common/schemas/pagination";
-import type { ToastOptions } from "~/@types/toast";
 import { nuxtApiFetcher } from "~/handlers/http/nuxtApiFetcher";
 import { parsePath } from "~/helpers/parsePath";
 import { slugify } from "~/helpers/slugify";
+import { type LazyFetcherCommonOptions } from "../../../@types/lazyFetcher";
 
-interface Options<T> {
+interface Options<T> extends LazyFetcherCommonOptions {
   bodyRef: MaybeRefOrGetter<IPaginationBody<T>>;
-  url: string;
-  immediate?: boolean;
-  toastOptions?: ToastOptions;
 }
 
 export default function usePaginateApi<T>({

@@ -51,15 +51,11 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
   };
 
   const fetchCurrentUser = async () => {
-    const response = await fetchApi<IUserFull>(
-      {
-        url: "/users/me",
-        method: "GET",
-      },
-      {
-        loadingRefs: [loading],
-      }
-    );
+    const response = await fetchApi<IUserFull>({
+      url: "/users/me",
+      method: "GET",
+      loadingRefs: [loading],
+    });
 
     return response;
   };

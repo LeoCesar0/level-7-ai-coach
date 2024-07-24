@@ -1,14 +1,12 @@
 import type { AppResponse, AppResponseError } from "@common/schemas/app";
-import type { ToastOptions } from "~/@types/toast";
 import { nuxtApiFetcher } from "~/handlers/http/nuxtApiFetcher";
 import { parsePath } from "~/helpers/parsePath";
 import { slugify } from "~/helpers/slugify";
 
-interface Options {
+import { type LazyFetcherCommonOptions } from "../../../@types/lazyFetcher";
+
+interface Options extends LazyFetcherCommonOptions {
   id: MaybeRefOrGetter<string>;
-  url: string;
-  immediate?: boolean;
-  toastOptions?: ToastOptions;
 }
 
 export default function useGetApi<T>({

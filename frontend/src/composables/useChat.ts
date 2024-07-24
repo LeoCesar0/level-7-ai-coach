@@ -27,16 +27,12 @@ export const useChat = () => {
       date: new Date().toISOString(),
       user: currentUser.value?._id ?? "",
     };
-    const response = await fetchApi<IChat>(
-      {
-        method: "POST",
-        url: "/chats",
-        body: body,
-      },
-      {
-        loadingRefs: [isLoading],
-      }
-    );
+    const response = await fetchApi<IChat>({
+      method: "POST",
+      url: "/chats",
+      body: body,
+      loadingRefs: [isLoading],
+    });
     console.log("❗ createNewChat response -->", response);
 
     return response;
@@ -55,60 +51,44 @@ export const useChat = () => {
       role: "human",
     };
     console.log("❗ sendChatMessage body -->", body);
-    const response = await fetchApi<ISendChatMessageResponse>(
-      {
-        method: "POST",
-        url: "/chats/send",
-        body: body,
-      },
-      {
-        loadingRefs: [aiTyping],
-      }
-    );
+    const response = await fetchApi<ISendChatMessageResponse>({
+      method: "POST",
+      url: "/chats/send",
+      body: body,
+      loadingRefs: [aiTyping],
+    });
 
     console.log("❗ sendChatMessage response -->", response);
     return response;
   };
 
   const paginateChats = async <T = any>(body: IPaginationBody<T>) => {
-    const response = await fetchApi<IPaginationResult<IChat>>(
-      {
-        method: "POST",
-        url: "/chats/paginate",
-        body: body,
-      },
-      {
-        loadingRefs: [isLoading],
-      }
-    );
+    const response = await fetchApi<IPaginationResult<IChat>>({
+      method: "POST",
+      url: "/chats/paginate",
+      body: body,
+      loadingRefs: [isLoading],
+    });
     console.log("❗ paginateChats response -->", response);
     return response;
   };
 
   const getChatHistory = async ({ chatId }: { chatId: string }) => {
-    const response = await fetchApi<IFormattedMessage[]>(
-      {
-        method: "GET",
-        url: "/chats/history/" + chatId,
-      },
-      {
-        loadingRefs: [isLoading],
-      }
-    );
+    const response = await fetchApi<IFormattedMessage[]>({
+      method: "GET",
+      url: "/chats/history/" + chatId,
+      loadingRefs: [isLoading],
+    });
 
     console.log("❗ getChatHistory response -->", response);
     return response;
   };
   const getChat = async ({ chatId }: { chatId: string }) => {
-    const response = await fetchApi<IChat>(
-      {
-        method: "GET",
-        url: "/chats/" + chatId,
-      },
-      {
-        loadingRefs: [isLoading],
-      }
-    );
+    const response = await fetchApi<IChat>({
+      method: "GET",
+      url: "/chats/" + chatId,
+      loadingRefs: [isLoading],
+    });
     console.log("❗ getChat response -->", response);
 
     return response;
