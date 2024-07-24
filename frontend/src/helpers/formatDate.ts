@@ -1,4 +1,4 @@
-import { stringToDate } from "@common/helpers/stringToDate";
+import { parseToDate } from "@common/helpers/parseToDate";
 
 type Options = {
   time?: boolean;
@@ -9,7 +9,7 @@ export const formatDate = (
   { time = false }: Options = {}
 ) => {
   if (!date) return "";
-  const _date = stringToDate(date);
+  const _date = parseToDate(date);
 
   if (time) {
     return _date.toLocaleString();

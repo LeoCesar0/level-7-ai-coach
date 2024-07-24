@@ -1,4 +1,4 @@
-export const stringToDate = (date: string | Date): Date => {
+export const parseToDate = (date: string | Date | number): Date => {
   if (date instanceof Date) {
     return date;
   }

@@ -13,7 +13,7 @@ import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { processJournalsAssessment } from "../../services/assessment/processJournalsAssessment";
 import { USER_POPULATES } from "@/static/populates";
 import { AppResponse } from "@common/schemas/app";
-import { stringToDate } from '@common/helpers/stringToDate';
+import { parseToDate } from "@common/helpers/parseToDate";
 
 const assessmentRoute = new Hono()
   // --------------------------
@@ -71,7 +71,7 @@ const assessmentRoute = new Hono()
           chatId,
           user,
           session,
-          date: stringToDate(foundChat.createdAt),
+          date: parseToDate(foundChat.createdAt),
         });
 
         return result;

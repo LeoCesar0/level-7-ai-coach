@@ -6,7 +6,7 @@ import { handleDBSession } from "../../handlers/handleDBSession";
 import { createNullishFilter } from "../../helpers/createNullishFilter";
 import { subHours } from "date-fns";
 import { IUserFullDoc } from "@/routes/users/schemas/user";
-import { stringToDate } from "@common/helpers/stringToDate";
+import { parseToDate } from "@common/helpers/parseToDate";
 
 // --------------------------
 // Process all journals that should be assessed. To be used globally and scheduled.
@@ -58,7 +58,7 @@ export const processJournalsAssessment = async () => {
           entries,
           session,
           userId,
-          date: stringToDate(journal.date),
+          date: parseToDate(journal.date),
         });
 
         const updatedJournal = await JournalModel.findByIdAndUpdate(

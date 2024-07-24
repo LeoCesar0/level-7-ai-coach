@@ -1,18 +1,9 @@
 <script setup lang="ts">
-import { Field, type ComponentFieldBindingObject } from "vee-validate";
-import { type ISelectOption } from "@/@schemas/select";
-import { vAutoAnimate } from "@formkit/auto-animate";
-import {
-  CalendarDate,
-  DateFormatter,
-  getLocalTimeZone,
-  parseDate,
-  today,
-} from "@internationalized/date";
+import { DateFormatter } from "@internationalized/date";
 import { CalendarIcon } from "@radix-icons/vue";
 import { cn } from "@lib/utils";
-import { useForwardPropsEmits, type CalendarRootEmits } from "radix-vue";
-import { stringToDate } from "@common/helpers/stringToDate";
+import { useForwardPropsEmits } from "radix-vue";
+import { parseToDate } from "@common/helpers/parseToDate";
 import type { VCalendarProps } from "~/components/ui/v-calendar/Calendar.vue";
 
 type Props = {
@@ -22,6 +13,21 @@ type Props = {
 const props = defineProps<Props>();
 const emit = defineEmits(["update:modelValue"]);
 const forward = useForwardPropsEmits(props, emit);
+
+const df = new DateFormatter("en-US", {
+  dateStyle: "long",
+});
+const formatDate = (value: (typeof props)["modelValue"]) => {
+  if (
+    typeof value === "string" ||
+    value instanceof Date ||
+    typeof value === "number"
+  ) {
+    const date = parseToDate(value);
+    return df.format(date);
+  }
+  return "";
+};
 </script>
 
 <template>
@@ -37,7 +43,7 @@ const forward = useForwardPropsEmits(props, emit);
         "
       >
         <CalendarIcon class="mr-2 h-4 w-4" />
-        {{ modelValue ? modelValue : "Pick a date" }}
+        {{ modelValue ? formatDate(modelValue) : "Pick a date" }}
       </UiButton>
     </UiPopoverTrigger>
     <UiPopoverContent class="w-auto p-0">

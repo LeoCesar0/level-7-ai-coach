@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ROUTE } from "../../../static/routes";
-import { stringToDate } from "@common/helpers/stringToDate";
+import { parseToDate } from "@common/helpers/parseToDate";
 import { type IChat } from "@common/schemas/chat/chat";
 const { createNewChat, getOpenChats, getChats } = useChat();
 
@@ -29,7 +29,7 @@ const handleCreateNewChat = async () => {
 };
 
 const getChatTitle = (chat: IChat) => {
-  const date = stringToDate(chat.date);
+  const date = parseToDate(chat.date);
   return `Chat ${date.toLocaleString()}`;
 };
 </script>

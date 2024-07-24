@@ -23,7 +23,7 @@ import { IFormattedMessage, IMessageType } from "@common/schemas/chat/message";
 import { zCreateMessage } from "@common/schemas/chat/createMessage";
 import { IUserDoc } from "../users/schemas/user.js";
 import { zStringNotEmpty } from "@common/schemas/primitives/stringNotEmpty.js";
-import { stringToDate } from "@common/helpers/stringToDate.js";
+import { parseToDate } from "@common/helpers/parseToDate.js";
 
 export const chatRouter = new Hono()
   // --------------------------
@@ -212,7 +212,7 @@ export const chatRouter = new Hono()
               chatId: _chat._id,
               user: user,
               session,
-              date: stringToDate(_chat.createdAt),
+              date: parseToDate(_chat.createdAt),
             });
             promises.push(promise);
           }
@@ -355,7 +355,7 @@ export const chatRouter = new Hono()
         //   );
         //   await processChatAssessment({
         //     chatId,
-        //     date: stringToDate(foundChat.createdAt),
+        //     date: parseToDate(foundChat.createdAt),
         //     session,
         //     user,
         //   });

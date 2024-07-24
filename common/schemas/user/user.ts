@@ -10,6 +10,7 @@ import { zAddress } from "./address";
 import { zAthleteInfo } from "./athleteInfo";
 import { zStringOnlyDigits } from "../primitives/stringOnlyDigits";
 import { zStringNotEmpty } from "../primitives/stringNotEmpty";
+import { zFlexDate } from "../primitives/zFlexDate";
 
 export const zUserBase = z.object({
   firebaseId: z.string(),
@@ -27,7 +28,7 @@ export const zUserBase = z.object({
   phoneCode: zStringOnlyDigits.nullish(),
   phone: zStringOnlyNumbers.nullish(),
   imageUrl: z.string().nullish(),
-  birthDate: z.coerce.date().nullish(),
+  birthDate: zFlexDate.nullish(),
   address: zAddress.nullish(),
   athleteInfo: zAthleteInfo.nullish(),
   archetype: zStringNotEmpty.nullish(),
