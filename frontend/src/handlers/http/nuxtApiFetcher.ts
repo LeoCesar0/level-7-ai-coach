@@ -20,7 +20,7 @@ export const nuxtApiFetcher: ApiFetcher = async <T>({
   const { authToken } = storeToRefs(authStore);
   const runtime = useRuntimeConfig();
   const baseUrl = runtime.public.apiBase;
-  const { toast, handleToastPromise } = useToast();
+  const { toast } = useToast();
 
   let toastLoadingId: null | LoadingId = null;
 

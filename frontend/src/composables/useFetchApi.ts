@@ -49,10 +49,7 @@ export const useFetchApi = () => {
       return res;
     } catch (err) {
       const res = handleApiError({ err: err });
-      console.error("❗ fetchApi treated Error -->", res);
-      if (showError) {
-        toast.error(res.error.message);
-      }
+
       return res;
     } finally {
       loadingRefs.forEach((loadingRef) => {

@@ -9,6 +9,7 @@ import { zRole } from "../roles";
 import { zAddress } from "./address";
 import { zAthleteInfo } from "./athleteInfo";
 import { zStringOnlyDigits } from "../primitives/stringOnlyDigits";
+import { zStringNotEmpty } from "../primitives/stringNotEmpty";
 
 export const zUserBase = z.object({
   firebaseId: z.string(),
@@ -21,7 +22,7 @@ export const zUserBase = z.object({
     .string()
     .min(1, { message: EXCEPTIONS.FIELD_REQUIRED("email") })
     .email(),
-  organization: z.string(),
+  organization: zStringNotEmpty,
   role: zRole.default("user"),
   phoneCode: zStringOnlyDigits.nullish(),
   phone: zStringOnlyNumbers.nullish(),
@@ -29,7 +30,7 @@ export const zUserBase = z.object({
   birthDate: z.coerce.date().nullish(),
   address: zAddress.nullish(),
   athleteInfo: zAthleteInfo.nullish(),
-  archetype: z.string().nullish(),
+  archetype: zStringNotEmpty.nullish(),
 });
 
 export type IUser = z.infer<typeof zUser>;

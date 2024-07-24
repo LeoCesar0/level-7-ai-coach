@@ -18,17 +18,21 @@ import {
   type IUpdateUser,
 } from "@common/schemas/user/updateUserRoute";
 
+type T = ICreateUserRoute | IUpdateUser;
+
 type Props =
   | {
       edit: false;
       initialValues: ICreateUserRoute;
+      onSubmit: (values: ICreateUserRoute) => Promise<void>;
+      isLoading: boolean;
     }
   | {
       edit: true;
       initialValues: IUpdateUser;
+      onSubmit: (values: IUpdateUser) => Promise<void>;
+      isLoading: boolean;
     };
-
-type T = ICreateUserRoute | IUpdateUser;
 
 const props = defineProps<Props>();
 
@@ -61,10 +65,13 @@ const form = useForm<T>({
   validationSchema: toTypedSchema(schema),
   initialValues: {},
 });
-form.setValues(props.initialValues);
 
-const formValues = computed(() => {
-  return form.values as T;
+const formIsValid = computed(() => {
+  return !props.isLoading && form.meta.value.valid;
+});
+
+watchEffect(() => {
+  form.setValues(props.initialValues);
 });
 
 const roleOptions = computed<ISelectOption<IRole>[]>(() => {
@@ -81,47 +88,56 @@ const roleOptions = computed<ISelectOption<IRole>[]>(() => {
 // --------------------------
 // HANDLERS
 // --------------------------
-const { execute: createUser } = useCreateApi<T, any>({
-  url: "/users",
-  bodyRef: formValues,
+// const { execute: createUser } = useCreateApi<T, any>({
+//   url: "/users",
+//   bodyRef: formValues,
+// });
+
+const handleSubmit = form.handleSubmit(async (values) => {
+  // @ts-ignore
+  await props.onSubmit(values);
 });
 
-const onSubmit = form.handleSubmit(async () => {
-  await createUser();
-});
+const userKey = props.edit ? "" : "user.";
 </script>
 
 <template>
-  <Form @submit="onSubmit">
-    <FormField name="user.name" label="Name" />
-    <FormField name="user.email" label="Email" />
+  <p>initial: {{ initialValues }}</p>
+  <p>currentValues: {{ form.values }}</p>
+  <Form @submit="handleSubmit">
+    <FormField :name="`${userKey}name`" label="Name" />
+    <FormField :name="`${userKey}email`" label="Email" />
     <FormField
-      name="user.organization"
+      :name="`${userKey}organization`"
       label="Organization"
       inputVariant="select"
       :selectOptions="organizationOptions"
     />
     <FormField
-      name="user.role"
+      :name="`${userKey}role`"
       label="Role"
       inputVariant="select"
       :selectOptions="roleOptions"
     />
     <div class="flex items-center gap-4">
       <FormField
-        name="user.phoneCode"
+        :name="`${userKey}phoneCode`"
         label="Phone Code"
         class="max-w-[200px]"
       />
-      <FormField name="user.phone" label="Phone" class="flex-1" />
+      <FormField :name="`${userKey}phone`" label="Phone" class="flex-1" />
     </div>
-    <FormField name="user.birthDate" label="Birth Date" inputVariant="date" />
+    <FormField
+      :name="`${userKey}birthDate`"
+      label="Birth Date"
+      inputVariant="date"
+    />
     <FormField
       name="password"
       label="Password"
       :inputProps="{ type: 'password' }"
       v-if="!props.edit"
     />
-    <UiButton type="submit"> Submit </UiButton>
+    <UiButton type="submit" :disabled="!formIsValid"> Submit </UiButton>
   </Form>
 </template>

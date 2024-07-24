@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import {
-  zCreateUserRoute,
-  type ICreateUserRoute,
-} from "@common/schemas/user/createUserRoute";
+import type { ICreateUser } from "@common/schemas/user/createUser";
+import { zCreateUserRoute } from "@common/schemas/user/createUserRoute";
+import { makeCreateToastOptions } from "~/helpers/fetch/toastOptions";
+import { type ICreateUserRoute } from "@common/schemas/user/createUserRoute";
 
 const initialValues: ICreateUserRoute = {
   user: {
@@ -14,12 +14,27 @@ const initialValues: ICreateUserRoute = {
   },
   password: "",
 };
+
+const { fetchApi } = useFetchApi();
+
+const onSubmit = async (values: ICreateUserRoute) => {
+  await fetchApi({
+    method: "POST",
+    url: "/users",
+    body: values,
+    toastOptions: makeCreateToastOptions({ label: "User" }),
+  });
+};
 </script>
 
 <template>
   <NuxtLayout name="dashboard-layout">
     <DashboardSection title="Create User">
-      <DashboardUserForm :initialValues="initialValues" :edit="false" />
+      <DashboardUserForm
+        :initialValues="initialValues"
+        :edit="false"
+        :onSubmit="onSubmit"
+      />
     </DashboardSection>
   </NuxtLayout>
 </template>
