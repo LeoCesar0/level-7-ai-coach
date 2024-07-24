@@ -25,6 +25,7 @@ export type IRoute = {
   permissions?: IRole[];
   inMenuFor?: IRole[];
   icon?: typeof IconChat | typeof DashboardIcon;
+  backsTo?: Route;
 };
 
 export const ROUTE: Record<Route, IRoute> = {
@@ -54,11 +55,13 @@ export const ROUTE: Record<Route, IRoute> = {
     href: "/dashboard/users/create",
     label: "Users",
     permissions: ["admin", "coach"],
+    backsTo: "users",
   },
   editUser: {
     href: "/dashboard/users/edit",
     label: "Users",
     permissions: ["admin", "coach"],
+    backsTo: "users",
   },
   chat: {
     href: "/dashboard/chat",
@@ -80,7 +83,6 @@ export const ROUTE: Record<Route, IRoute> = {
     permissions: [],
     // inMenuFor: ["user", "admin", "coach"],
   },
-
   settings: {
     href: "/dashboard/settings",
     label: "Settings",

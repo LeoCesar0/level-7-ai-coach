@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { ROUTE } from "@static/routes";
+import { ROUTE, ROUTES, ROUTES_LIST, type IRoute } from "@static/routes";
+import { compareRoute } from "~/helpers/compareRoute";
+import { getCurrentRoute } from "~/helpers/routing/getCurrentRoute";
 const route = useRoute();
+const router = useRouter();
 
 type Props = {
   title: string;
@@ -9,15 +12,9 @@ type Props = {
 const props = defineProps<Props>();
 
 const goBackLink = computed(() => {
-  const path = route.path.split("/");
-  path.pop();
-  const indexOfDashboard = path.findIndex(
-    (p) => p === ROUTE.dashboard.href.replaceAll("/", "")
-  );
-  if (indexOfDashboard >= 0 && path[indexOfDashboard + 1]) {
-    return path.join("/");
-  }
-  return "";
+  const page = getCurrentRoute();
+  const backsToPage = page?.backsTo ? ROUTE[page.backsTo] : undefined;
+  return backsToPage?.href ?? "";
 });
 </script>
 

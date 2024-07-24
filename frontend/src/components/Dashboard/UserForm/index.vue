@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type ICreateUser } from "@common/schemas/user/createUser";
-import z from "zod";
+import z, { ZodSchema } from "zod";
 import { zUser } from "@common/schemas/user/user";
 import { type IOrganization } from "@common/schemas/organization/organization";
 import UiAutoFormFieldSelect from "@components/ui/auto-form/AutoFormFieldSelect.vue";
@@ -10,17 +10,31 @@ import {
   type ICreateUserRoute,
 } from "@common/schemas/user/createUserRoute";
 import { type IUser } from "@common/schemas/user/user";
-import { useForm } from "vee-validate";
+import { useForm, type GenericObject } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { type IRole } from "@common/schemas/roles";
+import {
+  zUpdateUser,
+  type IUpdateUser,
+} from "@common/schemas/user/updateUserRoute";
 
-type Props = {
-  edit: boolean;
-};
+type Props =
+  | {
+      edit: false;
+      initialValues: ICreateUserRoute;
+    }
+  | {
+      edit: true;
+      initialValues: IUpdateUser;
+    };
+
+type T = ICreateUserRoute | IUpdateUser;
 
 const props = defineProps<Props>();
 
-const schema = zCreateUserRoute;
+console.log("❗ props.initialValues -->", props.initialValues);
+
+const schema = props.edit ? zUpdateUser : zCreateUserRoute;
 
 // --------------------------
 // COMPOSABLES
@@ -43,23 +57,16 @@ const organizationOptions = computed<ISelectOption[]>(() => {
   });
 });
 
-const form = useForm({
+const form = useForm<T>({
   validationSchema: toTypedSchema(schema),
-  initialValues: {
-    user: {
-      organization: "",
-      email: "",
-      name: "",
-      imageUrl: "",
-      role: "user",
-    },
-    password: "",
-  },
+  initialValues: {},
 });
+form.setValues(props.initialValues);
 
 const formValues = computed(() => {
-  return form.values as ICreateUserRoute;
+  return form.values as T;
 });
+
 const roleOptions = computed<ISelectOption<IRole>[]>(() => {
   const roles: ISelectOption<IRole>[] = [
     { label: "User", value: "user" },
@@ -74,7 +81,7 @@ const roleOptions = computed<ISelectOption<IRole>[]>(() => {
 // --------------------------
 // HANDLERS
 // --------------------------
-const { execute: createUser } = useCreateApi<ICreateUserRoute, IUser>({
+const { execute: createUser } = useCreateApi<T, any>({
   url: "/users",
   bodyRef: formValues,
 });
@@ -113,6 +120,7 @@ const onSubmit = form.handleSubmit(async () => {
       name="password"
       label="Password"
       :inputProps="{ type: 'password' }"
+      v-if="!props.edit"
     />
     <UiButton type="submit"> Submit </UiButton>
   </Form>
