@@ -2,30 +2,32 @@
 import { Field } from "vee-validate";
 import { type ISelectOption } from "@/@schemas/select";
 import { vAutoAnimate } from "@formkit/auto-animate";
-import { DateFormatter, getLocalTimeZone } from "@internationalized/date";
+import {
+  DateFormatter,
+  getLocalTimeZone,
+  parseDate,
+} from "@internationalized/date";
 import { CalendarIcon } from "@radix-icons/vue";
-import { cn } from '@lib/utils';
+import { cn } from "@lib/utils";
+import type { VCalendarProps } from "~/components/ui/v-calendar/Calendar.vue";
 
 type Props = {
   name: string;
   label: string;
-  inputVariant?: "input" | "select" | "date";
+  inputVariant?: "input" | "select" | "date" | "calendar";
   inputProps?: Record<string, any>;
   placeholder?: string;
   description?: string;
   class?: string;
   selectOptions?: ISelectOption[];
   disabled?: boolean;
+  calendarProps?: VCalendarProps;
 };
 
 const props = withDefaults(defineProps<Props>(), {
   inputVariant: "input",
   selectOptions: () => [],
   disabled: false,
-});
-
-const dateFormatter = new DateFormatter("en-US", {
-  dateStyle: "long",
 });
 </script>
 
@@ -68,31 +70,26 @@ const dateFormatter = new DateFormatter("en-US", {
         </UiSelect>
         <!-- DATE -->
         <div v-if="inputVariant === 'date'">
-          <UiPopover>
-            <UiPopoverTrigger as-child :disabled="disabled">
-              <UiButton
-                variant="outline"
-                :class="
-                  cn(
-                    'w-full justify-start text-left font-normal',
-                    !componentField.modelValue && 'text-muted-foreground'
-                  )
-                "
-              >
-                <CalendarIcon class="mr-2 h-4 w-4" />
-                {{
-                  componentField.modelValue
-                    ? dateFormatter.format(
-                        componentField.modelValue.toDate(getLocalTimeZone())
-                      )
-                    : "Pick a date"
-                }}
-              </UiButton>
-            </UiPopoverTrigger>
-            <UiPopoverContent class="w-auto p-0">
-              <UiCalendar initial-focus v-bind="componentField" />
-            </UiPopoverContent>
-          </UiPopover>
+          <FormFieldCalendar
+            v-bind="{
+              ...componentField,
+              disabled,
+              ...(props.inputProps ?? {}),
+              ...(props.calendarProps ?? {}),
+            }"
+          />
+        </div>
+        <!-- CALENDAR -->
+        <div v-if="inputVariant === 'calendar'">
+          <UiVCalendar
+            v-bind="{
+              ...componentField,
+              disabled,
+              ...(props.inputProps ?? {}),
+              ...(props.calendarProps ?? {}),
+            }"
+          />
+          />
         </div>
       </UiFormControl>
       <UiFormDescription v-if="description">{{

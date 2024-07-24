@@ -14,7 +14,9 @@ const id = getSingleParams("id");
 
 const isLoading = ref(false);
 
-const { data, status } = await useGetApi<IUserFull>({
+const initialValues = ref<IUpdateUser | null>(null);
+
+const { status, data } = await useGetApi<IUserFull>({
   id,
   url: `/users`,
   loadingRefs: [isLoading],
@@ -25,7 +27,26 @@ if (!id) {
 }
 const user = computed(() => data.value?.data);
 
+watchEffect(() => {
+  if (user.value && !initialValues.value) {
+    initialValues.value = {
+      name: user.value?.name,
+      email: user.value?.email,
+      organization: user.value?.organization._id,
+      imageUrl: user.value?.imageUrl,
+      role: user.value?.role,
+      active: user.value?.active,
+      phone: user.value?.phone,
+      address: user.value?.address,
+      phoneCode: user.value?.phoneCode,
+      birthDate: user.value?.birthDate,
+    };
+  }
+});
+
 const onSubmit = async (values: IUpdateUser) => {
+  console.log("❗ values -->", values);
+  return;
   await fetchApi({
     method: "PUT",
     url: `/users/${id}`,
@@ -40,14 +61,8 @@ const onSubmit = async (values: IUpdateUser) => {
   <NuxtLayout name="dashboard-layout">
     <DashboardSection :title="`Editing ${user?.name ?? ''}`">
       <DashboardUserForm
-        v-if="status === 'success'"
-        :initialValues="{
-          name: user?.name,
-          email: user?.email,
-          organization: user?.organization._id,
-          imageUrl: user?.imageUrl,
-          role: user?.role,
-        }"
+        v-if="initialValues"
+        :initialValues="initialValues"
         :edit="true"
         :onSubmit="onSubmit"
         :isLoading="isLoading"

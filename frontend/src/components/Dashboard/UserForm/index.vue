@@ -63,15 +63,11 @@ const organizationOptions = computed<ISelectOption[]>(() => {
 
 const form = useForm<T>({
   validationSchema: toTypedSchema(schema),
-  initialValues: {},
+  initialValues: props.initialValues,
 });
 
 const formIsValid = computed(() => {
   return !props.isLoading && form.meta.value.valid;
-});
-
-watchEffect(() => {
-  form.setValues(props.initialValues);
 });
 
 const roleOptions = computed<ISelectOption<IRole>[]>(() => {
