@@ -23,3 +23,15 @@ export const makeCreateToastOptions = ({
     loading: true,
   };
 };
+
+export const makeDeleteToastOptions = ({
+  label,
+}: {
+  label: string;
+}): ToastOptions => {
+  return {
+    success: { message: `${label} deleted successfully` },
+    error: true,
+    loading: true,
+  };
+};

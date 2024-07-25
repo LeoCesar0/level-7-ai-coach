@@ -3,7 +3,6 @@
 <template>
   <div class="min-h-screen flex flex-col relative">
     <slot />
+    <GlobalAlertDialog />
   </div>
 </template>
-
-<style lang="scss" scoped></style>

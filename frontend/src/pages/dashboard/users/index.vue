@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ColumnDef } from "@tanstack/vue-table";
 import { h, ref } from "vue";
-import { type IUser } from "@common/schemas/user/user";
+import { type IUser, type IUserFull } from "@common/schemas/user/user";
 import { type IPaginationBody } from "@common/schemas/paginateRoute";
 import { type IRole } from "@common/schemas/roles";
 import TableActiveCell from "@/components/Table/ActiveCell.vue";
@@ -11,31 +11,76 @@ import { ROUTE } from "@static/routes";
 import Dropdown from "@/components/Dropdown/index.vue";
 import { type IDropdownItem } from "../../../@schemas/dropdown";
 import { DotsHorizontalIcon } from "@radix-icons/vue";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { makeDeleteToastOptions } from "~/helpers/fetch/toastOptions";
 
-const pagination = ref<IPaginationBody<IUser>>({
+type TUser = IUserFull;
+
+const pagination = ref<IPaginationBody<TUser>>({
   limit: 10,
   page: 1,
 });
-// const data: IUser[] = [];
 
-const { data, error } = await usePaginateApi<IUser>({
+const { data, error } = await usePaginateApi<TUser>({
   bodyRef: pagination,
   url: "/users",
   immediate: true,
 });
 
-const getDropdownItems = ({ id }: { id: string }): IDropdownItem[] => {
+const { fetchApi } = useFetchApi();
+
+const handleDeleteUser = async (id: string) => {
+  await fetchApi({
+    url: `/users/${id}`,
+    method: "DELETE",
+    toastOptions: makeDeleteToastOptions({ label: "User" }),
+  });
+};
+
+const { openDialog } = useAlertDialog();
+
+const getDropdownItems = (user: TUser): IDropdownItem[] => {
+  const handleDeleteDialog = () => {
+    openDialog({
+      title: "Delete " + user.name,
+      message:
+        "This action cannot be undone. Are you sure you want to delete this user?",
+      confirm: {
+        label: "Delete",
+        variant: "danger",
+        action: async () => {
+          handleDeleteUser(user._id);
+        },
+      },
+    });
+  };
   return [
     {
       label: "Edit",
       action: () => {
-        navigateTo(ROUTE.editUser.href + `/${id}`);
+        navigateTo(ROUTE.editUser.href + `/${user._id}`);
+      },
+    },
+    {
+      label: "Delete",
+      action: () => {
+        handleDeleteDialog();
       },
     },
   ];
 };
 
-const columns: ColumnDef<IUser>[] = [
+const columns: ColumnDef<TUser>[] = [
   {
     accessorKey: "active",
     header: "Active",
@@ -55,6 +100,11 @@ const columns: ColumnDef<IUser>[] = [
     accessorKey: "email",
     header: "Email",
     cell: ({ row }) => row.getValue("email"),
+  },
+  {
+    accessorKey: "organization",
+    header: "Team/Organization",
+    cell: ({ row }) => row.original.organization.name,
   },
   {
     accessorKey: "role",
@@ -84,14 +134,13 @@ const columns: ColumnDef<IUser>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const values = row.original;
-      const items = getDropdownItems({ id: values._id });
+      const items = getDropdownItems(values);
       return h(
         "div",
         { class: "relative" },
         h(Dropdown, {
           items,
           trigger: "dots",
-          // onExpand: row.toggleExpanded,
         })
       );
     },

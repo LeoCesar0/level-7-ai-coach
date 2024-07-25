@@ -33,3 +33,7 @@
 .pointer[disabled] {
   cursor: not-allowed;
 }
+
+.danger-color {
+  @apply bg-red-200 hover:bg-red-300 text-red-600;
+}
