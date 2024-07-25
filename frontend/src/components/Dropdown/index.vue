@@ -15,6 +15,7 @@ import {
 import { defineProps } from "vue";
 import type { IDropdownItem } from "~/@schemas/dropdown";
 import { DotsHorizontalIcon } from "@radix-icons/vue";
+import { cn } from "~/lib/utils";
 
 type Props = {
   items: IDropdownItem[]; // Array of items for the dropdown menu
@@ -46,6 +47,12 @@ const props = defineProps<Props>();
               v-if="!subItem.items"
               :disabled="subItem.disabled"
               @click="subItem.action"
+              :class="
+                cn({
+                  'cursor-not-allowed': subItem.disabled,
+                  'danger-color': subItem.variant === 'danger',
+                })
+              "
             >
               <component
                 :is="subItem.icon"
@@ -76,6 +83,12 @@ const props = defineProps<Props>();
                     <DropdownMenuItem
                       :disabled="nestedItem.disabled"
                       @click="nestedItem.action"
+                      :class="
+                        cn({
+                          'cursor-not-allowed': nestedItem.disabled,
+                          'danger-color': nestedItem.variant === 'danger',
+                        })
+                      "
                     >
                       <component
                         :is="nestedItem.icon"
@@ -93,7 +106,17 @@ const props = defineProps<Props>();
             </DropdownMenuSub>
           </template>
         </DropdownMenuGroup>
-        <DropdownMenuItem v-else :disabled="item.disabled" @click="item.action">
+        <DropdownMenuItem
+          v-else
+          :disabled="item.disabled"
+          @click="item.action"
+          :class="
+            cn({
+              'cursor-not-allowed': item.disabled,
+              'danger-color': item.variant === 'danger',
+            })
+          "
+        >
           <component :is="item.icon" class="mr-2 h-4 w-4" v-if="item.icon" />
           <span>{{ item.label }}</span>
           <DropdownMenuShortcut v-if="item.shortcut">{{

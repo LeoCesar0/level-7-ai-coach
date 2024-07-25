@@ -10,18 +10,6 @@ import { formatDate } from "@helpers/formatDate";
 import { ROUTE } from "@static/routes";
 import Dropdown from "@/components/Dropdown/index.vue";
 import { type IDropdownItem } from "../../../@schemas/dropdown";
-import { DotsHorizontalIcon } from "@radix-icons/vue";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { makeDeleteToastOptions } from "~/helpers/fetch/toastOptions";
 
 type TUser = IUserFull;
@@ -75,6 +63,7 @@ const getDropdownItems = (user: TUser): IDropdownItem[] => {
       action: () => {
         handleDeleteDialog();
       },
+      variant: "danger",
     },
   ];
 };
@@ -150,7 +139,6 @@ const columns: ColumnDef<TUser>[] = [
 <template>
   <NuxtLayout name="dashboard-layout">
     <DashboardSection title="Users">
-      <p>paginationBody PAGE: {{ paginationBody.page }}</p>
       <template v-slot:actions-right>
         <NuxtLink :to="ROUTE.createUser.href">
           <UiButton>New User</UiButton>

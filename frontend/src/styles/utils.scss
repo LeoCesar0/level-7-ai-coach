@@ -36,5 +36,5 @@
 
 .danger-color {
   // @apply bg-red-200 hover:bg-red-300 text-red-600;
-  @apply bg-destructive hover:bg-destructive/80 text-destructive-foreground;
+  @apply bg-destructive hover:bg-red-300 hover:text-destructive-foreground text-destructive-foreground;
 }
