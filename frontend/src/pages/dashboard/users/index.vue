@@ -26,16 +26,46 @@ import { makeDeleteToastOptions } from "~/helpers/fetch/toastOptions";
 
 type TUser = IUserFull;
 
-const pagination = ref<IPaginationBody<TUser>>({
-  limit: 10,
-  page: 1,
-});
+// --------------------------
+// PAGINATION FETCH
+// --------------------------
 
-const { data, error } = await usePaginateApi<TUser>({
-  bodyRef: pagination,
-  url: "/users",
-  immediate: true,
-});
+const { paginationBody, paginationResult, isLoading } =
+  await usePagination<TUser>({
+    url: "/users",
+  });
+
+// const paginationBody = ref<IPaginationBody<TUser>>({
+//   limit: 10,
+//   page: 1,
+// });
+
+// const {
+//   data: paginationResult,
+//   error,
+//   status,
+//   refresh,
+// } = await usePaginateApi<TUser>({
+//   bodyRef: paginationBody,
+//   url: "/users",
+//   immediate: true,
+// });
+
+// watch(
+//   paginationBody,
+//   () => {
+//     refresh();
+//   },
+//   {
+//     deep: true,
+//   }
+// );
+
+// const isLoading = computed(() => {
+//   return status.value === "pending";
+// });
+
+// --------------------------
 
 const { fetchApi } = useFetchApi();
 
@@ -151,12 +181,18 @@ const columns: ColumnDef<TUser>[] = [
 <template>
   <NuxtLayout name="dashboard-layout">
     <DashboardSection title="Users">
+      <p>paginationBody PAGE: {{ paginationBody.page }}</p>
       <template v-slot:actions-right>
         <NuxtLink :to="ROUTE.createUser.href">
           <UiButton>New User</UiButton>
         </NuxtLink>
       </template>
-      <Table :data="data?.data?.list ?? []" :columns="columns" />
+      <Table
+        :columns="columns"
+        :isLoading="isLoading"
+        :paginationBody="paginationBody"
+        :paginationResult="paginationResult?.data"
+      />
     </DashboardSection>
   </NuxtLayout>
 </template>

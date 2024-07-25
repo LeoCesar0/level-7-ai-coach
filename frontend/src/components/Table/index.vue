@@ -35,14 +35,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { valueUpdater } from "@/lib/utils";
+import type { IPaginationBody } from "@common/schemas/paginateRoute";
+import type { IPaginationResult } from "@common/schemas/pagination";
 
 // Define props to accept data and columns
 type IProps = {
-  data: T[];
   columns: ColumnDef<T>[];
+  paginationBody: IPaginationBody<T>;
+  paginationResult: IPaginationResult<T> | null | undefined;
+  isLoading?: boolean;
 };
 
 const props = defineProps<IProps>();
+
+const data = computed(() => {
+  return props.paginationResult?.list || [];
+});
 
 const sorting = ref<SortingState>([]);
 const columnFilters = ref<ColumnFiltersState>([]);
@@ -52,7 +60,7 @@ const expanded = ref<ExpandedState>({});
 
 const table = computed(() => {
   return useVueTable({
-    data: props.data,
+    data: data.value,
     columns: props.columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -142,9 +150,7 @@ const table = computed(() => {
         <TableBody>
           <template v-if="table.getRowModel().rows?.length">
             <template v-for="row in table.getRowModel().rows" :key="row.id">
-              <TableRow
-                :data-state="row.getIsSelected() && 'selected'"
-              >
+              <TableRow :data-state="row.getIsSelected() && 'selected'">
                 <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
                   <FlexRender
                     :render="cell.column.columnDef.cell"
@@ -159,7 +165,6 @@ const table = computed(() => {
               </TableRow>
             </template>
           </template>
-
           <TableRow v-else>
             <TableCell :colspan="columns.length" class="h-24 text-center">
               No results.
@@ -173,7 +178,15 @@ const table = computed(() => {
       <div class="flex-1 text-sm text-muted-foreground">
         <slot name="footer-left" />
       </div>
-      <div class="space-x-2">
+      <div>
+        <TablePagination
+          v-if="paginationResult && paginationBody"
+          v-bind:paginationBody="paginationBody"
+          v-bind:paginationResult="paginationResult"
+          :isLoading="isLoading"
+        />
+      </div>
+      <!-- <div class="space-x-2">
         <Button
           variant="outline"
           size="sm"
@@ -190,7 +203,7 @@ const table = computed(() => {
         >
           Next
         </Button>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
