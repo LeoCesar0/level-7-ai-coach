@@ -22,7 +22,6 @@ export const handleAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
   // INVALID TOKEN
   // --------------------------
   if (invalidToken) {
-    console.log("❗❗❗ Here Invalid token error");
     status = 401;
     const error: AppResponse = {
       error: {
@@ -57,7 +56,6 @@ export const handleAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
   // ZOD ERROR
   // --------------------------
   if (err instanceof ZodError) {
-    console.log("ZOD ERROR INSTANCE");
     message = getZodErrorMessage({ error: err });
     status = 422;
     ctx.status(status);
@@ -82,8 +80,8 @@ export const handleAppError: ErrorHandler<BlankEnv> = async (err, ctx) => {
     if (status === 401) {
       message = EXCEPTIONS.NOT_AUTHORIZED;
     }
-    const text = await httpError.text();
-    console.log("❗ text -->", text);
+    // const text = await httpError.text();
+    // console.log("❗ text -->", text);
 
     // const statusText = httpError.statusText;
     // console.log("Error is HTTPException");

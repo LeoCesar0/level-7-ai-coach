@@ -37,6 +37,29 @@ honoApp.use(
   })
 );
 
+honoApp.use("*", async (ctx, next) => {
+  if (process.env.NODE_ENV === ENV.PRODUCTION) {
+    return await next();
+  }
+
+  const req = ctx.req;
+  const url = req.url;
+  const method = req.method;
+  console.log("-----------------------------------");
+  console.log("Requested Path:", url);
+  try {
+    const payload = method === "GET" ? req.query() : await req.json();
+    console.log("Payload:", payload);
+  } catch (err) {}
+
+  await next();
+
+  try {
+    const response = await ctx.res.json();
+    console.log("Response: ", response);
+  } catch (err) {}
+});
+
 const routes = honoApp
   .route("/users", userRoute)
   .route("/organizations", organizationsRoute)
