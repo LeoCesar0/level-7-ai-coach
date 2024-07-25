@@ -18,7 +18,7 @@ type TUser = IUserFull;
 // PAGINATION FETCH
 // --------------------------
 
-const { paginationBody, paginationResult, isLoading } =
+const { paginationBody, paginationResult, isLoading, refresh } =
   await usePagination<TUser>({
     url: "/users",
   });
@@ -32,6 +32,7 @@ const handleDeleteUser = async (id: string) => {
     method: "DELETE",
     toastOptions: makeDeleteToastOptions({ label: "User" }),
   });
+  await refresh();
 };
 
 const { openDialog } = useAlertDialog();

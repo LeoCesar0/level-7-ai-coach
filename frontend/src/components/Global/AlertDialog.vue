@@ -26,7 +26,12 @@ const { dialogOptions, isOpen } = storeToRefs(store);
               'danger-color': dialogOptions?.confirm?.variant === 'danger',
             })
           "
-          @click="dialogOptions?.confirm?.action"
+          @click="
+            () => {
+              dialogOptions?.confirm?.action();
+              store.closeDialog();
+            }
+          "
           >{{
             dialogOptions?.confirm?.label ?? "Continue"
           }}</UiAlertDialogAction

@@ -55,6 +55,7 @@ export const usePagination = async <T extends any>({
     paginationResult,
     error,
     status,
+    refresh,
     paginationBody,
   };
 };
