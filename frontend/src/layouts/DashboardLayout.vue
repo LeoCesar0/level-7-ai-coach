@@ -12,7 +12,7 @@ const { currentUser } = storeToRefs(userStore);
     <DashboardMenu />
     <div class="flex-1 flex flex-col width-full py-8">
       <!-- <DashboardHeader /> -->
-      <div class="p-4 flex-1 flex flex-col">
+      <div class="p-4 flex-1 flex flex-col animate-fade">
         <slot />
       </div>
       <!-- <DashboardFooter /> -->

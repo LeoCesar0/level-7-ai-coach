@@ -6,7 +6,7 @@
 <template>
   <!-- <div class="min-h-screen flex flex-col relative">
   </div> -->
-    <div class="container p-[20px] flex-1 flex flex-col justify-center">
+    <div class="container p-[20px] flex-1 flex flex-col justify-center animate-fade">
       <slot />
     </div>
     <HomeDetails />
