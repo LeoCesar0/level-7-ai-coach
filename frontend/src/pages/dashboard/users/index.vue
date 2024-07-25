@@ -34,37 +34,6 @@ const { paginationBody, paginationResult, isLoading } =
   await usePagination<TUser>({
     url: "/users",
   });
-
-// const paginationBody = ref<IPaginationBody<TUser>>({
-//   limit: 10,
-//   page: 1,
-// });
-
-// const {
-//   data: paginationResult,
-//   error,
-//   status,
-//   refresh,
-// } = await usePaginateApi<TUser>({
-//   bodyRef: paginationBody,
-//   url: "/users",
-//   immediate: true,
-// });
-
-// watch(
-//   paginationBody,
-//   () => {
-//     refresh();
-//   },
-//   {
-//     deep: true,
-//   }
-// );
-
-// const isLoading = computed(() => {
-//   return status.value === "pending";
-// });
-
 // --------------------------
 
 const { fetchApi } = useFetchApi();
