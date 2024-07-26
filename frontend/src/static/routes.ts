@@ -12,10 +12,20 @@ export const ROUTES = [
   "settings",
   "profile",
   "journal",
+  // --------------------------
+  // users
+  // --------------------------
   "users",
   "createUser",
   "editUser",
   "viewUser",
+  // --------------------------
+  // orgs
+  // --------------------------
+  "organizations",
+  "createOrganization",
+  "editOrganization",
+  "viewOrganization",
 ] as const;
 
 export type Route = (typeof ROUTES)[number];
@@ -49,35 +59,7 @@ export const ROUTE: Record<Route, IRoute> = {
     icon: DashboardIcon,
     name: "dashboard",
   },
-  users: {
-    href: "/dashboard/users",
-    label: "Users",
-    permissions: ["admin", "coach"],
-    inMenuFor: ["admin", "coach"],
-    icon: PersonIcon,
-    name: "users",
-  },
-  createUser: {
-    href: "/dashboard/users/create",
-    label: "Create User",
-    permissions: ["admin", "coach"],
-    backsTo: "users",
-    name: "createUser",
-  },
-  editUser: {
-    href: "/dashboard/users/edit",
-    label: "Edit User",
-    permissions: ["admin", "coach"],
-    backsTo: "users",
-    name: "editUser",
-  },
-  viewUser: {
-    href: "/dashboard/users/view",
-    label: "View User",
-    permissions: ["admin", "coach"],
-    backsTo: "users",
-    name: "viewUser",
-  },
+
   chat: {
     href: "/dashboard/chat",
     label: "Chat",
@@ -108,6 +90,70 @@ export const ROUTE: Record<Route, IRoute> = {
     inMenuFor: ["user", "admin", "coach"],
     icon: IconSettings,
     name: "settings",
+  },
+  // --------------------------
+  // Users
+  // --------------------------
+  users: {
+    href: "/dashboard/users",
+    label: "Users",
+    permissions: ["admin", "coach"],
+    inMenuFor: ["admin", "coach"],
+    icon: PersonIcon,
+    name: "users",
+  },
+  createUser: {
+    href: "/dashboard/users/create",
+    label: "Create User",
+    permissions: ["admin", "coach"],
+    backsTo: "users",
+    name: "createUser",
+  },
+  editUser: {
+    href: "/dashboard/users/edit",
+    label: "Edit User",
+    permissions: ["admin", "coach"],
+    backsTo: "users",
+    name: "editUser",
+  },
+  viewUser: {
+    href: "/dashboard/users/view",
+    label: "View User",
+    permissions: ["admin", "coach"],
+    backsTo: "users",
+    name: "viewUser",
+  },
+  // --------------------------
+  // Organizations
+  // --------------------------
+  organizations: {
+    href: "/dashboard/organizations",
+    label: "Organizations",
+    permissions: ["admin", "coach"],
+    inMenuFor: ["admin", "coach"],
+    icon: PersonIcon,
+    name: "organizations",
+  },
+  createOrganization: {
+    href: "/dashboard/organizations/create",
+    label: "Create Team",
+    permissions: ["admin", "coach"],
+    backsTo: "organizations",
+    name: "createOrganization",
+  },
+  editOrganization: {
+    href: "/dashboard/organizations/edit",
+    label: "Edit Team",
+    permissions: ["admin", "coach"],
+    backsTo: "organizations",
+    name: "editOrganization",
+  },
+  viewOrganization: {
+    href: "/dashboard/organizations/view",
+    label: "View Team",
+    permissions: ["admin", "coach"],
+    backsTo: "organizations",
+    name: "viewOrganization",
   },
 };
 

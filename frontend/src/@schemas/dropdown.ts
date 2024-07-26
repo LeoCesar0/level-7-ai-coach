@@ -6,4 +6,5 @@ export type IDropdownItem = {
   items?: IDropdownItem[]; // Sub-items for nested dropdown
   disabled?: boolean; // Optional disabled state
   variant?: "danger";
+  hidden?: boolean;
 };
