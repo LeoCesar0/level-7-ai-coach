@@ -4,7 +4,7 @@ import z, { ZodSchema } from "zod";
 import { zUser } from "@common/schemas/user/user";
 import { type IOrganization } from "@common/schemas/organization/organization";
 import UiAutoFormFieldSelect from "@components/ui/auto-form/AutoFormFieldSelect.vue";
-import { type ISelectOption } from "../../../@schemas/select";
+import { type ISelectOption } from "@/@schemas/select";
 import {
   zCreateUserRoute,
   type ICreateUserRoute,
@@ -18,30 +18,22 @@ import {
   type IUpdateUser,
 } from "@common/schemas/user/updateUserRoute";
 import type { IArchetype } from "@common/schemas/archetype/archetype";
-import { API_ROUTE } from "@common/static/routes";
+import { zCreateOrganization } from "@common/schemas/organization/createOrganization";
 
-type Props =
-  | {
-      edit: false;
-      initialValues: ICreateUserRoute;
-      onSubmit: (values: ICreateUserRoute) => Promise<void>;
-      isLoading: boolean;
-    }
-  | {
-      edit: true;
-      initialValues: IUpdateUser;
-      onSubmit: (values: IUpdateUser) => Promise<void>;
-      isLoading: boolean;
-    };
+type T = IOrganization;
 
-// type T = ICreateUserRoute | IUpdateUser;
-type T = Props["initialValues"];
+type Props = {
+  edit: boolean;
+  initialValues: T;
+  onSubmit: (values: T) => Promise<void>;
+  isLoading: boolean;
+};
 
 const props = defineProps<Props>();
 
 console.log("❗ props.initialValues -->", props.initialValues);
 
-const schema = props.edit ? zUpdateUser : zCreateUserRoute;
+const schema = props.edit ? zUpdate : zCreateOrganization;
 
 // --------------------------
 // COMPOSABLES
@@ -55,7 +47,7 @@ const { currentUser } = storeToRefs(userStore);
 // --------------------------
 
 const { data: orgRes } = await useListApi<IOrganization>({
-  url: API_ROUTE.organizations.list.url,
+  url: "/organizations",
 });
 
 const organizationOptions = computed<ISelectOption[]>(() => {
@@ -73,7 +65,7 @@ const organizationOptions = computed<ISelectOption[]>(() => {
 // --------------------------
 
 const { data: archetypeRes } = await useListApi<IArchetype>({
-  url: "/archetypes/list",
+  url: "/archetypes",
 });
 
 const archetypeOptions = computed<ISelectOption[]>(() => {

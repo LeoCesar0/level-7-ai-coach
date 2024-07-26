@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { IUserFull } from "@common/schemas/user/user";
+import { API_ROUTE } from "@common/static/routes";
 import { formatDate } from "~/helpers/formatDate";
 import { getSingleParams } from "~/helpers/getSingleParams";
 import { getYearsOld } from "~/helpers/getYearsOld";
@@ -14,8 +15,7 @@ if (!id) {
 }
 
 const { status, data } = await useGetApi<IUserFull>({
-  id,
-  url: `/users`,
+  url: API_ROUTE.users.get.url(id),
   loadingRefs: [isLoading],
 });
 

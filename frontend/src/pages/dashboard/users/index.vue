@@ -11,6 +11,7 @@ import { ROUTE } from "@static/routes";
 import Dropdown from "@/components/Dropdown/index.vue";
 import { type IDropdownItem } from "../../../@schemas/dropdown";
 import { makeDeleteToastOptions } from "~/helpers/fetch/toastOptions";
+import { API_ROUTE } from "@common/static/routes";
 
 type TUser = IUserFull;
 
@@ -20,7 +21,7 @@ type TUser = IUserFull;
 
 const { paginationBody, paginationResult, isLoading, refresh } =
   await usePagination<TUser>({
-    url: "/users",
+    url: API_ROUTE.users.paginate.url,
   });
 // --------------------------
 
@@ -28,7 +29,7 @@ const { fetchApi } = useFetchApi();
 
 const handleDeleteUser = async (id: string) => {
   await fetchApi({
-    url: `/users/${id}`,
+    url: API_ROUTE.users.delete.url(id),
     method: "DELETE",
     toastOptions: makeDeleteToastOptions({ label: "User" }),
   });

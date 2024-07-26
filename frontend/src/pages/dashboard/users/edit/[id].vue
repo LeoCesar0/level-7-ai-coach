@@ -4,6 +4,7 @@ import {
   type IUpdateUser,
 } from "@common/schemas/user/updateUserRoute";
 import type { IUserFull } from "@common/schemas/user/user";
+import { API_ROUTE } from "@common/static/routes";
 import { makeUpdateToastOptions } from "~/helpers/fetch/toastOptions";
 import { getSingleParams } from "~/helpers/getSingleParams";
 import { getCurrentRouteBackToHref } from "~/helpers/routing/getRouteBackToHref";
@@ -22,8 +23,7 @@ if (!id) {
 }
 
 const { status, data } = await useGetApi<IUserFull>({
-  id,
-  url: `/users`,
+  url: API_ROUTE.users.get.url(id),
   loadingRefs: [isLoading],
 });
 
@@ -50,7 +50,7 @@ const onSubmit = async (values: IUpdateUser) => {
   console.log("❗ values -->", values);
   await fetchApi({
     method: "PUT",
-    url: `/users/${id}`,
+    url: API_ROUTE.users.update.url(id),
     body: values,
     toastOptions: makeUpdateToastOptions({ label: "User" }),
     loadingRefs: [isLoading],

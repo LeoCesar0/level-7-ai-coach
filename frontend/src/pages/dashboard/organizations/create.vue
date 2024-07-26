@@ -1,44 +1,25 @@
 <script setup lang="ts">
-import type { ICreateUser } from "@common/schemas/user/createUser";
-import { zCreateUserRoute } from "@common/schemas/user/createUserRoute";
 import { makeCreateToastOptions } from "~/helpers/fetch/toastOptions";
-import { type ICreateUserRoute } from "@common/schemas/user/createUserRoute";
-import type { IUser, IUserFull } from "@common/schemas/user/user";
-import { ROUTE } from "~/static/routes";
-import {
-  getCurrentRouteBackToHref,
-  getRouteBackToHref,
-} from "~/helpers/routing/getRouteBackToHref";
+import { getCurrentRouteBackToHref } from "~/helpers/routing/getRouteBackToHref";
+import type { ICreateOrganization } from "@common/schemas/organization/createOrganization";
+import { API_ROUTE_PATH } from "@common/static/routes";
 
-const initialValues: ICreateUserRoute = {
-  user: {
-    organization: "",
-    email: "",
-    name: "",
-    imageUrl: "",
-    role: "user",
-    address: {
-      address: "",
-      city: "",
-      country: "",
-      state: "",
-    },
-    phone: "",
-    phoneCode: "",
-  },
-  password: "",
+const initialValues: ICreateOrganization = {
+  name: "",
+  imageUrl: "",
+  users: [],
 };
 
 const isLoading = ref(false);
 
 const { fetchApi } = useFetchApi();
 
-const onSubmit = async (values: ICreateUserRoute) => {
-  await fetchApi<IUser>({
+const onSubmit = async (values: ICreateOrganization) => {
+  await fetchApi<ICreateOrganization>({
     method: "POST",
-    url: "/users",
+    url: API_ROUTE_PATH.organizations,
     body: values,
-    toastOptions: makeCreateToastOptions({ label: "User" }),
+    toastOptions: makeCreateToastOptions({ label: "Team" }),
     loadingRefs: [isLoading],
     onSuccess(data) {
       const backToHref = getCurrentRouteBackToHref();
@@ -52,7 +33,7 @@ const onSubmit = async (values: ICreateUserRoute) => {
 
 <template>
   <NuxtLayout name="dashboard-layout">
-    <DashboardSection title="Create User">
+    <DashboardSection title="Create Team">
       <DashboardUserForm
         :initialValues="initialValues"
         :edit="false"

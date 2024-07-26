@@ -25,9 +25,10 @@ export default function useDeleteApi<R = boolean>({
     key,
     () => {
       const id = toValue(paramsRef);
+      const _url = id ? `${url}/${id}` : url;
       return nuxtApiFetcher<R>({
         method: method,
-        url: parsePath({ url: `${url}/${id}` }),
+        url: parsePath({ url: _url }),
         toastOptions,
         loadingRefs,
         onError,

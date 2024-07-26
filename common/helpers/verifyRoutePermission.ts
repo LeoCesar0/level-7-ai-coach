@@ -1,10 +1,7 @@
 import { type IUser, type IUserFull } from "@common/schemas/user/user";
 import type { Nullish } from "@common/type/helpers";
 import { verifyUserPermission } from "./verifyUserPermission";
-import type {
-  IRouteApiMethod,
-  IRouteMutationMethod,
-} from "@common/static/methods";
+import type { IRouteApiAction } from "@common/static/methods";
 import type { IPermissionItem } from "@common/static/permissions";
 import { verifyMutatePermission } from "./verifyMutatePermission";
 
@@ -12,25 +9,25 @@ export const verifyRoutePermission = ({
   user,
   routePermissions,
   item,
-  method,
+  action,
 }: {
   user: Nullish<IUser | IUserFull>;
   routePermissions: IPermissionItem;
   item: Record<string, any>;
-  method: IRouteApiMethod;
+  action: IRouteApiAction;
 }) => {
   const isMutating =
-    method === "post" || method === "put" || method === "delete";
+    action === "create" || action === "update" || action === "delete";
   if (isMutating) {
     return verifyMutatePermission({
       item,
-      method: method as IRouteMutationMethod,
+      action,
       routePermissions,
       user,
     });
   }
 
-  const permissions = routePermissions[method];
+  const permissions = routePermissions[action];
   const permissionToRoute = verifyUserPermission({
     user,
     routePermissions: permissions,

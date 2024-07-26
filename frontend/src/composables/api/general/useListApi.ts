@@ -22,7 +22,7 @@ export default function useListApi<T>({
     () => {
       return nuxtApiFetcher<T[]>({
         method: method,
-        url: parsePath({ url: `${url}/list` }),
+        url: parsePath({ url: url }),
         toastOptions,
         loadingRefs,
         onError,

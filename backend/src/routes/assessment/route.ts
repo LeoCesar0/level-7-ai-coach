@@ -8,12 +8,12 @@ import { HTTPException } from "hono/http-exception";
 import { IUserFullDoc, UserModel } from "../users/schemas/user";
 import { processChatAssessment } from "../../services/assessment/processChatAssessment";
 import { handleDBSession } from "../../handlers/handleDBSession";
-import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { processJournalsAssessment } from "../../services/assessment/processJournalsAssessment";
 import { USER_POPULATES } from "@/static/populates";
 import { AppResponse } from "@common/schemas/app";
 import { parseToDate } from "@common/helpers/parseToDate";
+import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute";
 
 const assessmentRoute = new Hono()
   // --------------------------

@@ -24,7 +24,7 @@ export default function usePaginateApi<T>({
   return useLazyAsyncData<AppResponse<IPaginationResult<T>>, AppResponseError>(
     key,
     () => {
-      const _url = parsePath({ url: `${url}/paginate` });
+      const _url = parsePath({ url: url });
       const body = toValue(bodyRef);
       return nuxtApiFetcher<IPaginationResult<T>>({
         method: method,

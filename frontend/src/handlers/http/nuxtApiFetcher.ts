@@ -57,7 +57,7 @@ export const nuxtApiFetcher = async <T>({
   const handleError = async (err: AppResponseError) => {
     if (onError) {
       await onError(err);
-      await nextTick()
+      await nextTick();
     }
     const errMessage =
       typeof toastOptions.error === "object"
@@ -84,13 +84,13 @@ export const nuxtApiFetcher = async <T>({
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     onRequestError({ request, error, options, response }) {
-      console.log("❗ onRequestError error -->", error);
-      console.log("❗ onRequestError response -->", response);
+      console.error("❗ onRequestError error -->", error);
+      console.error("❗ onRequestError response -->", response);
       const resError = handleApiError({ err: response });
       handleError(resError);
     },
     onResponseError({ response, options }) {
-      console.log("❗ onResponseError -->", response);
+      console.error("❗ onResponseError -->", response);
       const resError = handleApiError({ err: response._data });
       handleError(resError);
     },

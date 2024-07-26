@@ -2,7 +2,6 @@ import { Hono } from "hono";
 import { IOrganizationDoc, OrganizationModel } from "./schemas/organization";
 import { routeValidator } from "../../middlewares/routeValidator";
 import { authValidator } from "../../middlewares/authValidator";
-import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute";
 import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
 import { EXCEPTIONS } from "@common/static/exceptions";
@@ -11,9 +10,10 @@ import { firebaseAuth } from "../../lib/firebase";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { AppResponse } from "@common/schemas/app";
 import { zCreateOrganization } from "@common/schemas/organization/createOrganization";
-import { zOrganization } from "@common/schemas/organization/organization";
 import { zStringNotEmpty } from "@common/schemas/primitives/stringNotEmpty";
 import { FilterQuery } from "mongoose";
+import { zUpdateOrganization } from "../../../../common/schemas/organization/updateOrganization";
+import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute";
 
 const organizationsRoute = new Hono()
   // --------------------------
@@ -119,7 +119,7 @@ const organizationsRoute = new Hono()
   )
   .put(
     "/:id",
-    routeValidator({ schema: zOrganization.partial() }),
+    routeValidator({ schema: zUpdateOrganization }),
     authValidator({ permissionsTo: ["admin", "coach"] }),
     async (ctx) => {
       const orgId = ctx.req.param("id");

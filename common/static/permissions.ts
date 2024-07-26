@@ -1,26 +1,26 @@
-import type { IRole } from "@common/schemas/roles";
-import type { IRouteApiMethod, IRouteMethod } from "./methods";
-import type { IApiRoutes } from "./routes";
+import type { IRole } from "../schemas/roles";
+import type { IRouteApiAction } from "./methods";
+import type { IApiRoute } from "./routes";
 
-export type IPermissionRecord = Record<IApiRoutes, IPermissionItem>;
+export type IPermissionRecord = Record<IApiRoute, IPermissionItem>;
 
 export type IPermissionItem = {
-  [key in IRouteApiMethod]?: IRole[];
+  [key in IRouteApiAction]?: IRole[];
 };
 
 export const PERMISSION = {
   organizations: {
     get: ["user", "admin", "coach"],
-    post: ["admin", "coach"],
-    put: ["admin", "coach"],
+    create: ["admin", "coach"],
+    update: ["admin", "coach"],
     delete: ["admin", "coach"],
     list: ["admin", "coach"],
     paginate: ["admin", "coach"],
   },
   users: {
     get: ["admin", "coach"],
-    post: ["admin", "coach"],
-    put: ["admin", "coach", "user"],
+    create: ["admin", "coach"],
+    update: ["admin", "coach", "user"],
     delete: ["admin", "coach"],
     me: ["admin", "coach", "user"],
   },

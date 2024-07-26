@@ -7,7 +7,6 @@ import { createAppUser } from "../../services/createAppUser";
 import { HTTPException } from "hono/http-exception";
 import cloneDeep from "lodash.clonedeep";
 import { OrganizationModel } from "../organizations/schemas/organization";
-import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { getUserFull } from "../../services/getUserFull";
 import { USER_POPULATES } from "@/static/populates";
@@ -17,6 +16,7 @@ import { zCreateUserRoute } from "@common/schemas/user/createUserRoute";
 import { zUpdateUser } from "@common/schemas/user/updateUserRoute";
 import { getReqUser } from "@/helpers/getReqUser";
 import { handleUpdateUser } from "./handler/handleUpdateUser";
+import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute";
 
 const userRoute = new Hono()
   // --------------------------

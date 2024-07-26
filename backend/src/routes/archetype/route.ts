@@ -4,12 +4,12 @@ import { authValidator } from "../../middlewares/authValidator";
 import { ArchetypeModel, IArchetypeDoc } from "./schemas/archetype";
 import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
-import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { slugify } from "../../helpers/slugify";
 import { EXCEPTIONS } from "@common/static/exceptions";
 import { AppResponse } from "@common/schemas/app";
 import { zCreateArchetype } from "@common/schemas/archetype/createArchetype";
+import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute";
 
 const archetypeRoute = new Hono()
   .get(

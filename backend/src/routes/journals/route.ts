@@ -4,7 +4,6 @@ import { routeValidator } from "../../middlewares/routeValidator.js";
 import { authValidator } from "../../middlewares/authValidator.js";
 import { HTTPException } from "hono/http-exception";
 import { getUserFull } from "../../services/getUserFull.js";
-import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute.js";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute.js";
 import { z } from "zod";
 import { AppResponse } from "@common/schemas/app.js";
@@ -12,6 +11,7 @@ import { zCreateJournal } from "@common/schemas/journal/createJournal.js";
 import { zJournal } from "@common/schemas/journal/journal.js";
 import { IUserDoc } from "../users/schemas/user.js";
 import { zStringNotEmpty } from "@common/schemas/primitives/stringNotEmpty.js";
+import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute.js";
 
 // --------------------------
 // GET

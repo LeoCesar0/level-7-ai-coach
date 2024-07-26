@@ -17,13 +17,13 @@ import { createNullishFilter } from "../../helpers/createNullishFilter";
 import { AppResponse } from "@common/schemas/app.js";
 import { ISendChatMessageResponse } from "@common/schemas/chat/message";
 import { handlePaginationRoute } from "@/handlers/handlePaginationRoute.js";
-import { zPaginateRouteQueryInput } from "@/@schemas/paginateRoute.js";
 import { zCreateChat } from "@common/schemas/chat/create";
 import { IFormattedMessage, IMessageType } from "@common/schemas/chat/message";
 import { zCreateMessage } from "@common/schemas/chat/createMessage";
 import { IUserDoc } from "../users/schemas/user.js";
 import { zStringNotEmpty } from "@common/schemas/primitives/stringNotEmpty.js";
 import { parseToDate } from "@common/helpers/parseToDate.js";
+import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute.js";
 
 export const chatRouter = new Hono()
   // --------------------------

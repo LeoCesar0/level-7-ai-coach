@@ -9,6 +9,7 @@ import {
   getCurrentRouteBackToHref,
   getRouteBackToHref,
 } from "~/helpers/routing/getRouteBackToHref";
+import { API_ROUTE } from "@common/static/routes";
 
 const initialValues: ICreateUserRoute = {
   user: {
@@ -36,7 +37,7 @@ const { fetchApi } = useFetchApi();
 const onSubmit = async (values: ICreateUserRoute) => {
   await fetchApi<IUser>({
     method: "POST",
-    url: "/users",
+    url: API_ROUTE.users.create.url,
     body: values,
     toastOptions: makeCreateToastOptions({ label: "User" }),
     loadingRefs: [isLoading],
