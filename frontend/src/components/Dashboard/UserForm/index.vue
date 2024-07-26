@@ -17,8 +17,7 @@ import {
   zUpdateUser,
   type IUpdateUser,
 } from "@common/schemas/user/updateUserRoute";
-
-type T = ICreateUserRoute | IUpdateUser;
+import type { IArchetype } from "@common/schemas/archetype/archetype";
 
 type Props =
   | {
@@ -34,6 +33,9 @@ type Props =
       isLoading: boolean;
     };
 
+// type T = ICreateUserRoute | IUpdateUser;
+type T = Props["initialValues"];
+
 const props = defineProps<Props>();
 
 console.log("❗ props.initialValues -->", props.initialValues);
@@ -46,6 +48,10 @@ const schema = props.edit ? zUpdateUser : zCreateUserRoute;
 
 const userStore = useUserStore();
 const { currentUser } = storeToRefs(userStore);
+
+// --------------------------
+// GET ORGANIZATION OPTIONS
+// --------------------------
 
 const { data: orgRes } = await useListApi<IOrganization>({
   url: "/organizations",
@@ -61,14 +67,27 @@ const organizationOptions = computed<ISelectOption[]>(() => {
   });
 });
 
-const form = useForm<T>({
-  validationSchema: toTypedSchema(schema),
-  initialValues: props.initialValues,
+// --------------------------
+// GET ARCHETYPE OPTIONS
+// --------------------------
+
+const { data: archetypeRes } = await useListApi<IArchetype>({
+  url: "/archetypes",
 });
 
-const formIsValid = computed(() => {
-  return !props.isLoading && form.meta.value.valid;
+const archetypeOptions = computed<ISelectOption[]>(() => {
+  const items = archetypeRes.value?.data ?? [];
+  return items.map((item) => {
+    return {
+      label: item.name,
+      value: item._id,
+    };
+  });
 });
+
+// --------------------------
+// ROLE OPTIONS
+// --------------------------
 
 const roleOptions = computed<ISelectOption<IRole>[]>(() => {
   const roles: ISelectOption<IRole>[] = [
@@ -79,6 +98,19 @@ const roleOptions = computed<ISelectOption<IRole>[]>(() => {
     roles.push({ label: "Admin", value: "admin" });
   }
   return roles;
+});
+
+// --------------------------
+// FORM
+// --------------------------
+
+const form = useForm<T>({
+  validationSchema: toTypedSchema(schema),
+  initialValues: props.initialValues,
+});
+
+const formIsValid = computed(() => {
+  return !props.isLoading && form.meta.value.valid;
 });
 
 // --------------------------
@@ -95,25 +127,52 @@ const handleSubmit = form.handleSubmit(async (values) => {
 });
 
 const userKey = props.edit ? "" : "user.";
+const formRoleValue = ref("");
+watch(
+  form.values,
+  (newValue) => {
+    if (userKey) {
+      // @ts-ignore
+      formRoleValue.value = newValue?.user?.role;
+      return;
+    }
+    // @ts-ignore
+    formRoleValue.value = newValue?.role;
+  },
+  {
+    deep: true,
+    immediate: true,
+  }
+);
 </script>
 
 <template>
-  <p>initial: {{ initialValues }}</p>
-  <p>currentValues: {{ form.values }}</p>
+  <!-- <p>initial: {{ initialValues }}</p> -->
+  <!-- <p>currentValues: {{ form.values }}</p> -->
   <Form @submit="handleSubmit">
-    <FormField :name="`${userKey}name`" label="Name" />
-    <FormField :name="`${userKey}email`" label="Email" />
+    <FormField :name="`${userKey}name`" label="Name" :required="true" />
+    <FormField :name="`${userKey}email`" label="Email" :required="true" />
     <FormField
       :name="`${userKey}organization`"
       label="Organization"
       inputVariant="select"
       :selectOptions="organizationOptions"
+      :required="true"
+    />
+    <FormField
+      :name="`${userKey}archetype`"
+      label="Athlete Archetype"
+      inputVariant="select"
+      :selectOptions="archetypeOptions"
+      :required="true"
+      v-if="formRoleValue === 'user' && edit"
     />
     <FormField
       :name="`${userKey}role`"
       label="Role"
       inputVariant="select"
       :selectOptions="roleOptions"
+      :required="true"
     />
     <div class="flex items-center gap-4">
       <FormField
@@ -122,6 +181,28 @@ const userKey = props.edit ? "" : "user.";
         class="max-w-[200px]"
       />
       <FormField :name="`${userKey}phone`" label="Phone" class="flex-1" />
+    </div>
+    <div class="flex flex-wrap gap-4">
+      <FormField
+        :name="`${userKey}address.city`"
+        label="City"
+        class="flex-grow w-full sm:flex-1"
+      />
+      <FormField
+        :name="`${userKey}address.state`"
+        label="State"
+        class="flex-grow w-full sm:flex-1"
+      />
+      <FormField
+        :name="`${userKey}address.country`"
+        label="Country"
+        class="flex-grow w-full sm:flex-1"
+      />
+      <FormField
+        :name="`${userKey}address.address`"
+        label="Address"
+        class="flex-grow w-full"
+      />
     </div>
     <FormField
       :name="`${userKey}birthDate`"
@@ -133,6 +214,7 @@ const userKey = props.edit ? "" : "user.";
       label="Password"
       :inputProps="{ type: 'password' }"
       v-if="!props.edit"
+      :required="true"
     />
     <UiButton type="submit" :disabled="!formIsValid"> Submit </UiButton>
   </Form>

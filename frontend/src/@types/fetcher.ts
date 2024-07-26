@@ -1,17 +1,22 @@
-import type { AppResponse } from "@common/schemas/app";
+import type { AppResponse, AppResponseError } from "@common/schemas/app";
 import type { ToastOptions } from "./toast";
 
 export type FetcherMethod = "POST" | "GET" | "PUT" | "DELETE" | "PATCH";
 
-export type IApiFetcherOptions = {
+export type IFetchersCommonOptions<T> = {
   url: string;
+  toastOptions?: ToastOptions;
+  loadingRefs?: Ref<boolean>[];
+  onSuccess?: (data: AppResponse<T>) => any | Promise<any>;
+  onError?: (data: AppResponseError) => any | Promise<any>;
+};
+
+export type IApiFetcherOptions<T = any> = {
   method: FetcherMethod;
   body?: any;
   contentType?: string;
   token?: string | null;
-  toastOptions?: ToastOptions;
-  loadingRefs?: Ref<boolean>[];
-};
+} & IFetchersCommonOptions<T>;
 
 export type IApiFetcherResponse<T> = AppResponse<T>;
 

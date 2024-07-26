@@ -15,6 +15,9 @@ export default function usePaginateApi<T>({
   url,
   immediate = true,
   toastOptions = { loading: false, error: true, success: false },
+  loadingRefs,
+  onError,
+  onSuccess,
 }: Options<T>) {
   const method = "POST";
   const key = slugify(`${url}-${method}`).replace("/", "");
@@ -23,11 +26,14 @@ export default function usePaginateApi<T>({
     () => {
       const _url = parsePath({ url: `${url}/paginate` });
       const body = toValue(bodyRef);
-      return nuxtApiFetcher({
+      return nuxtApiFetcher<IPaginationResult<T>>({
         method: method,
         url: _url,
         body: body,
         toastOptions,
+        loadingRefs,
+        onError,
+        onSuccess,
       });
     },
     {

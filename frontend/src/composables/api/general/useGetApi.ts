@@ -14,16 +14,22 @@ export default function useGetApi<T>({
   immediate = true,
   id,
   toastOptions = { loading: false, error: true, success: false },
+  loadingRefs,
+  onError,
+  onSuccess,
 }: Options) {
   const method = "GET";
   const key = slugify(`${url}-${method}-${id}`).replace("/", "");
   return useLazyAsyncData<AppResponse<T>, AppResponseError>(
     key,
     () => {
-      return nuxtApiFetcher({
+      return nuxtApiFetcher<T>({
         method: method,
         url: parsePath({ url: `${url}/${id}` }),
         toastOptions,
+        loadingRefs,
+        onError,
+        onSuccess,
       });
     },
     {

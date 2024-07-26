@@ -6,6 +6,7 @@ import {
 import type { IUserFull } from "@common/schemas/user/user";
 import { makeUpdateToastOptions } from "~/helpers/fetch/toastOptions";
 import { getSingleParams } from "~/helpers/getSingleParams";
+import { getCurrentRouteBackToHref } from "~/helpers/routing/getRouteBackToHref";
 import { ROUTE } from "~/static/routes";
 
 const { fetchApi } = useFetchApi();
@@ -16,15 +17,16 @@ const isLoading = ref(false);
 
 const initialValues = ref<IUpdateUser | null>(null);
 
+if (!id) {
+  await navigateTo(ROUTE.users.href);
+}
+
 const { status, data } = await useGetApi<IUserFull>({
   id,
   url: `/users`,
   loadingRefs: [isLoading],
 });
 
-if (!id) {
-  navigateTo(ROUTE.users.href);
-}
 const user = computed(() => data.value?.data);
 
 watchEffect(() => {
@@ -52,6 +54,12 @@ const onSubmit = async (values: IUpdateUser) => {
     body: values,
     toastOptions: makeUpdateToastOptions({ label: "User" }),
     loadingRefs: [isLoading],
+    onSuccess(data) {
+      const backToHref = getCurrentRouteBackToHref();
+      if (backToHref) {
+        navigateTo(backToHref);
+      }
+    },
   });
 };
 </script>

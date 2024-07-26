@@ -14,7 +14,7 @@ export const useFetchApi = () => {
   const fetchApi = async <T>({
     url,
     ...rest
-  }: IApiFetcherOptions): Promise<IFetchApiResponse<T>> => {
+  }: IApiFetcherOptions<T>): Promise<IFetchApiResponse<T>> => {
     const fetcher = nuxtApiFetcher;
 
     try {

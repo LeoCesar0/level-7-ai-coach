@@ -6,16 +6,21 @@ import { parsePath } from "~/helpers/parsePath";
 import { slugify } from "~/helpers/slugify";
 import { type LazyFetcherCommonOptions } from "../../../@types/lazyFetcher";
 
-interface Options<T> extends LazyFetcherCommonOptions {
+interface Options<T, R> extends LazyFetcherCommonOptions<T, R> {
   bodyRef: MaybeRefOrGetter<T>;
 }
+// T = REQUEST TYPE
+// R = RESPONSE TYPE
 
 export default function useCreateApi<T, R>({
   bodyRef,
   immediate = false,
   url,
   toastOptions = { error: true, loading: true, success: true },
-}: Options<T>) {
+  loadingRefs,
+  onError,
+  onSuccess,
+}: Options<T, R>) {
   const method = "POST";
   const key = slugify(`${url}-${method}`).replace("/", "");
   return useLazyAsyncData<AppResponse<R>, AppResponseError>(
@@ -23,11 +28,14 @@ export default function useCreateApi<T, R>({
     () => {
       const body = toValue(bodyRef);
       console.log("❗ here body -->", body);
-      return nuxtApiFetcher({
+      return nuxtApiFetcher<R>({
         method: "POST",
         body: body,
         url: parsePath({ url }),
         toastOptions: toastOptions,
+        loadingRefs,
+        onError,
+        onSuccess,
       });
     },
     { immediate: immediate }

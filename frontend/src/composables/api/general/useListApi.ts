@@ -11,16 +11,22 @@ export default function useListApi<T>({
   url,
   immediate = true,
   toastOptions = { loading: false, error: true, success: false },
+  loadingRefs,
+  onError,
+  onSuccess,
 }: Options) {
   const method = "GET";
   const key = slugify(`${url}-list`).replace("/", "");
   return useLazyAsyncData<AppResponse<T[]>, AppResponseError>(
     key,
     () => {
-      return nuxtApiFetcher({
+      return nuxtApiFetcher<T[]>({
         method: method,
         url: parsePath({ url: `${url}/list` }),
         toastOptions,
+        loadingRefs,
+        onError,
+        onSuccess,
       });
     },
     {

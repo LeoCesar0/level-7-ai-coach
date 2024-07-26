@@ -15,11 +15,13 @@ export const ROUTES = [
   "users",
   "createUser",
   "editUser",
+  "viewUser",
 ] as const;
 
 export type Route = (typeof ROUTES)[number];
 
 export type IRoute = {
+  name: Route;
   label: string;
   href: string;
   permissions?: IRole[];
@@ -32,10 +34,12 @@ export const ROUTE: Record<Route, IRoute> = {
   home: {
     href: "/",
     label: "Home",
+    name: "home",
   },
   "sign-in": {
     href: "/sign-in",
     label: "Sign in",
+    name: "sign-in",
   },
   dashboard: {
     href: "/dashboard",
@@ -43,6 +47,7 @@ export const ROUTE: Record<Route, IRoute> = {
     permissions: ["admin", "coach", "user"],
     inMenuFor: ["admin", "coach", "user"],
     icon: DashboardIcon,
+    name: "dashboard",
   },
   users: {
     href: "/dashboard/users",
@@ -50,18 +55,28 @@ export const ROUTE: Record<Route, IRoute> = {
     permissions: ["admin", "coach"],
     inMenuFor: ["admin", "coach"],
     icon: PersonIcon,
+    name: "users",
   },
   createUser: {
     href: "/dashboard/users/create",
-    label: "Users",
+    label: "Create User",
     permissions: ["admin", "coach"],
     backsTo: "users",
+    name: "createUser",
   },
   editUser: {
     href: "/dashboard/users/edit",
-    label: "Users",
+    label: "Edit User",
     permissions: ["admin", "coach"],
     backsTo: "users",
+    name: "editUser",
+  },
+  viewUser: {
+    href: "/dashboard/users/view",
+    label: "View User",
+    permissions: ["admin", "coach"],
+    backsTo: "users",
+    name: "viewUser",
   },
   chat: {
     href: "/dashboard/chat",
@@ -69,6 +84,7 @@ export const ROUTE: Record<Route, IRoute> = {
     permissions: [],
     inMenuFor: ["user"],
     icon: IconChat,
+    name: "chat",
   },
   journal: {
     href: "/dashboard/journal",
@@ -76,11 +92,13 @@ export const ROUTE: Record<Route, IRoute> = {
     permissions: [],
     inMenuFor: ["user"],
     icon: IconJournal,
+    name: "journal",
   },
   profile: {
     href: "/dashboard/profile",
     label: "Profile",
     permissions: [],
+    name: "profile",
     // inMenuFor: ["user", "admin", "coach"],
   },
   settings: {
@@ -89,6 +107,7 @@ export const ROUTE: Record<Route, IRoute> = {
     permissions: [],
     inMenuFor: ["user", "admin", "coach"],
     icon: IconSettings,
+    name: "settings",
   },
 };
 

@@ -8,7 +8,7 @@ import { normalizeUrl } from "~/helpers/normalizeUrl";
 import { handleApiError } from "../handleApiError";
 import type { Id as LoadingId } from "vue3-toastify";
 
-export const nuxtApiFetcher: ApiFetcher = async <T>({
+export const nuxtApiFetcher = async <T>({
   method,
   url,
   body,
@@ -16,7 +16,9 @@ export const nuxtApiFetcher: ApiFetcher = async <T>({
   token,
   toastOptions = {},
   loadingRefs = [],
-}: IApiFetcherOptions): Promise<IApiFetcherResponse<T>> => {
+  onError,
+  onSuccess,
+}: IApiFetcherOptions<T>): Promise<IApiFetcherResponse<T>> => {
   const authStore = useAuthToken();
   const { authToken } = storeToRefs(authStore);
   const runtime = useRuntimeConfig();
@@ -52,7 +54,11 @@ export const nuxtApiFetcher: ApiFetcher = async <T>({
   console.log("❗ body -->", body);
   console.log("❗ method -->", method);
 
-  const handleError = (err: AppResponseError) => {
+  const handleError = async (err: AppResponseError) => {
+    if (onError) {
+      await onError(err);
+      await nextTick()
+    }
     const errMessage =
       typeof toastOptions.error === "object"
         ? toastOptions.error.message
@@ -100,6 +106,10 @@ export const nuxtApiFetcher: ApiFetcher = async <T>({
   // HANDLE SUCCESS
   // --------------------------
   if (!res.error) {
+    if (onSuccess) {
+      await onSuccess(res);
+      await nextTick();
+    }
     const successMessage =
       typeof toastOptions.success === "object"
         ? toastOptions.success.message

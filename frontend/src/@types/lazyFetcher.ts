@@ -1,8 +1,5 @@
-import type { ToastOptions } from "./toast";
+import type { IFetchersCommonOptions } from "./fetcher";
 
-export type LazyFetcherCommonOptions = {
-  url: string;
+export type LazyFetcherCommonOptions<T = any, R = T> = {
   immediate?: boolean;
-  toastOptions?: ToastOptions;
-  loadingRefs?: Ref<boolean>[];
-};
+} & IFetchersCommonOptions<R>;

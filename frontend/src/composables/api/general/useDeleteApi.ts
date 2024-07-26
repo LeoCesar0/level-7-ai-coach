@@ -15,6 +15,9 @@ export default function useDeleteApi<R = boolean>({
   url,
   immediate = false,
   toastOptions = { error: true, loading: true, success: true },
+  loadingRefs,
+  onError,
+  onSuccess,
 }: Options) {
   const method = "DELETE";
   const key = slugify(`${url}-${method}`).replace("/", "");
@@ -22,10 +25,13 @@ export default function useDeleteApi<R = boolean>({
     key,
     () => {
       const id = toValue(paramsRef);
-      return nuxtApiFetcher({
+      return nuxtApiFetcher<R>({
         method: method,
         url: parsePath({ url: `${url}/${id}` }),
         toastOptions,
+        loadingRefs,
+        onError,
+        onSuccess,
       });
     },
     { immediate: immediate }

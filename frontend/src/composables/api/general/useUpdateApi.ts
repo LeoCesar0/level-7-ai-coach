@@ -15,6 +15,9 @@ export default function useUpdateApi<T>({
   url,
   immediate = false,
   toastOptions = { error: true, loading: true, success: true },
+  loadingRefs,
+  onError,
+  onSuccess,
 }: Options<T>) {
   const method = "PUT";
   const key = slugify(`${url}-${method}-${id}`).replace("/", "");
@@ -22,11 +25,14 @@ export default function useUpdateApi<T>({
     key,
     () => {
       const body = toValue(bodyRef);
-      return nuxtApiFetcher({
+      return nuxtApiFetcher<T>({
         method: method,
         body: body,
         url: parsePath({ url }),
         toastOptions,
+        loadingRefs,
+        onError,
+        onSuccess,
       });
     },
     { immediate: immediate }

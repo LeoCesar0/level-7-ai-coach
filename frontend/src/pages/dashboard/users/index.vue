@@ -54,6 +54,12 @@ const getDropdownItems = (user: TUser): IDropdownItem[] => {
   };
   return [
     {
+      label: "View",
+      action: () => {
+        navigateTo(ROUTE.viewUser.href + `/${user._id}`);
+      },
+    },
+    {
       label: "Edit",
       action: () => {
         navigateTo(ROUTE.editUser.href + `/${user._id}`);

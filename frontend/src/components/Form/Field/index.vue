@@ -22,6 +22,7 @@ type Props = {
   selectOptions?: ISelectOption[];
   disabled?: boolean;
   calendarProps?: VCalendarProps;
+  required?: boolean;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -34,7 +35,7 @@ const props = withDefaults(defineProps<Props>(), {
 <template>
   <Field v-slot="{ componentField }" :name="name">
     <UiFormItem :class="cn(props.class ?? '')" v-auto-animate>
-      <UiFormLabel>{{ label }}</UiFormLabel>
+      <UiFormLabel :required="required">{{ label }}</UiFormLabel>
       <UiFormControl>
         <!-- INPUT -->
         <UiInput
