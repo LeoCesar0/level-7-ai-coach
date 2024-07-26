@@ -41,6 +41,8 @@ const user = computed(() => data.value?.data);
           <div>
             <h1 class="text-2xl font-bold">{{ user.name }}</h1>
             <p><strong>Email </strong>{{ user.email }}</p>
+            <p><strong>Role </strong>{{ user.role }}</p>
+            <p><strong>Active </strong>{{ user.active ? "Yes" : "No" }}</p>
             <p>
               <strong>Organization/Team </strong> {{ user.organization.name }}
             </p>
@@ -59,13 +61,12 @@ const user = computed(() => data.value?.data);
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div v-if="user.phone">
-            <h2 class="font-semibold text-lg">Phone</h2>
-            <p>{{ user.phoneCode }} {{ user.phone }}</p>
-          </div>
-          <div v-if="user.birthDate">
-            <h2 class="font-semibold text-lg">Birth Date</h2>
-            <p>{{ user.birthDate }}</p>
+          <div v-if="user.archetype && user.role === 'user'">
+            <h2 class="font-semibold text-lg">Archetype</h2>
+            <NuxtLink
+              ><p>{{ user.archetype.name }}</p></NuxtLink
+            >
+            <p class="text-sm mt-2">{{ user.archetype.description }}</p>
           </div>
           <div v-if="user.address">
             <h2 class="font-semibold text-lg">Address</h2>
@@ -75,20 +76,9 @@ const user = computed(() => data.value?.data);
               {{ user.address.country }}
             </p>
           </div>
+
           <div v-if="user.athleteInfo">
             <h2 class="font-semibold text-lg">Athlete Info</h2>
-          </div>
-          <div v-if="user.archetype">
-            <h2 class="font-semibold text-lg">Archetype</h2>
-            <p>{{ user.archetype }}</p>
-          </div>
-          <div>
-            <h2 class="font-semibold text-lg">Role</h2>
-            <p>{{ user.role }}</p>
-          </div>
-          <div>
-            <h2 class="font-semibold text-lg">Active</h2>
-            <p>{{ user.active ? "Yes" : "No" }}</p>
           </div>
         </div>
       </UiCard>
