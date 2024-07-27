@@ -34,7 +34,7 @@ const onSubmit = async (values: ICreateOrganization) => {
 <template>
   <NuxtLayout name="dashboard-layout">
     <DashboardSection title="Create Team">
-      <DashboardUserForm
+      <DashboardOrganizationForm
         :initialValues="initialValues"
         :edit="false"
         :onSubmit="onSubmit"

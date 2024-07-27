@@ -12,6 +12,7 @@ import { verifyUserPermission } from "@common/helpers/verifyUserPermission";
 import { PERMISSION } from "@common/static/permissions";
 import { verifyMutatePermission } from "@common/helpers/verifyMutatePermission";
 import { verifyRoutePermission } from "@common/helpers/verifyRoutePermission";
+import { API_ROUTE } from "@common/static/routes";
 
 const userStore = useUserStore();
 const { currentUser } = storeToRefs(userStore);
@@ -22,7 +23,7 @@ const { currentUser } = storeToRefs(userStore);
 
 const { paginationBody, paginationResult, isLoading, refresh } =
   await usePagination<IOrganization>({
-    url: "/organizations",
+    url: API_ROUTE.organizations.paginate.url,
   });
 // --------------------------
 
@@ -30,7 +31,7 @@ const { fetchApi } = useFetchApi();
 
 const handleDeleteItem = async (id: string) => {
   await fetchApi({
-    url: `/organizations/${id}`,
+    url: API_ROUTE.organizations.delete.url(id),
     method: "DELETE",
     toastOptions: makeDeleteToastOptions({ label: "Team" }),
   });
@@ -58,19 +59,19 @@ const getDropdownItems = (item: IOrganization): IDropdownItem[] => {
     item,
     routePermissions: PERMISSION.organizations,
     user: currentUser.value,
-    method: "get",
+    action: "get",
   });
   const canDelete = verifyRoutePermission({
     item,
     routePermissions: PERMISSION.organizations,
     user: currentUser.value,
-    method: "delete",
+    action: "delete",
   });
   const canEdit = verifyRoutePermission({
     item,
     routePermissions: PERMISSION.organizations,
     user: currentUser.value,
-    method: "put",
+    action: "update",
   });
 
   const items: IDropdownItem[] = [

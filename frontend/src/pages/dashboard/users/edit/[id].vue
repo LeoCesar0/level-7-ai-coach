@@ -47,7 +47,7 @@ watchEffect(() => {
 });
 
 const onSubmit = async (values: IUpdateUser) => {
-  console.log("❗ values -->", values);
+  // console.log("❗ values -->", values);
   await fetchApi({
     method: "PUT",
     url: API_ROUTE.users.update.url(id),

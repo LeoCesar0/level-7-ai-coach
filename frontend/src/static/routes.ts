@@ -3,6 +3,7 @@ import { DashboardIcon, PersonIcon } from "@radix-icons/vue";
 import IconChat from "@/components/icons/Chat.vue";
 import IconJournal from "@/components/icons/Journal.vue";
 import IconSettings from "@/components/icons/Settings.vue";
+import { FlagIcon } from "lucide-vue-next";
 
 export const ROUTES = [
   "home",
@@ -36,7 +37,7 @@ export type IRoute = {
   href: string;
   permissions?: IRole[];
   inMenuFor?: IRole[];
-  icon?: typeof IconChat | typeof DashboardIcon;
+  icon?: typeof IconChat | typeof DashboardIcon | typeof FlagIcon;
   backsTo?: Route;
 };
 
@@ -83,14 +84,7 @@ export const ROUTE: Record<Route, IRoute> = {
     name: "profile",
     // inMenuFor: ["user", "admin", "coach"],
   },
-  settings: {
-    href: "/dashboard/settings",
-    label: "Settings",
-    permissions: [],
-    inMenuFor: ["user", "admin", "coach"],
-    icon: IconSettings,
-    name: "settings",
-  },
+
   // --------------------------
   // Users
   // --------------------------
@@ -128,10 +122,10 @@ export const ROUTE: Record<Route, IRoute> = {
   // --------------------------
   organizations: {
     href: "/dashboard/organizations",
-    label: "Organizations",
+    label: "Teams",
     permissions: ["admin", "coach"],
     inMenuFor: ["admin", "coach"],
-    icon: PersonIcon,
+    icon: FlagIcon,
     name: "organizations",
   },
   createOrganization: {
@@ -154,6 +148,17 @@ export const ROUTE: Record<Route, IRoute> = {
     permissions: ["admin", "coach"],
     backsTo: "organizations",
     name: "viewOrganization",
+  },
+  // --------------------------
+  // other
+  // --------------------------
+  settings: {
+    href: "/dashboard/settings",
+    label: "Settings",
+    permissions: [],
+    inMenuFor: ["user", "admin", "coach"],
+    icon: IconSettings,
+    name: "settings",
   },
 };
 
