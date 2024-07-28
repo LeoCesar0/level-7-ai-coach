@@ -12,6 +12,7 @@ import Dropdown from "@/components/Dropdown/index.vue";
 import { type IDropdownItem } from "../../../@schemas/dropdown";
 import { makeDeleteToastOptions } from "~/helpers/fetch/toastOptions";
 import { API_ROUTE } from "@common/static/routes";
+import FancyLink from "@components/FancyLink/index.vue";
 
 type TUser = IUserFull;
 
@@ -100,7 +101,14 @@ const columns: ColumnDef<TUser>[] = [
   {
     accessorKey: "organization",
     header: "Team/Organization",
-    cell: ({ row }) => row.original.organization.name,
+    cell: ({ row }) =>
+      h(
+        FancyLink,
+        {
+          to: ROUTE.viewOrganization.href + `/${row.original._id}`,
+        },
+        row.original.organization.name
+      ),
   },
   {
     accessorKey: "role",

@@ -25,8 +25,8 @@ const item = computed(() => data.value?.data);
 <template>
   <NuxtLayout name="dashboard-layout">
     <DashboardSection :title="`Viewing ${item?.name ?? ''}`">
-      <!-- <template v-slot:actions-right>
-        <NuxtLink :to="`${ROUTE.organizations.href}/${id}`">
+      <template v-slot:actions-right>
+        <NuxtLink :to="`${ROUTE.editOrganization.href}/${id}`">
           <UiButton>Edit Team/Organization</UiButton>
         </NuxtLink>
       </template>
@@ -54,7 +54,7 @@ const item = computed(() => data.value?.data);
             </p>
           </div>
         </div>
-      </UiCard> -->
+      </UiCard>
     </DashboardSection>
   </NuxtLayout>
 </template>
