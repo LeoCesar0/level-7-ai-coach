@@ -41,7 +41,7 @@ const onSubmit = async (values: ICreateUserRoute) => {
     body: values,
     toastOptions: makeCreateToastOptions({ label: "User" }),
     loadingRefs: [isLoading],
-    onSuccess(data) {
+    onSuccess: async (data) => {
       const backToHref = getCurrentRouteBackToHref();
       if (backToHref) {
         navigateTo(backToHref);

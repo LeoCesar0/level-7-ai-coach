@@ -54,7 +54,7 @@ const onSubmit = async (values: IUpdateUser) => {
     body: values,
     toastOptions: makeUpdateToastOptions({ label: "User" }),
     loadingRefs: [isLoading],
-    onSuccess(data) {
+    onSuccess: async (data) => {
       const backToHref = getCurrentRouteBackToHref();
       if (backToHref) {
         navigateTo(backToHref);

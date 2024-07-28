@@ -21,7 +21,7 @@ const onSubmit = async (values: ICreateOrganization) => {
     body: values,
     toastOptions: makeCreateToastOptions({ label: "Team" }),
     loadingRefs: [isLoading],
-    onSuccess(data) {
+    onSuccess: async (data) => {
       const backToHref = getCurrentRouteBackToHref();
       if (backToHref) {
         navigateTo(backToHref);

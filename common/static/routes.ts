@@ -4,7 +4,7 @@ import { zUpdateOrganization } from "../schemas/organization/updateOrganization"
 import type { IRouteApiAction, IRouteMethod } from "./methods";
 import { zCreateUser } from "../schemas/user/createUser";
 import { zUpdateUser } from "../schemas/user/updateUserRoute";
-import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute";
+import { zPaginateRouteQueryInput } from "../schemas/paginateRoute";
 
 export const API_ROUTES = [
   // --------------------------

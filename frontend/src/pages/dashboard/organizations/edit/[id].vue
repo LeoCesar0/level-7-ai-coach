@@ -38,14 +38,13 @@ watchEffect(() => {
 });
 
 const onSubmit = async (values: IUpdateOrganization) => {
-  // console.log("❗ values -->", values);
   await fetchApi({
     method: "PUT",
     url: API_ROUTE.organizations.update.url(id),
     body: values,
     toastOptions: makeUpdateToastOptions({ label: "Team" }),
     loadingRefs: [isLoading],
-    onSuccess(data) {
+    onSuccess: async (data) => {
       const backToHref = getCurrentRouteBackToHref();
       if (backToHref) {
         navigateTo(backToHref);

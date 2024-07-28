@@ -7,8 +7,8 @@ export type IFetchersCommonOptions<T> = {
   url: string;
   toastOptions?: ToastOptions;
   loadingRefs?: Ref<boolean>[];
-  onSuccess?: (data: AppResponse<T>) => any | Promise<any>;
-  onError?: (data: AppResponseError) => any | Promise<any>;
+  onSuccess?: (data: AppResponse<T>) => Promise<any>;
+  onError?: (data: AppResponseError) => Promise<any>;
 };
 
 export type IApiFetcherOptions<T = any> = {

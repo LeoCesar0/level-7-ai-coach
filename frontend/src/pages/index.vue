@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { ROUTE } from "~/static/routes";
-
-let num: number = 2;
 </script>
 
 <template>
