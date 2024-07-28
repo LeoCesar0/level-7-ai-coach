@@ -3,7 +3,13 @@ import { DashboardIcon, PersonIcon } from "@radix-icons/vue";
 import IconChat from "@/components/icons/Chat.vue";
 import IconJournal from "@/components/icons/Journal.vue";
 import IconSettings from "@/components/icons/Settings.vue";
-import { FlagIcon } from "lucide-vue-next";
+import {
+  FlagIcon,
+  AntennaIcon,
+  UsersIcon,
+  UserIcon,
+  MedalIcon,
+} from "lucide-vue-next";
 
 export const ROUTES = [
   "home",
@@ -27,6 +33,13 @@ export const ROUTES = [
   "createOrganization",
   "editOrganization",
   "viewOrganization",
+  // --------------------------
+  // archetypes
+  // --------------------------
+  "archetypes",
+  "createArchetype",
+  "editArchetype",
+  "viewArchetype",
 ] as const;
 
 export type Route = (typeof ROUTES)[number];
@@ -35,9 +48,9 @@ export type IRoute = {
   name: Route;
   label: string;
   href: string;
-  permissions?: IRole[];
+  permissions?: IRole[]; // undefined means no permission required, empty list means any authenticated user can access
   inMenuFor?: IRole[];
-  icon?: typeof IconChat | typeof DashboardIcon | typeof FlagIcon;
+  icon?: typeof IconChat | typeof DashboardIcon | typeof UsersIcon;
   backsTo?: Route;
 };
 
@@ -60,7 +73,6 @@ export const ROUTE: Record<Route, IRoute> = {
     icon: DashboardIcon,
     name: "dashboard",
   },
-
   chat: {
     href: "/dashboard/chat",
     label: "Chat",
@@ -77,13 +89,6 @@ export const ROUTE: Record<Route, IRoute> = {
     icon: IconJournal,
     name: "journal",
   },
-  profile: {
-    href: "/dashboard/profile",
-    label: "Profile",
-    permissions: [],
-    name: "profile",
-    // inMenuFor: ["user", "admin", "coach"],
-  },
 
   // --------------------------
   // Users
@@ -93,7 +98,7 @@ export const ROUTE: Record<Route, IRoute> = {
     label: "Users",
     permissions: ["admin", "coach"],
     inMenuFor: ["admin", "coach"],
-    icon: PersonIcon,
+    icon: UsersIcon,
     name: "users",
   },
   createUser: {
@@ -125,7 +130,7 @@ export const ROUTE: Record<Route, IRoute> = {
     label: "Teams",
     permissions: ["admin", "coach"],
     inMenuFor: ["admin", "coach"],
-    icon: FlagIcon,
+    icon: MedalIcon,
     name: "organizations",
   },
   createOrganization: {
@@ -150,13 +155,53 @@ export const ROUTE: Record<Route, IRoute> = {
     name: "viewOrganization",
   },
   // --------------------------
+  // archetypes
+  // --------------------------
+  archetypes: {
+    href: "/dashboard/archetypes",
+    label: "Archetypes",
+    permissions: ["admin"],
+    inMenuFor: ["admin"],
+    icon: AntennaIcon,
+    name: "archetypes",
+  },
+  createArchetype: {
+    href: "/dashboard/archetypes/create",
+    label: "Create Archetype",
+    permissions: ["admin"],
+    backsTo: "archetypes",
+    name: "createArchetype",
+  },
+  editArchetype: {
+    href: "/dashboard/archetypes/edit",
+    label: "Edit Archetype",
+    permissions: ["admin"],
+    backsTo: "archetypes",
+    name: "editArchetype",
+  },
+  viewArchetype: {
+    href: "/dashboard/archetypes/view",
+    label: "View Archetype",
+    permissions: ["admin"],
+    backsTo: "archetypes",
+    name: "viewArchetype",
+  },
+  // --------------------------
   // other
   // --------------------------
+  profile: {
+    href: "/dashboard/profile",
+    label: "Profile",
+    permissions: [],
+    inMenuFor: ["user", "admin", "coach"],
+    name: "profile",
+    icon: UserIcon,
+  },
   settings: {
     href: "/dashboard/settings",
     label: "Settings",
     permissions: [],
-    inMenuFor: ["user", "admin", "coach"],
+    // inMenuFor: ["user", "admin", "coach"],
     icon: IconSettings,
     name: "settings",
   },

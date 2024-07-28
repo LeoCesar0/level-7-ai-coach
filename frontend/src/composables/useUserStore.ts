@@ -59,6 +59,12 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
 
     return response;
   };
+  const refreshCurrentUser = async () => {
+    const res = await fetchCurrentUser();
+    if (res.data) {
+      currentUser.value = res.data;
+    }
+  };
 
   const handleFetchCurrentUser = async () => {
     const response = await fetchCurrentUser();
@@ -127,6 +133,7 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
     login,
     logout,
     fetchCurrentUser,
+    refreshCurrentUser,
     handleFetchCurrentUser,
     handleSessionExpired,
   };
