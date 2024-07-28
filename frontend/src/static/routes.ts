@@ -5,7 +5,7 @@ import IconJournal from "@/components/icons/Journal.vue";
 import IconSettings from "@/components/icons/Settings.vue";
 import {
   FlagIcon,
-  AntennaIcon,
+  BotMessageSquareIcon,
   UsersIcon,
   UserIcon,
   MedalIcon,
@@ -162,7 +162,7 @@ export const ROUTE: Record<Route, IRoute> = {
     label: "Archetypes",
     permissions: ["admin"],
     inMenuFor: ["admin"],
-    icon: AntennaIcon,
+    icon: BotMessageSquareIcon,
     name: "archetypes",
   },
   createArchetype: {
