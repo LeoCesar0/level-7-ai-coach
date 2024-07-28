@@ -1,10 +1,15 @@
 <script setup lang="ts">
+import { verifyRoutePermission } from "@common/helpers/verifyRoutePermission";
 import type { IUserFull } from "@common/schemas/user/user";
+import { PERMISSION } from "@common/static/permissions";
 import { API_ROUTE } from "@common/static/routes";
 import { formatDate } from "~/helpers/formatDate";
 import { getSingleParams } from "~/helpers/getSingleParams";
 import { getYearsOld } from "~/helpers/getYearsOld";
 import { ROUTE } from "~/static/routes";
+
+const userStore = useUserStore();
+const { currentUser } = storeToRefs(userStore);
 
 const id = getSingleParams("id");
 
@@ -20,13 +25,22 @@ const { status, data } = await useGetApi<IUserFull>({
 });
 
 const user = computed(() => data.value?.data);
+
+const canEdit = computed(() => {
+  return verifyRoutePermission({
+    item: user,
+    routePermissions: PERMISSION.organizations,
+    user: currentUser.value,
+    action: "update",
+  });
+});
 </script>
 
 <template>
   <NuxtLayout name="dashboard-layout">
     <DashboardSection :title="`Viewing ${user?.name ?? ''}`">
       <template v-slot:actions-right>
-        <NuxtLink :to="`${ROUTE.editUser.href}/${id}`">
+        <NuxtLink v-if="canEdit" :to="`${ROUTE.editUser.href}/${id}`">
           <UiButton>Edit User</UiButton>
         </NuxtLink>
       </template>
