@@ -1,14 +1,19 @@
+import { IUserDoc } from "@/routes/users/schemas/user";
 import { getCollection } from "@/services/mongodb/getCollection";
+import { IPaginationBodyOutput } from "@common/schemas/paginateRoute";
 import { IPaginationResult } from "@common/schemas/pagination";
-import { AnyObject } from "mongoose";
+import { IUser } from "@common/schemas/user/user";
+import { AnyObject, Model } from "mongoose";
 
 export type IHandlePaginatedSearch<T> = {
+  body: IPaginationBodyOutput;
+  model: Model<T>;
+  reqUser: IUserDoc | IUser;
+  modelHasActive: boolean;
   searchQuery: string;
   collectionName: string;
   searchIndexName: string;
   fields: (keyof T)[];
-  page?: number;
-  limit?: number;
   populates?: {
     key: keyof T extends string ? keyof T : never;
     collectionName: string;
@@ -20,11 +25,17 @@ export const handlePaginatedSearch = async <T extends AnyObject>({
   searchQuery,
   searchIndexName,
   fields,
-  page = 1,
-  limit = 10,
   populates,
+  body,
+  model,
+  modelHasActive,
+  reqUser,
 }: IHandlePaginatedSearch<T>): Promise<IPaginationResult<T>> => {
   const collection = getCollection<T>({ name: collectionName });
+
+  const limit = body.limit;
+  const page = body.page;
+  const filters = body.filters;
   const skip = (page - 1) * limit;
 
   let queryArray = [
@@ -36,6 +47,11 @@ export const handlePaginatedSearch = async <T extends AnyObject>({
       },
     },
   ];
+  // if (body.filters) {
+  //   Object.entries(body.filters).forEach(([key, value]) => {
+  //     queryArray.push();
+  //   });
+  // }
 
   let pipeline: any[] = [
     {
@@ -47,6 +63,11 @@ export const handlePaginatedSearch = async <T extends AnyObject>({
       },
     },
   ];
+  if (filters) {
+    pipeline.push({
+      $match: filters,
+    });
+  }
   if (populates) {
     pipeline = pipeline.concat([
       {

@@ -17,6 +17,9 @@ import { zUpdateUser } from "@common/schemas/user/updateUserRoute";
 import { getReqUser } from "@/helpers/getReqUser";
 import { handleUpdateUser } from "./handler/handleUpdateUser";
 import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute";
+import { handlePaginatedSearch } from "@/handlers/handlePaginatedSearch";
+import { COLLECTION } from "@/lib/langchain/@static";
+import { SEARCH_INDEXES } from "@/handlers/dbIndexes/setup";
 
 const userRoute = new Hono()
   // --------------------------
@@ -33,6 +36,24 @@ const userRoute = new Hono()
       const body = ctx.req.valid("json");
       // @ts-ignore
       const reqUser: IUserDoc = ctx.get("reqUser");
+
+      if (body.searchQuery) {
+        const resData = await handlePaginatedSearch({
+          model: UserModel,
+          collectionName: COLLECTION.USERS,
+          fields: ["name", "email"],
+          searchIndexName: SEARCH_INDEXES.USERS,
+          searchQuery: body.searchQuery,
+          body,
+          populates: {
+            key: "organization",
+            collectionName: COLLECTION.ORGANIZATIONS,
+          },
+          modelHasActive: true,
+          reqUser: reqUser,
+        });
+        return ctx.json(resData, 200);
+      }
 
       const resData = await handlePaginationRoute<IUserDoc>({
         model: UserModel,

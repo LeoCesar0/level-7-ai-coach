@@ -6,28 +6,48 @@ import { COLLECTION } from "@/lib/langchain/@static";
 import { SEARCH_INDEXES } from "@/handlers/dbIndexes/setup";
 import { IUser } from "@common/schemas/user/user";
 import { handlePaginatedSearch } from "@/handlers/handlePaginatedSearch";
-import { IUserFullDoc } from "../users/schemas/user";
+import { IUserDoc, IUserFullDoc, UserModel } from "../users/schemas/user";
+import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute";
+import { routeValidator } from "@/middlewares/routeValidator";
+import { HTTPException } from "hono/http-exception";
+import { EXCEPTIONS } from "@common/static/exceptions";
 
 const testRoute = new Hono()
-  .get("/", authValidator(), async (ctx) => {
-    const reqUser = getReqUser(ctx);
+  .get(
+    "/",
+    authValidator(),
+    routeValidator({
+      schema: zPaginateRouteQueryInput,
+      target: "json",
+    }),
+    async (ctx) => {
+      const body = ctx.req.valid("json");
+      const reqUser = getReqUser(ctx);
 
-    const search = "john";
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
 
-    const result = await handlePaginatedSearch<IUserFullDoc>({
-      collectionName: COLLECTION.USERS,
-      fields: ["name"],
-      searchIndexName: SEARCH_INDEXES.USERS,
-      searchQuery: search,
-      page: 2,
-      populates: {
-        key: "organization",
-        collectionName: COLLECTION.ORGANIZATIONS,
-      },
-    });
+      const search = "john";
 
-    return ctx.json({ result }, 200);
-  })
+      const result = await handlePaginatedSearch<IUserDoc>({
+        model: UserModel,
+        collectionName: COLLECTION.USERS,
+        fields: ["name"],
+        searchIndexName: SEARCH_INDEXES.USERS,
+        searchQuery: search,
+        body,
+        populates: {
+          key: "organization",
+          collectionName: COLLECTION.ORGANIZATIONS,
+        },
+        modelHasActive: true,
+        reqUser: reqUser,
+      });
+
+      return ctx.json({ result }, 200);
+    }
+  )
   .get("/hello", async (ctx) => {
     return ctx.json({ hello: "world" }, 200);
   });
