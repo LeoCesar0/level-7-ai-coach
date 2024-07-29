@@ -14,6 +14,9 @@ import { USER_POPULATES } from "@/static/populates";
 import { AppResponse } from "@common/schemas/app";
 import { parseToDate } from "@common/helpers/parseToDate";
 import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute";
+import { FilterQuery } from "mongoose";
+import { EXCEPTIONS } from "@common/static/exceptions";
+import { getReqUser } from "@/helpers/getReqUser";
 
 const assessmentRoute = new Hono()
   // --------------------------
@@ -44,8 +47,11 @@ const assessmentRoute = new Hono()
     }),
     async (ctx) => {
       const { id: chatId } = ctx.req.valid("param");
-      // @ts-ignore
-      const reqUser: IUser = ctx.get("reqUser");
+      const reqUser = getReqUser(ctx);
+
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
 
       const foundChat = await ChatModel.findById(chatId);
 
@@ -101,8 +107,11 @@ const assessmentRoute = new Hono()
     }),
     async (ctx) => {
       const { id: chatId } = ctx.req.valid("param");
-      // @ts-ignore
-      const reqUser: IUser = ctx.get("reqUser");
+      const reqUser = getReqUser(ctx);
+
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
 
       const foundChat = await ChatModel.findById(chatId);
 
@@ -132,14 +141,27 @@ const assessmentRoute = new Hono()
     }),
     async (ctx) => {
       const body = ctx.req.valid("json");
-      // @ts-ignore
-      const reqUser: IUser = ctx.get("reqUser");
+      const reqUser = getReqUser(ctx);
+
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
+
+      const obligatoryFilters: FilterQuery<IAssessmentDoc> = {};
+
+      if (reqUser.role === "user") {
+        obligatoryFilters.user = reqUser._id.toString();
+      }
+      if (reqUser.role === "coach" && !body.filters?.user) {
+        throw new HTTPException(401, {
+          message: "Assessment pagination by coach must inform the user",
+        });
+      }
 
       const resData = await handlePaginationRoute<IAssessmentDoc>({
         model: AssessmentModel,
         body,
-        reqUser,
-        modelHasActive: false,
+        obligatoryFilters,
       });
 
       return ctx.json(resData, 200);

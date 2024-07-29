@@ -10,39 +10,39 @@ import { EXCEPTIONS } from "@common/static/exceptions";
 import { AppResponse } from "@common/schemas/app";
 import { zCreateArchetype } from "@common/schemas/archetype/createArchetype";
 import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute";
-import { zUpdateArchetype } from '@common/schemas/archetype/updateArchetype';
+import { zUpdateArchetype } from "@common/schemas/archetype/updateArchetype";
+import { getReqUser } from "@/helpers/getReqUser";
+import { FilterQuery } from "mongoose";
 
 const archetypeRoute = new Hono()
-  .get(
-    "/list",
-    authValidator({ permissionsTo: ["admin", "user", "coach"] }),
-    async (ctx) => {
-      // @ts-ignore
-      const reqUser: IUser = ctx.get("reqUser");
+  .get("/list", authValidator({ permissionsTo: ["admin"] }), async (ctx) => {
+    const reqUser = getReqUser(ctx);
 
-      const list = await ArchetypeModel.find();
-
-      const resData: AppResponse<IArchetypeDoc[]> = {
-        data: list,
-        error: null,
-      };
-
-      return ctx.json(resData, 200);
+    if (!reqUser) {
+      throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
     }
-  )
+
+    const list = await ArchetypeModel.find();
+
+    const resData: AppResponse<IArchetypeDoc[]> = {
+      data: list,
+      error: null,
+    };
+
+    return ctx.json(resData, 200);
+  })
   // --------------------------
   // create
   // --------------------------
   .post(
     "/",
-    authValidator({ permissionsTo: ["coach", "admin"] }),
+    authValidator({ permissionsTo: ["admin"] }),
     routeValidator({
       schema: zCreateArchetype,
       target: "json",
     }),
     async (ctx) => {
       const { description, name } = ctx.req.valid("json");
-      // @ts-ignore
 
       const slug = slugify(name);
 
@@ -79,7 +79,7 @@ const archetypeRoute = new Hono()
   // --------------------------
   .get(
     "/:id",
-    authValidator({ permissionsTo: ["user", "coach", "admin"] }),
+    authValidator({ permissionsTo: ["admin"] }),
     routeValidator({
       schema: z.object({
         id: z.string(),
@@ -88,7 +88,7 @@ const archetypeRoute = new Hono()
     }),
     async (ctx) => {
       const { id } = ctx.req.valid("param");
-      // @ts-ignore
+   
 
       const result = await ArchetypeModel.findById(id);
 
@@ -109,7 +109,7 @@ const archetypeRoute = new Hono()
   // --------------------------
   .put(
     "/:id",
-    authValidator({ permissionsTo: ["coach", "admin"] }),
+    authValidator({ permissionsTo: ["admin"] }),
     routeValidator({
       schema: z.object({
         id: z.string(),
@@ -123,7 +123,6 @@ const archetypeRoute = new Hono()
     async (ctx) => {
       const { id } = ctx.req.valid("param");
       const values = ctx.req.valid("json");
-      // @ts-ignore
 
       if (!values || !Object.keys(values).length) {
         throw new HTTPException(400, { message: "No data to update" });
@@ -160,7 +159,7 @@ const archetypeRoute = new Hono()
   // --------------------------
   .delete(
     "/:id",
-    authValidator({ permissionsTo: ["coach", "admin"] }),
+    authValidator({ permissionsTo: ["admin"] }),
     routeValidator({
       schema: z.object({
         id: z.string(),
@@ -169,7 +168,7 @@ const archetypeRoute = new Hono()
     }),
     async (ctx) => {
       const { id } = ctx.req.valid("param");
-      // @ts-ignore
+
 
       const exists = await ArchetypeModel.findById(id);
 
@@ -194,21 +193,25 @@ const archetypeRoute = new Hono()
   // --------------------------
   .post(
     "/paginate",
-    authValidator({ permissionsTo: ["admin", "user", "coach"] }),
+    authValidator({ permissionsTo: ["admin"] }),
     routeValidator({
       schema: zPaginateRouteQueryInput,
       target: "json",
     }),
     async (ctx) => {
       const body = ctx.req.valid("json");
-      // @ts-ignore
-      const reqUser: IUser = ctx.get("reqUser");
+      const reqUser = getReqUser(ctx);
+
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
+
+      const obligatoryFilters: FilterQuery<IArchetypeDoc> = {};
 
       const resData = await handlePaginationRoute<IArchetypeDoc>({
         model: ArchetypeModel,
         body,
-        reqUser,
-        modelHasActive: false,
+        obligatoryFilters,
       });
 
       return ctx.json(resData, 200);

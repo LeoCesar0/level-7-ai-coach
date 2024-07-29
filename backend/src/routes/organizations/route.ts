@@ -14,6 +14,7 @@ import { zStringNotEmpty } from "@common/schemas/primitives/stringNotEmpty";
 import { FilterQuery } from "mongoose";
 import { zUpdateOrganization } from "../../../../common/schemas/organization/updateOrganization";
 import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute";
+import { getReqUser } from "@/helpers/getReqUser";
 
 const organizationsRoute = new Hono()
   // --------------------------
@@ -23,8 +24,11 @@ const organizationsRoute = new Hono()
     "/list",
     authValidator({ permissionsTo: ["admin", "coach"] }),
     async (ctx) => {
-      // @ts-ignore
-      const reqUser: IUser = ctx.get("reqUser");
+      const reqUser = getReqUser(ctx);
+
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
 
       const filters: FilterQuery<IOrganizationDoc> = {};
 
@@ -56,14 +60,26 @@ const organizationsRoute = new Hono()
     }),
     async (ctx) => {
       const body = ctx.req.valid("json");
-      // @ts-ignore
-      const reqUser: IUser = ctx.get("reqUser");
+
+      const reqUser = getReqUser(ctx);
+
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
+
+      const obligatoryFilters: FilterQuery<IOrganizationDoc> = {};
+
+      if (reqUser.role === "user") {
+        obligatoryFilters.active = true;
+      }
+      if (reqUser.role === "coach") {
+        obligatoryFilters._id = reqUser.organization.toString();
+      }
 
       const resData = await handlePaginationRoute<IOrganizationDoc>({
         model: OrganizationModel,
         body,
-        reqUser,
-        modelHasActive: true,
+        obligatoryFilters,
       });
 
       return ctx.json(resData, 200);
@@ -135,14 +151,13 @@ const organizationsRoute = new Hono()
         });
       }
 
-      // @ts-ignore
-      const contextUser: IUser | undefined = ctx.get("reqUser");
+      const reqUser = getReqUser(ctx);
 
-      const isSameOrg = contextUser?.organization.toString() === orgId;
+      const isSameOrg = reqUser?.organization.toString() === orgId;
 
       if (
-        !contextUser || // NO REQ USER
-        (contextUser.role === "coach" && !isSameOrg) // REQ USER IS COACH AND NOT THE SAME ORG
+        !reqUser || // NO REQ USER
+        (reqUser.role === "coach" && !isSameOrg) // REQ USER IS COACH AND NOT THE SAME ORG
       ) {
         throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
       }

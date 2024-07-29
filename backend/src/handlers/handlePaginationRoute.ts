@@ -7,38 +7,16 @@ import { IUser } from "@common/schemas/user/user";
 
 export type IHandlePaginationRoute<T> = {
   body: IPaginationBodyOutput;
+  obligatoryFilters: FilterQuery<T>;
   model: Model<T>;
-  reqUser: IUserDoc | IUser;
-  modelHasActive: boolean;
   populates?: (keyof T extends string ? keyof T : never)[];
-};
-
-const parseFilter = <T>(filters: FilterQuery<T>) => {
-  const newFilters: FilterQuery<T> = {};
-  Object.entries(filters).forEach(([key, value]) => {
-    if (typeof value === "string" && value.startsWith("regex:")) {
-      // value is regex
-      newFilters[key as keyof typeof newFilters] = new RegExp(
-        value.split("regex:")[1]
-      );
-    } else if (value instanceof Object) {
-      // value is object
-      newFilters[key as keyof typeof newFilters] = parseFilter(value);
-    } else {
-      // any other
-      newFilters[key as keyof typeof newFilters] = value;
-    }
-  });
-
-  return newFilters;
 };
 
 export const handlePaginationRoute = async <T>({
   body,
   model,
-  reqUser,
-  modelHasActive,
   populates,
+  obligatoryFilters,
 }: IHandlePaginationRoute<T>) => {
   const limit = body.limit;
   const page = body.page;
@@ -51,13 +29,21 @@ export const handlePaginationRoute = async <T>({
     sortObj["createdAt"] = "desc";
   }
   const getBaseQuery = () => {
-    const filters: FilterQuery<T> = parseFilter(body.filters || {});
-
+    const filters: FilterQuery<T> = {
+      ...(body.filters || {}),
+      ...obligatoryFilters,
+    };
     console.log("❗ filters -->", filters);
     let res = model.find({ ...filters });
-    if (reqUser.role !== "admin" && modelHasActive) {
-      res = res.where("active").equals(true);
-    }
+
+    // if (reqUser.role === "user" && modelHasActive) {
+    //   res = res.where("active").equals(true);
+    // }
+
+    // if (reqUser.role === "coach") {
+    //   res = res.where("organization").equals(reqUser.organization.toString());
+    // }
+
     if (populates) {
       res.populate(populates);
     }

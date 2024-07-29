@@ -12,6 +12,9 @@ import { zJournal } from "@common/schemas/journal/journal.js";
 import { IUserDoc } from "../users/schemas/user.js";
 import { zStringNotEmpty } from "@common/schemas/primitives/stringNotEmpty.js";
 import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute.js";
+import { FilterQuery } from "mongoose";
+import { getReqUser } from "@/helpers/getReqUser.js";
+import { EXCEPTIONS } from "@common/static/exceptions.js";
 
 // --------------------------
 // GET
@@ -25,8 +28,11 @@ export const journalRoute = new Hono()
     }),
     authValidator({ permissionsTo: ["admin", "coach", "user"] }),
     async (ctx) => {
-      // @ts-ignore
-      const reqUser = ctx.get("reqUser") as IUserDoc;
+      const reqUser = getReqUser(ctx);
+
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
 
       let resData: AppResponse<IJournalDoc>;
 
@@ -67,14 +73,27 @@ export const journalRoute = new Hono()
     }),
     async (ctx) => {
       const body = ctx.req.valid("json");
-      // @ts-ignore
-      const reqUser: IUser = ctx.get("reqUser");
+      const reqUser = getReqUser(ctx);
+
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
+
+      const obligatoryFilters: FilterQuery<IJournalDoc> = {};
+
+      if (reqUser.role === "user") {
+        obligatoryFilters.user = reqUser._id.toString();
+      }
+      if (reqUser.role === "coach" && !body.filters?.user) {
+        throw new HTTPException(401, {
+          message: "Journal pagination by coach must inform the user",
+        });
+      }
 
       const resData = await handlePaginationRoute<IJournalDoc>({
         model: JournalModel,
         body,
-        reqUser,
-        modelHasActive: false,
+        obligatoryFilters,
       });
 
       return ctx.json(resData, 200);
@@ -95,8 +114,11 @@ export const journalRoute = new Hono()
       const body = ctx.req.valid("json");
       const { date, images, draft, text } = body;
 
-      // @ts-ignore
-      const reqUser = ctx.get("reqUser") as IUserDoc;
+      const reqUser = getReqUser(ctx);
+
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
 
       const userId = reqUser._id.toString();
 
@@ -145,8 +167,11 @@ export const journalRoute = new Hono()
 
       let resData: AppResponse<IJournalDoc>;
 
-      // @ts-ignore
-      const reqUser = ctx.get("reqUser") as IUserDoc;
+      const reqUser = getReqUser(ctx);
+
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
 
       const userId = reqUser._id.toString();
 
@@ -195,8 +220,11 @@ export const journalRoute = new Hono()
 
       let resData: AppResponse<boolean>;
 
-      // @ts-ignore
-      const reqUser = ctx.get("reqUser") as IUserDoc;
+      const reqUser = getReqUser(ctx);
+
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
 
       const userId = reqUser._id.toString();
 
@@ -229,28 +257,3 @@ export const journalRoute = new Hono()
       return ctx.json(resData, 200);
     }
   );
-
-// .get(
-//   "/",
-//   authValidator({ permissionsTo: ["admin", "coach", "user"] }),
-//   async (ctx) => {
-//     // @ts-ignore
-//     const reqUser = ctx.get("reqUser") as IUserDoc;
-//     let list: IJournalDoc[] = [];
-
-//     if (reqUser.role === "admin") {
-//       list = await JournalModel.find();
-//     } else if (reqUser.role === "coach") {
-//       list = await JournalModel.find({ organization: reqUser.organization });
-//     } else if (reqUser.role === "user") {
-//       list = await JournalModel.find({ user: reqUser._id });
-//     }
-
-//     const resData: AppResponse<IJournalDoc[]> = {
-//       data: list,
-//       error: null,
-//     };
-
-//     return ctx.json(resData, 200);
-//   }
-// )

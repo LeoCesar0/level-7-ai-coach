@@ -24,6 +24,8 @@ import { IUserDoc } from "../users/schemas/user.js";
 import { zStringNotEmpty } from "@common/schemas/primitives/stringNotEmpty.js";
 import { parseToDate } from "@common/helpers/parseToDate.js";
 import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute.js";
+import { getReqUser } from "@/helpers/getReqUser.js";
+import { FilterQuery } from "mongoose";
 
 export const chatRouter = new Hono()
   // --------------------------
@@ -38,31 +40,40 @@ export const chatRouter = new Hono()
     }),
     async (ctx) => {
       const body = ctx.req.valid("json");
-      // @ts-ignore
-      const reqUser: IUserDoc = ctx.get("reqUser");
 
-      let filters: (typeof body)["filters"] = body.filters ?? {};
+      const reqUser = getReqUser(ctx);
 
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
+
+      // let filters: (typeof body)["filters"] = body.filters ?? {};
+
+      // if (reqUser.role === "coach") {
+      //   filters = {
+      //     ...filters,
+      //     organization: reqUser.organization.toString(),
+      //   };
+      // } else if (reqUser.role === "user") {
+      //   filters = {
+      //     ...filters,
+      //     user: reqUser._id.toString(),
+      //   };
+      // }
+
+      const obligatoryFilters: FilterQuery<IChatDoc> = {};
+
+      if (reqUser.role === "user") {
+        obligatoryFilters.user = reqUser._id.toString();
+      }
       if (reqUser.role === "coach") {
-        filters = {
-          ...filters,
-          organization: reqUser.organization.toString(),
-        };
-      } else if (reqUser.role === "user") {
-        filters = {
-          ...filters,
-          user: reqUser._id.toString(),
-        };
+        obligatoryFilters.organization = reqUser.organization.toString();
       }
 
       const resData = await handlePaginationRoute<IChatDoc>({
         model: ChatModel,
-        body: {
-          ...body,
-          filters: filters,
-        },
-        reqUser,
-        modelHasActive: false,
+        body: body,
+        obligatoryFilters,
       });
 
       return ctx.json(resData, 200);
@@ -72,8 +83,12 @@ export const chatRouter = new Hono()
     "/list",
     authValidator({ permissionsTo: ["admin", "coach", "user"] }),
     async (ctx) => {
-      // @ts-ignore
-      const reqUser = ctx.get("reqUser") as IUserDoc;
+      const reqUser = getReqUser(ctx);
+
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
+
       let list: IChatDoc[] = [];
 
       if (reqUser.role === "admin") {
@@ -144,7 +159,6 @@ export const chatRouter = new Hono()
     authValidator({ permissionsTo: ["admin", "coach", "user"] }),
     async (ctx) => {
       const { id: chatId } = ctx.req.valid("param");
-      // @ts-ignore
 
       const chat = await ChatModel.findById(chatId);
 

@@ -3,13 +3,10 @@ import { getCollection } from "@/services/mongodb/getCollection";
 import { IPaginationBodyOutput } from "@common/schemas/paginateRoute";
 import { IPaginationResult } from "@common/schemas/pagination";
 import { IUser } from "@common/schemas/user/user";
-import { AnyObject, Model } from "mongoose";
+import { AnyObject, FilterQuery, Model } from "mongoose";
 
 export type IHandlePaginatedSearch<T> = {
   body: IPaginationBodyOutput;
-  model: Model<T>;
-  reqUser: IUserDoc | IUser;
-  modelHasActive: boolean;
   searchQuery: string;
   collectionName: string;
   searchIndexName: string;
@@ -18,6 +15,7 @@ export type IHandlePaginatedSearch<T> = {
     key: keyof T extends string ? keyof T : never;
     collectionName: string;
   };
+  obligatoryFilters: FilterQuery<T>;
 };
 
 export const handlePaginatedSearch = async <T extends AnyObject>({
@@ -27,16 +25,19 @@ export const handlePaginatedSearch = async <T extends AnyObject>({
   fields,
   populates,
   body,
-  model,
-  modelHasActive,
-  reqUser,
+  obligatoryFilters,
 }: IHandlePaginatedSearch<T>): Promise<IPaginationResult<T>> => {
   const collection = getCollection<T>({ name: collectionName });
 
   const limit = body.limit;
   const page = body.page;
-  const filters = body.filters;
+  // const filters = body.filters;
   const skip = (page - 1) * limit;
+
+  const filters: FilterQuery<T> = {
+    ...(body.filters || {}),
+    ...obligatoryFilters,
+  };
 
   let queryArray = [
     {
@@ -63,7 +64,7 @@ export const handlePaginatedSearch = async <T extends AnyObject>({
       },
     },
   ];
-  if (filters) {
+  if (filters && Object.values(filters).length > 0) {
     pipeline.push({
       $match: filters,
     });

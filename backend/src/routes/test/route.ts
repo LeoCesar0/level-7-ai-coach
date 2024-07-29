@@ -31,7 +31,6 @@ const testRoute = new Hono()
       const search = "john";
 
       const result = await handlePaginatedSearch<IUserDoc>({
-        model: UserModel,
         collectionName: COLLECTION.USERS,
         fields: ["name"],
         searchIndexName: SEARCH_INDEXES.USERS,
@@ -41,8 +40,6 @@ const testRoute = new Hono()
           key: "organization",
           collectionName: COLLECTION.ORGANIZATIONS,
         },
-        modelHasActive: true,
-        reqUser: reqUser,
       });
 
       return ctx.json({ result }, 200);

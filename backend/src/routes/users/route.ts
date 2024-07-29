@@ -20,6 +20,7 @@ import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute";
 import { handlePaginatedSearch } from "@/handlers/handlePaginatedSearch";
 import { COLLECTION } from "@/lib/langchain/@static";
 import { SEARCH_INDEXES } from "@/handlers/dbIndexes/setup";
+import { FilterQuery } from "mongoose";
 
 const userRoute = new Hono()
   // --------------------------
@@ -34,12 +35,23 @@ const userRoute = new Hono()
     }),
     async (ctx) => {
       const body = ctx.req.valid("json");
-      // @ts-ignore
-      const reqUser: IUserDoc = ctx.get("reqUser");
 
+      const reqUser = getReqUser(ctx);
+
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
+
+      const obligatoryFilters: FilterQuery<IUserDoc> = {};
+
+      if (reqUser.role === "user") {
+        obligatoryFilters.active = true;
+      }
+      if (reqUser.role === "coach") {
+        obligatoryFilters.organization = reqUser.organization.toString();
+      }
       if (body.searchQuery) {
-        const resData = await handlePaginatedSearch({
-          model: UserModel,
+        const resData = await handlePaginatedSearch<IUserDoc>({
           collectionName: COLLECTION.USERS,
           fields: ["name", "email"],
           searchIndexName: SEARCH_INDEXES.USERS,
@@ -49,8 +61,7 @@ const userRoute = new Hono()
             key: "organization",
             collectionName: COLLECTION.ORGANIZATIONS,
           },
-          modelHasActive: true,
-          reqUser: reqUser,
+          obligatoryFilters,
         });
         return ctx.json(resData, 200);
       }
@@ -58,17 +69,15 @@ const userRoute = new Hono()
       const resData = await handlePaginationRoute<IUserDoc>({
         model: UserModel,
         body,
-        reqUser,
-        modelHasActive: true,
         populates: USER_POPULATES,
+        obligatoryFilters,
       });
 
       return ctx.json(resData, 200);
     }
   )
   .get("/me", authValidator(), async (ctx) => {
-    // @ts-ignore
-    const reqUser: IUserDoc = ctx.get("reqUser");
+    const reqUser = getReqUser(ctx);
 
     if (!reqUser) {
       throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
@@ -100,8 +109,11 @@ const userRoute = new Hono()
     async (ctx) => {
       const userId = ctx.req.param("id");
 
-      // @ts-ignore
-      const reqUser: IUserDoc = ctx.get("reqUser");
+      const reqUser = getReqUser(ctx);
+
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
 
       const user = await getUserFull({ userId: userId });
 
@@ -134,8 +146,11 @@ const userRoute = new Hono()
 
       console.log("❗ inputs -->", inputs);
 
-      // @ts-ignore
-      const reqUser: IUserDoc = ctx.get("reqUser");
+      const reqUser = getReqUser(ctx);
+
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
 
       const userValues = cloneDeep(inputs.user);
 
@@ -267,8 +282,11 @@ const userRoute = new Hono()
       const userId = ctx.req.param("id");
       let resData: AppResponse<boolean>;
 
-      // @ts-ignore
-      const contextUser: IUserDoc | undefined = ctx.get("reqUser");
+      const reqUser = getReqUser(ctx);
+
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
 
       const userToChange = await UserModel.findById(userId);
 
@@ -277,7 +295,7 @@ const userRoute = new Hono()
       }
 
       const isSameOrg =
-        contextUser?.organization.toString() ===
+        reqUser?.organization.toString() ===
         userToChange.organization?.toString();
 
       if (!userId) {
@@ -285,8 +303,8 @@ const userRoute = new Hono()
       }
 
       if (
-        !contextUser || // NO REQ USER
-        (contextUser.role === "coach" && !isSameOrg) // REQ USER IS COACH AND NOT THE SAME ORG
+        !reqUser || // NO REQ USER
+        (reqUser.role === "coach" && !isSameOrg) // REQ USER IS COACH AND NOT THE SAME ORG
       ) {
         throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
       }
