@@ -1,20 +1,12 @@
-<script setup lang="ts" generic="T extends IUpdateOrganization">
-import { type IOrganization } from "@common/schemas/organization/organization";
+<script setup lang="ts" generic="T extends IUpdateArchetype">
 import { type ISelectOption } from "@/@schemas/select";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
-import { type IRole } from "@common/schemas/roles";
 import {
-  zCreateOrganization,
-  type ICreateOrganization,
-} from "@common/schemas/organization/createOrganization";
-import {
-  zUpdateOrganization,
-  type IUpdateOrganization,
-} from "@common/schemas/organization/updateOrganization";
-import { API_ROUTE } from "@common/static/routes";
-
-// type T = ICreateOrganization | IUpdateOrganization;
+  zUpdateArchetype,
+  type IUpdateArchetype,
+} from "@common/schemas/archetype/updateArchetype";
+import { zCreateArchetype } from "@common/schemas/archetype/createArchetype";
 
 type Props = {
   edit: boolean;
@@ -25,9 +17,7 @@ type Props = {
 
 const props = defineProps<Props>();
 
-console.log("❗ props.initialValues -->", props.initialValues);
-
-const schema = props.edit ? zUpdateOrganization : zCreateOrganization;
+const schema = props.edit ? zUpdateArchetype : zCreateArchetype;
 
 // --------------------------
 // COMPOSABLES
@@ -35,14 +25,6 @@ const schema = props.edit ? zUpdateOrganization : zCreateOrganization;
 
 const userStore = useUserStore();
 const { currentUser } = storeToRefs(userStore);
-
-// --------------------------
-// GET ORGANIZATION OPTIONS
-// --------------------------
-
-const { data: orgRes } = await useListApi<IOrganization>({
-  url: API_ROUTE.organizations.list.url,
-});
 
 // --------------------------
 // FORM
@@ -79,11 +61,14 @@ const handleSubmit = form.handleSubmit(async (values) => {
 </script>
 
 <template>
-  <!-- <p>initial: {{ initialValues }}</p> -->
-  <!-- <p>currentValues: {{ form.values }}</p> -->
+  <p>initialValues: {{ initialValues }}</p>
   <Form @submit="handleSubmit">
     <FormField :name="'name'" label="Name" :required="true" />
-    <FormField :name="'active'" label="Active" v-if="edit" />
-    <UiButton type="submit" :disabled="!formIsValid">Submit</UiButton>
+    <FormField
+      :name="'description'"
+      label="Description"
+      input-variant="textarea"
+    />
+    <UiButton type="submit" :disabled="!formIsValid">Save</UiButton>
   </Form>
 </template>

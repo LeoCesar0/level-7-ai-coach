@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { IOrganization } from "@common/schemas/organization/organization";
-import type { IUpdateOrganization } from "@common/schemas/organization/updateOrganization";
+import type { IArchetype } from "@common/schemas/archetype/archetype";
+import type { IUpdateArchetype } from "@common/schemas/archetype/updateArchetype";
 import { API_ROUTE } from "@common/static/routes";
 import { makeUpdateToastOptions } from "~/helpers/fetch/toastOptions";
 import { getSingleParams } from "~/helpers/getSingleParams";
@@ -13,14 +13,14 @@ const id = getSingleParams("id");
 
 const isLoading = ref(false);
 
-const initialValues = ref<IUpdateOrganization | null>(null);
+const initialValues = ref<IUpdateArchetype | null>(null);
 
 if (!id) {
-  await navigateTo(ROUTE.organizations.href);
+  await navigateTo(ROUTE.archetypes.href);
 }
 
-const { status, data } = await useGetApi<IOrganization>({
-  url: API_ROUTE.organizations.get.url(id),
+const { data } = await useGetApi<IArchetype>({
+  url: API_ROUTE.archetypes.get.url(id),
   loadingRefs: [isLoading],
 });
 
@@ -30,24 +30,22 @@ watchEffect(() => {
   if (item.value) {
     initialValues.value = {
       name: item.value?.name,
-      imageUrl: item.value?.imageUrl,
-      active: item.value?.active,
-      users: item.value?.users,
+      description: item.value?.description,
     };
   }
 });
 
-const onSubmit = async (values: IUpdateOrganization) => {
+const onSubmit = async (values: IUpdateArchetype) => {
   await fetchApi({
     method: "PUT",
-    url: API_ROUTE.organizations.update.url(id),
+    url: API_ROUTE.archetypes.update.url(id),
     body: values,
-    toastOptions: makeUpdateToastOptions({ label: "Team" }),
+    toastOptions: makeUpdateToastOptions({ label: "Archetype" }),
     loadingRefs: [isLoading],
     onSuccess: async (data) => {
       const backToHref = getCurrentRouteBackToHref();
       if (backToHref) {
-        navigateTo(backToHref);
+        await navigateTo(backToHref);
       }
     },
   });
@@ -57,7 +55,7 @@ const onSubmit = async (values: IUpdateOrganization) => {
 <template>
   <NuxtLayout name="dashboard-layout">
     <DashboardSection :title="`Editing ${item?.name ?? ''}`">
-      <DashboardOrganizationForm
+      <DashboardArchetypeForm
         v-if="initialValues"
         :initialValues="initialValues"
         :edit="true"

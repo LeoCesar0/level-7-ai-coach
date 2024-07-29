@@ -2,19 +2,13 @@
 import { Field } from "vee-validate";
 import { type ISelectOption } from "@/@schemas/select";
 import { vAutoAnimate } from "@formkit/auto-animate";
-import {
-  DateFormatter,
-  getLocalTimeZone,
-  parseDate,
-} from "@internationalized/date";
-import { CalendarIcon } from "@radix-icons/vue";
 import { cn } from "@lib/utils";
 import type { VCalendarProps } from "~/components/ui/v-calendar/Calendar.vue";
 
 type Props = {
   name: string;
   label: string;
-  inputVariant?: "input" | "select" | "date" | "calendar";
+  inputVariant?: "input" | "select" | "date" | "calendar" | "textarea";
   inputProps?: Record<string, any>;
   placeholder?: string;
   description?: string;
@@ -46,6 +40,17 @@ const props = withDefaults(defineProps<Props>(), {
             disabled,
             ...(props.inputProps ?? {}),
           }"
+        />
+        <!-- TEXTAREA -->
+        <UiTextarea
+          v-if="inputVariant === 'textarea'"
+          :placeholder="placeholder ?? ''"
+          v-bind="{
+            ...componentField,
+            disabled,
+            ...(props.inputProps ?? {}),
+          }"
+          :rows="5"
         />
         <!-- SELECT -->
         <UiSelect

@@ -109,6 +109,17 @@ const form = useForm<T>({
   validationSchema: toTypedSchema(schema),
   initialValues: props.initialValues,
 });
+watch(
+  () => props.initialValues,
+  (newValue) => {
+    // @ts-ignore
+    form.setValues(newValue);
+  },
+  {
+    deep: true,
+    immediate: true,
+  }
+);
 
 const formIsValid = computed(() => {
   return !props.isLoading && form.meta.value.valid;

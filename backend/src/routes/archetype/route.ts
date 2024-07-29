@@ -10,6 +10,7 @@ import { EXCEPTIONS } from "@common/static/exceptions";
 import { AppResponse } from "@common/schemas/app";
 import { zCreateArchetype } from "@common/schemas/archetype/createArchetype";
 import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute";
+import { zUpdateArchetype } from '@common/schemas/archetype/updateArchetype';
 
 const archetypeRoute = new Hono()
   .get(
@@ -116,7 +117,7 @@ const archetypeRoute = new Hono()
       target: "param",
     }),
     routeValidator({
-      schema: zCreateArchetype.partial(),
+      schema: zUpdateArchetype,
       target: "json",
     }),
     async (ctx) => {

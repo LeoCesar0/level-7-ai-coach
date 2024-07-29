@@ -23,5 +23,15 @@ export const PERMISSION = {
     update: ["admin", "coach", "user"],
     delete: ["admin", "coach"],
     me: ["admin", "coach", "user"],
+    list: ["admin", "coach"],
+    paginate: ["admin", "coach"],
+  },
+  archetypes: {
+    get: ["admin"],
+    create: ["admin"],
+    update: ["admin", "user"],
+    delete: ["admin"],
+    list: ["admin"],
+    paginate: ["admin"],
   },
 } satisfies IPermissionRecord;

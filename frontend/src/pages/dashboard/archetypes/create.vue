@@ -1,30 +1,29 @@
 <script setup lang="ts">
 import { makeCreateToastOptions } from "~/helpers/fetch/toastOptions";
 import { getCurrentRouteBackToHref } from "~/helpers/routing/getRouteBackToHref";
-import type { ICreateOrganization } from "@common/schemas/organization/createOrganization";
 import { API_ROUTE } from "@common/static/routes";
+import type { ICreateArchetype } from "@common/schemas/archetype/createArchetype";
 
-const initialValues: ICreateOrganization = {
+const initialValues: ICreateArchetype = {
   name: "",
-  imageUrl: "",
-  users: [],
+  description: "",
 };
 
 const isLoading = ref(false);
 
 const { fetchApi } = useFetchApi();
 
-const onSubmit = async (values: ICreateOrganization) => {
-  await fetchApi<ICreateOrganization>({
+const onSubmit = async (values: ICreateArchetype) => {
+  await fetchApi<ICreateArchetype>({
     method: "POST",
-    url: API_ROUTE.organizations.create.url,
+    url: API_ROUTE.archetypes.create.url,
     body: values,
-    toastOptions: makeCreateToastOptions({ label: "Team" }),
+    toastOptions: makeCreateToastOptions({ label: "Archetype" }),
     loadingRefs: [isLoading],
     onSuccess: async (data) => {
       const backToHref = getCurrentRouteBackToHref();
       if (backToHref) {
-        navigateTo(backToHref);
+        await navigateTo(backToHref);
       }
     },
   });
@@ -33,8 +32,8 @@ const onSubmit = async (values: ICreateOrganization) => {
 
 <template>
   <NuxtLayout name="dashboard-layout">
-    <DashboardSection title="Create Team">
-      <DashboardOrganizationForm
+    <DashboardSection title="Create Archetype">
+      <DashboardArchetypeForm
         :initialValues="initialValues"
         :edit="false"
         :onSubmit="onSubmit"

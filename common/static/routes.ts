@@ -5,6 +5,8 @@ import type { IRouteApiAction, IRouteMethod } from "./methods";
 import { zCreateUser } from "../schemas/user/createUser";
 import { zUpdateUser } from "../schemas/user/updateUserRoute";
 import { zPaginateRouteQueryInput } from "../schemas/paginateRoute";
+import { zCreateArchetype } from "@common/schemas/archetype/createArchetype";
+import { zUpdateArchetype } from "@common/schemas/archetype/updateArchetype";
 
 export const API_ROUTES = [
   // --------------------------
@@ -15,19 +17,10 @@ export const API_ROUTES = [
   // orgs
   // --------------------------
   "organizations",
+  "archetypes",
 ] as const;
 
 export type IApiRoute = (typeof API_ROUTES)[number];
-//TODO
-
-export const API_ROUTE_PATH = {
-  organizations: "/organizations",
-  organizationsPaginate: "/organizations/paginate",
-  organizationsList: "/organizations/list",
-  users: "/users",
-  usersPaginate: "/users/paginate",
-  usersList: "/users/list",
-};
 
 export type IApiRouteActionItem = {
   baseUrl: string; // base
@@ -119,6 +112,47 @@ export const API_ROUTE = {
     paginate: {
       baseUrl: "/users",
       url: "/users/paginate",
+      path: "/paginate",
+      method: "get",
+      bodySchema: zPaginateRouteQueryInput,
+    },
+  },
+  archetypes: {
+    create: {
+      baseUrl: "/archetypes",
+      url: "/archetypes",
+      path: "/",
+      method: "post",
+      bodySchema: zCreateArchetype,
+    },
+    update: {
+      baseUrl: "/archetypes",
+      url: (id: string) => `/archetypes/${id}`,
+      path: "/",
+      method: "put",
+      bodySchema: zUpdateArchetype,
+    },
+    delete: {
+      baseUrl: "/archetypes",
+      url: (id: string) => `/archetypes/${id}`,
+      path: "/",
+      method: "delete",
+    },
+    get: {
+      baseUrl: "/archetypes",
+      url: (id: string) => `/archetypes/${id}`,
+      path: "/",
+      method: "get",
+    },
+    list: {
+      baseUrl: "/archetypes",
+      url: "/archetypes/list",
+      path: "/list",
+      method: "get",
+    },
+    paginate: {
+      baseUrl: "/archetypes",
+      url: "/archetypes/paginate",
       path: "/paginate",
       method: "get",
       bodySchema: zPaginateRouteQueryInput,

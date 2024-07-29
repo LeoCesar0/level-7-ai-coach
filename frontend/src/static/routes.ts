@@ -6,6 +6,7 @@ import IconSettings from "@/components/icons/Settings.vue";
 import {
   FlagIcon,
   BotMessageSquareIcon,
+  BookUserIcon,
   UsersIcon,
   UserIcon,
   MedalIcon,
@@ -39,7 +40,6 @@ export const ROUTES = [
   "archetypes",
   "createArchetype",
   "editArchetype",
-  "viewArchetype",
 ] as const;
 
 export type Route = (typeof ROUTES)[number];
@@ -162,7 +162,7 @@ export const ROUTE: Record<Route, IRoute> = {
     label: "Archetypes",
     permissions: ["admin"],
     inMenuFor: ["admin"],
-    icon: BotMessageSquareIcon,
+    icon: BookUserIcon,
     name: "archetypes",
   },
   createArchetype: {
@@ -178,13 +178,6 @@ export const ROUTE: Record<Route, IRoute> = {
     permissions: ["admin"],
     backsTo: "archetypes",
     name: "editArchetype",
-  },
-  viewArchetype: {
-    href: "/dashboard/archetypes/view",
-    label: "View Archetype",
-    permissions: ["admin"],
-    backsTo: "archetypes",
-    name: "viewArchetype",
   },
   // --------------------------
   // other

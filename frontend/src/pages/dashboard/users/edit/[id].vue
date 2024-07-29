@@ -30,7 +30,7 @@ const { status, data } = await useGetApi<IUserFull>({
 const user = computed(() => data.value?.data);
 
 watchEffect(() => {
-  if (user.value && !initialValues.value) {
+  if (user.value) {
     initialValues.value = {
       name: user.value?.name,
       email: user.value?.email,
