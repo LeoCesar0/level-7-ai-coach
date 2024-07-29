@@ -17,4 +17,5 @@ export const COLLECTION = {
   MEMORY: MEMORY_COLLECTION,
   USER_ANALYTICS: "userAnalytics",
   USERS: "users",
+  ORGANIZATIONS: "organizations",
 };
