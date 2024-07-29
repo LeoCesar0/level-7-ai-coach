@@ -34,6 +34,7 @@
     "@langchain/core": "^0.2.11",
     "@langchain/mongodb": "^0.0.4",
     "@langchain/openai": "^0.2.1",
+    "@zodyac/zod-mongoose": "^1.1.2",
     "bcrypt": "^5.1.1",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
@@ -42,12 +43,12 @@
     "langchain": "^0.2.7",
     "lodash.clonedeep": "^4.5.0",
     "mongodb": "^6.8.0",
+    "mongoose": "^8.4.3",
     "node-cron": "^3.0.3",
     "openai": "^4.52.1",
     "pkgroll": "^2.1.1",
     "slugify": "^1.6.6",
-    "@zodyac/zod-mongoose": "^1.1.2",
-    "mongoose": "^8.4.3",
+    "urllib": "^4.2.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

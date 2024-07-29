@@ -13,6 +13,26 @@ export type IHandlePaginationRoute<T> = {
   populates?: (keyof T extends string ? keyof T : never)[];
 };
 
+const parseFilter = <T>(filters: FilterQuery<T>) => {
+  const newFilters: FilterQuery<T> = {};
+  Object.entries(filters).forEach(([key, value]) => {
+    if (typeof value === "string" && value.startsWith("regex:")) {
+      // value is regex
+      newFilters[key as keyof typeof newFilters] = new RegExp(
+        value.split("regex:")[1]
+      );
+    } else if (value instanceof Object) {
+      // value is object
+      newFilters[key as keyof typeof newFilters] = parseFilter(value);
+    } else {
+      // any other
+      newFilters[key as keyof typeof newFilters] = value;
+    }
+  });
+
+  return newFilters;
+};
+
 export const handlePaginationRoute = async <T>({
   body,
   model,
@@ -31,7 +51,9 @@ export const handlePaginationRoute = async <T>({
     sortObj["createdAt"] = "desc";
   }
   const getBaseQuery = () => {
-    const filters: FilterQuery<T> = body.filters ?? {};
+    const filters: FilterQuery<T> = parseFilter(body.filters || {});
+
+    console.log("❗ filters -->", filters);
     let res = model.find({ ...filters });
     if (reqUser.role !== "admin" && modelHasActive) {
       res = res.where("active").equals(true);

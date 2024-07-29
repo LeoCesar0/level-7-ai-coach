@@ -16,6 +16,7 @@ import { processUserAnalytics } from "./services/analytics/processUserAnalytics"
 import { processJournalsAssessment } from "./services/assessment/processJournalsAssessment";
 import { cors } from "hono/cors";
 import testRoute from "./routes/test/route";
+import { handleSetupIndexes } from "./handlers/dbIndexes/handleSetupIndexes";
 
 dotenv.config({ path: "../.env" });
 
@@ -81,6 +82,8 @@ honoServer.on("listening", () => {
   console.log(
     `🚀 Server is running on port ${port}, env: ${process.env.NODE_ENV}`
   );
+
+  // handleSetupIndexes();
 });
 
 if (
