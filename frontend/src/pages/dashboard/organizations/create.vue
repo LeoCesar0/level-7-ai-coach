@@ -24,7 +24,7 @@ const onSubmit = async (values: ICreateOrganization) => {
     onSuccess: async (data) => {
       const backToHref = getCurrentRouteBackToHref();
       if (backToHref) {
-        navigateTo(backToHref);
+        await navigateTo(backToHref);
       }
     },
   });

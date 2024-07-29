@@ -44,7 +44,7 @@ const onSubmit = async (values: ICreateUserRoute) => {
     onSuccess: async (data) => {
       const backToHref = getCurrentRouteBackToHref();
       if (backToHref) {
-        navigateTo(backToHref);
+        await navigateTo(backToHref);
       }
     },
   });
