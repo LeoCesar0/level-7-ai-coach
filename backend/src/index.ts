@@ -83,7 +83,7 @@ honoServer.on("listening", () => {
     `🚀 Server is running on port ${port}, env: ${process.env.NODE_ENV}`
   );
 
-  // handleSetupIndexes();
+  handleSetupIndexes();
 });
 
 if (

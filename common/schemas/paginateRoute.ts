@@ -29,6 +29,5 @@ export type IPaginationBodyOutput<T = any> = {
   limit: number;
   sortBy?: string | null | undefined;
   sortOrder?: "asc" | "ascending" | "desc" | "descending" | null | undefined;
-  // filters?: Record<string, any> | null | undefined;
   filters?: FilterQuery<T> | null | undefined;
 };

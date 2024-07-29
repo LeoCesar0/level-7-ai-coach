@@ -25,6 +25,8 @@ import { JournalModel } from "../src/routes/journals/schemas/journal";
 import { ENV } from "@common/static/envs";
 import { ICreateArchetype } from "@common/schemas/archetype/createArchetype";
 import { ArchetypeModel } from "@/routes/archetype/schemas/archetype";
+import { faker } from "@faker-js/faker";
+import { IRole } from "@common/schemas/roles";
 
 dotenv.config({ path: "../.env" });
 
@@ -138,7 +140,6 @@ const run = async () => {
     inputs: {
       password: devPassword,
       user: {
-        active: true,
         name: adminName,
         role: "admin",
         email: adminEmail,
@@ -153,12 +154,19 @@ const run = async () => {
   // USER
   // --------------------------
 
-  const organization1 = await OrganizationModel.create({
+  const teamLiquidFire = await OrganizationModel.create({
     name: "Team Liquid Fire",
     active: true,
     slug: slugify("Team Fire Dev"),
     _id: "6689cd9963d2aa5bbcffc9f4",
   });
+
+  const teamBoltz = await OrganizationModel.create({
+    name: "Team Boltz",
+    active: true,
+    slug: slugify("Team Boltz"),
+  });
+
   const normalUserEmail = "dev_user@level7.com";
   const normalUserName = "John Doe";
   let firebaseUser = await firebaseAuth
@@ -176,12 +184,11 @@ const run = async () => {
     inputs: {
       password: devPassword,
       user: {
-        active: true,
         name: normalUserName,
         role: "user",
         email: normalUserEmail,
-        organization: organization1._id.toString(),
-        archetype: defaultArch._id.toString(),
+        organization: teamLiquidFire._id.toString(),
+        // archetype: defaultArch._id.toString(),
         _id: "6689cd9963d2aa5bbcffc9f6",
       },
     },
@@ -207,11 +214,10 @@ const run = async () => {
     inputs: {
       password: devPassword,
       user: {
-        active: true,
         name: coachUserName,
         role: "coach",
         email: coachUserEmail,
-        organization: organization1._id.toString(),
+        organization: teamLiquidFire._id.toString(),
         _id: "6689cd9a63d2aa5bbcffc9f9",
       },
     },
@@ -219,6 +225,139 @@ const run = async () => {
   });
 
   // console.log("❗ admin -->", admin);
+
+  // --------------------------
+  // SEED RANDOM USERS
+  // --------------------------
+
+  const createRandomUser = async ({
+    index,
+    teamId,
+    role,
+    teamName = "random",
+    userName,
+  }: {
+    role: IRole;
+    teamId: string;
+    index: number;
+    teamName?: string;
+    userName?: string;
+  }) => {
+    const randomUserEmail = `${
+      userName ? slugify(userName) : "dev"
+    }_${teamName}_${role}_${index}_@test.com`;
+    const randomUserName = userName ?? faker.person.fullName();
+    let firebaseRandomUser = await firebaseAuth
+      .getUserByEmail(randomUserEmail)
+      .catch((err) => {});
+
+    if (!firebaseRandomUser) {
+      firebaseRandomUser = await firebaseAuth.createUser({
+        displayName: randomUserName,
+        email: randomUserEmail,
+        password: devPassword,
+      });
+    }
+    const fakePhone = Math.random() > 0.5;
+    const fakeAddress = Math.random() > 0.5;
+    const fakeBirth = Math.random() > 0.5;
+
+    const randomUser = await createAppUser({
+      inputs: {
+        password: devPassword,
+        user: {
+          name: randomUserName,
+          role: role,
+          email: randomUserEmail,
+          organization: teamId,
+          address: fakeAddress
+            ? {
+                address: faker.location.streetAddress(),
+                city: "Nashville",
+                state: "Tennessee",
+                country: "USA",
+              }
+            : undefined,
+          phone: fakePhone ? faker.phone.number() : undefined,
+          birthDate: fakeBirth ? new Date(1990, 1, 1) : undefined,
+        },
+      },
+      firebaseId: firebaseRandomUser.uid,
+    });
+    console.log("❗created randomUser -->", randomUserName);
+    return randomUser;
+  };
+
+  // --------------------------
+  // Create random coaches
+  // --------------------------
+
+  await createRandomUser({
+    index: 150,
+    role: "coach",
+    teamId: teamLiquidFire._id.toString(),
+  });
+  await createRandomUser({
+    index: 250,
+    role: "coach",
+    teamId: teamBoltz._id.toString(),
+  });
+
+  // --------------------------
+  // Create disabled users
+  // --------------------------
+  const disabledUser = await createRandomUser({
+    index: 344,
+    role: "user",
+    teamId: teamLiquidFire._id.toString(),
+    userName: "disabled user",
+  });
+  await UserModel.updateOne({ _id: disabledUser._id }, { active: false });
+  const disabledCoach = await createRandomUser({
+    index: 344,
+    role: "coach",
+    teamId: teamLiquidFire._id.toString(),
+    userName: "disabled coach",
+  });
+  await UserModel.updateOne({ _id: disabledCoach._id }, { active: false });
+
+  // --------------------------
+  // Create random users
+  // --------------------------
+  const promises: Promise<any>[] = [];
+
+  for (let i = 0; i < 5; i++) {
+    // team liquid fier and random names
+    const promise = createRandomUser({
+      index: i,
+      role: "user",
+      teamId: teamLiquidFire._id.toString(),
+      teamName: "fire",
+    });
+    promises.push(promise);
+  }
+  for (let i = 0; i < 12; i++) {
+    // team liquid fier and similar names
+    const promise = createRandomUser({
+      index: i,
+      role: "user",
+      teamId: teamLiquidFire._id.toString(),
+      teamName: "fire",
+      userName: "Johnny Doe " + i,
+    });
+    promises.push(promise);
+  }
+  for (let i = 0; i < 10; i++) {
+    const promise = createRandomUser({
+      index: i,
+      role: "user",
+      teamId: teamBoltz._id.toString(),
+      teamName: "boltz",
+    });
+    promises.push(promise);
+  }
+
+  await Promise.all(promises);
 
   // --------------------------
   // CHAT
