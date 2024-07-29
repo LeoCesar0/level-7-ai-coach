@@ -23,7 +23,6 @@ export type IPaginationBody<T = any> = {
   sortOrder?: "asc" | "ascending" | "desc" | "descending" | null | undefined;
   filters?: FilterQuery<T> | null | undefined;
 };
-// | undefined;
 
 export type IPaginationBodyOutput<T = any> = {
   page: number;

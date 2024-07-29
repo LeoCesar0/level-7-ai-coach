@@ -61,7 +61,7 @@ const handleSubmit = form.handleSubmit(async (values) => {
 </script>
 
 <template>
-  <p>initialValues: {{ initialValues }}</p>
+  <!-- <p>initialValues: {{ initialValues }}</p> -->
   <Form @submit="handleSubmit">
     <FormField :name="'name'" label="Name" :required="true" />
     <FormField
