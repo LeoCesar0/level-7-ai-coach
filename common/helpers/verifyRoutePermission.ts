@@ -1,8 +1,8 @@
-import { type IUser, type IUserFull } from "@common/schemas/user/user";
-import type { Nullish } from "@common/type/helpers";
+import { type IUser, type IUserFull } from "../schemas/user/user";
+import type { Nullish } from "../type/helpers";
 import { verifyUserPermission } from "./verifyUserPermission";
-import type { IRouteApiAction } from "@common/static/methods";
-import type { IPermissionItem } from "@common/static/permissions";
+import type { IRouteApiAction } from "../static/methods";
+import type { IPermissionItem } from "../static/permissions";
 import { verifyMutatePermission } from "./verifyMutatePermission";
 
 export const verifyRoutePermission = ({

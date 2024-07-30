@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ROUTE, ROUTES, ROUTES_LIST, type IRoute } from "@static/routes";
-import { compareRoute } from "~/helpers/compareRoute";
+import { ROUTE } from "@static/routes";
 import { getCurrentRoute } from "~/helpers/routing/getCurrentRoute";
 const route = useRoute();
 const router = useRouter();

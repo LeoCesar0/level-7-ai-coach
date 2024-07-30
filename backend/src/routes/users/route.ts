@@ -53,7 +53,9 @@ const userRoute = new Hono()
       if (body.searchQuery) {
         const resData = await handlePaginatedSearch<IUserDoc>({
           collectionName: COLLECTION.USERS,
-          fields: ["name", "email"],
+          fields: body.searchFields
+            ? (body.searchFields as (keyof IUserDoc)[])
+            : ["name", "email"],
           searchIndexName: SEARCH_INDEXES.USERS,
           searchQuery: body.searchQuery,
           body,

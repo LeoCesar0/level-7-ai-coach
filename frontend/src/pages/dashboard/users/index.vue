@@ -23,6 +23,9 @@ type TUser = IUserFull;
 const { paginationBody, paginationResult, isLoading, refresh } =
   await usePagination<TUser>({
     url: API_ROUTE.users.paginate.url,
+    initialBody: {
+      searchQuery: "",
+    },
   });
 // --------------------------
 
@@ -166,6 +169,7 @@ const columns: ColumnDef<TUser>[] = [
         :paginationBody="paginationBody"
         :paginationResult="paginationResult?.data"
       />
+      {{ paginationResult?.data }}
     </DashboardSection>
   </NuxtLayout>
 </template>

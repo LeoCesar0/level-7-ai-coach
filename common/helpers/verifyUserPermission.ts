@@ -1,6 +1,6 @@
-import type { IRole } from "@common/schemas/roles";
-import type { IUser, IUserFull } from "@common/schemas/user/user";
-import type { Nullish } from "@common/type/helpers";
+import type { IRole } from "../schemas/roles";
+import type { IUser, IUserFull } from "../schemas/user/user";
+import type { Nullish } from "../type/helpers";
 
 export const verifyUserPermission = ({
   user,

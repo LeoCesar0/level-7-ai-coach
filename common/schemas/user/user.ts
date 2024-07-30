@@ -4,7 +4,7 @@ import { zCreateUser } from "./createUser";
 import { zMongoDocumentClient } from "../mongo";
 import { zArchetype } from "../archetype/archetype";
 import { zOrganization } from "../organization/organization";
-import { EXCEPTIONS } from "@common/static/exceptions";
+import { EXCEPTIONS } from "../../static/exceptions";
 import { zRole } from "../roles";
 import { zAddress } from "./address";
 import { zAthleteInfo } from "./athleteInfo";

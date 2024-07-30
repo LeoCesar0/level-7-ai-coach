@@ -1,12 +1,12 @@
+import { zPaginateRouteQueryInput } from "../schemas/paginateRoute";
 import type { ZodSchema } from "zod";
 import { zCreateOrganization } from "../schemas/organization/createOrganization";
 import { zUpdateOrganization } from "../schemas/organization/updateOrganization";
 import type { IRouteApiAction, IRouteMethod } from "./methods";
 import { zCreateUser } from "../schemas/user/createUser";
 import { zUpdateUser } from "../schemas/user/updateUserRoute";
-import { zPaginateRouteQueryInput } from "../schemas/paginateRoute";
-import { zCreateArchetype } from "@common/schemas/archetype/createArchetype";
-import { zUpdateArchetype } from "@common/schemas/archetype/updateArchetype";
+import { zCreateArchetype } from "../schemas/archetype/createArchetype";
+import { zUpdateArchetype } from "../schemas/archetype/updateArchetype";
 
 export const API_ROUTES = [
   // --------------------------

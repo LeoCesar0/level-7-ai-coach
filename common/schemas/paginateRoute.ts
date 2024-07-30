@@ -11,6 +11,7 @@ export const zPaginateRouteQueryInput = z
     sortOrder: z.enum(["asc", "ascending", "desc", "descending"]).nullish(),
     filters: zFilters.nullish(),
     searchQuery: z.string().nullish(),
+    searchFields: z.string().array().nullish(),
   })
   .default({
     limit: 10,
@@ -24,6 +25,7 @@ export type IPaginationBody<T = any> = {
   sortOrder?: "asc" | "ascending" | "desc" | "descending" | null | undefined;
   filters?: FilterQuery<T> | null | undefined;
   searchQuery?: string | null | undefined;
+  searchFields?: (keyof T)[] | null | undefined;
 };
 
 export type IPaginationBodyOutput<T = any> = {
@@ -33,4 +35,5 @@ export type IPaginationBodyOutput<T = any> = {
   sortOrder?: "asc" | "ascending" | "desc" | "descending" | null | undefined;
   filters?: FilterQuery<T> | null | undefined;
   searchQuery?: string | null | undefined;
+  searchFields?: (keyof T)[] | null | undefined;
 };

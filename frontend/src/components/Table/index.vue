@@ -52,6 +52,10 @@ const data = computed(() => {
   return props.paginationResult?.list || [];
 });
 
+const hasSearch = computed(() => {
+  return typeof props.paginationBody.searchQuery === "string";
+});
+
 const sorting = ref<SortingState>([]);
 const columnFilters = ref<ColumnFiltersState>([]);
 const columnVisibility = ref<VisibilityState>({});
@@ -102,10 +106,16 @@ const table = computed(() => {
     <div class="flex gap-2 items-center py-4">
       <!-- <Input
         class="max-w-sm"
-        placeholder="Filter..."
+        placeholder="Search..."
         :model-value="table.getColumn('email')?.getFilterValue() as string"
         @update:model-value="table.getColumn('email')?.setFilterValue($event)"
       /> -->
+      <Input
+        v-if="hasSearch"
+        class="max-w-sm"
+        placeholder="Search..."
+        v-model="paginationBody.searchQuery as string"
+      />
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
           <Button variant="outline" class="ml-auto">

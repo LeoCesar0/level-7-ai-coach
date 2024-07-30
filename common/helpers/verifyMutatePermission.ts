@@ -1,17 +1,16 @@
 import {
   zOrganization,
   type IOrganization,
-} from "@common/schemas/organization/organization";
-import type { IRole } from "@common/schemas/roles";
+} from "../schemas/organization/organization";
 import {
   zUser,
   zUserFull,
   type IUser,
   type IUserFull,
-} from "@common/schemas/user/user";
-import type { Nullish } from "@common/type/helpers";
+} from "../schemas/user/user";
+import type { Nullish } from "../type/helpers";
 import { verifyUserPermission } from "./verifyUserPermission";
-import type { IPermissionItem } from "@common/static/permissions";
+import type { IPermissionItem } from "../static/permissions";
 
 export const itemIsUser = (item: any): item is IUser | IUserFull => {
   return zUser.safeParse(item).success || zUserFull.safeParse(item).success;
