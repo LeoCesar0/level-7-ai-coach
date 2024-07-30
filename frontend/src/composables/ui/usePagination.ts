@@ -19,6 +19,10 @@ export const usePagination = async <T extends any>({
     ...(initialBody || {}),
   }) as Ref<IPaginationBody<T>>;
 
+  const searchOldValue = ref<typeof paginationBody.value.searchQuery>(
+    paginationBody.value.searchQuery ?? ""
+  );
+
   const {
     data: paginationResult,
     error,
@@ -30,8 +34,10 @@ export const usePagination = async <T extends any>({
     immediate: true,
   });
 
-  const debouncedRefresh = debounce((newValue: IPaginationBody<T>) => {
-    console.log("❗ newValue -->", newValue);
+  // --------------------------
+  // REFRESH VALUES
+  // --------------------------s
+  const handleRefresh = (newValue: IPaginationBody<T>) => {
     refresh();
     router.push({
       query: {
@@ -39,12 +45,20 @@ export const usePagination = async <T extends any>({
         page: newValue.page || 1,
       },
     });
+  };
+  const debouncedRefresh = debounce((newValue: IPaginationBody<T>) => {
+    handleRefresh(newValue);
   }, 500);
 
   watch(
     paginationBody,
     (newValue) => {
-      debouncedRefresh(newValue);
+      if (newValue.searchQuery !== searchOldValue.value) {
+        debouncedRefresh(newValue);
+        searchOldValue.value = newValue.searchQuery;
+      } else {
+        handleRefresh(newValue);
+      }
     },
     {
       deep: true,
