@@ -1,5 +1,6 @@
 import { IUserDoc } from "@/routes/users/schemas/user";
 import { getCollection } from "@/services/mongodb/getCollection";
+import { AppResponse } from "@common/schemas/app";
 import { IPaginationBodyOutput } from "@common/schemas/paginateRoute";
 import { IPaginationResult } from "@common/schemas/pagination";
 import { IUser } from "@common/schemas/user/user";
@@ -26,12 +27,11 @@ export const handlePaginatedSearch = async <T extends AnyObject>({
   populates,
   body,
   obligatoryFilters,
-}: IHandlePaginatedSearch<T>): Promise<IPaginationResult<T>> => {
+}: IHandlePaginatedSearch<T>): Promise<AppResponse<IPaginationResult<T>>> => {
   const collection = getCollection<T>({ name: collectionName });
 
   const limit = body.limit;
   const page = body.page;
-  // const filters = body.filters;
   const skip = (page - 1) * limit;
 
   const filters: FilterQuery<T> = {
@@ -105,15 +105,20 @@ export const handlePaginatedSearch = async <T extends AnyObject>({
   const hasNextPage = page < totalPages;
   const hasPrevPage = page > 1;
 
-  return {
-    list: data.data as T[],
-    totalItems,
-    page,
-    limit,
-    totalPages,
-    hasNextPage,
-    hasPrevPage,
-    nextPage: hasNextPage ? page + 1 : null,
-    prevPage: hasPrevPage ? page - 1 : null,
+  const resData: AppResponse<IPaginationResult<T>> = {
+    data: {
+      list: (data.data ?? []) as T[],
+      totalItems,
+      page,
+      limit,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+      nextPage: hasNextPage ? page + 1 : null,
+      prevPage: hasPrevPage ? page - 1 : null,
+    },
+    error: null,
   };
+
+  return resData;
 };

@@ -1,4 +1,5 @@
 import { type IPaginationBody } from "@common/schemas/paginateRoute";
+import debounce from "lodash.debounce";
 
 type IUsePagination<T> = {
   url: string;
@@ -12,12 +13,11 @@ export const usePagination = async <T extends any>({
   const router = useRouter();
   const route = useRoute();
 
-  const paginationBody = ref<IPaginationBody<T>>(
-    initialBody || {
-      limit: 10,
-      page: 1,
-    }
-  ) as Ref<IPaginationBody<T>>;
+  const paginationBody = ref<IPaginationBody<T>>({
+    limit: 10,
+    page: 1,
+    ...(initialBody || {}),
+  }) as Ref<IPaginationBody<T>>;
 
   const {
     data: paginationResult,
@@ -30,16 +30,21 @@ export const usePagination = async <T extends any>({
     immediate: true,
   });
 
+  const debouncedRefresh = debounce((newValue: IPaginationBody<T>) => {
+    console.log("❗ newValue -->", newValue);
+    refresh();
+    router.push({
+      query: {
+        ...route.query,
+        page: newValue.page || 1,
+      },
+    });
+  }, 500);
+
   watch(
     paginationBody,
     (newValue) => {
-      refresh();
-      router.push({
-        query: {
-          ...route.query,
-          page: newValue.page || 1,
-        },
-      });
+      debouncedRefresh(newValue);
     },
     {
       deep: true,

@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@radix-icons/vue": "^1.0.0",
+    "@types/lodash.debounce": "^4.0.9",
     "@vue/devtools-api": "^6.6.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

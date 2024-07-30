@@ -1,4 +1,3 @@
-import { zPaginateRouteQueryInput } from "../schemas/paginateRoute";
 import type { ZodSchema } from "zod";
 import { zCreateOrganization } from "../schemas/organization/createOrganization";
 import { zUpdateOrganization } from "../schemas/organization/updateOrganization";
@@ -7,18 +6,25 @@ import { zCreateUser } from "../schemas/user/createUser";
 import { zUpdateUser } from "../schemas/user/updateUserRoute";
 import { zCreateArchetype } from "../schemas/archetype/createArchetype";
 import { zUpdateArchetype } from "../schemas/archetype/updateArchetype";
+import { zFilters } from "@common/schemas/paginateRoute";
+import z from "zod";
 
-export const API_ROUTES = [
-  // --------------------------
-  // users
-  // --------------------------
-  "users",
-  // --------------------------
-  // orgs
-  // --------------------------
-  "organizations",
-  "archetypes",
-] as const;
+const zPaginateRouteQueryInput = z
+  .object({
+    page: z.number().min(1).default(1),
+    limit: z.number().min(1).default(10),
+    sortBy: z.string().nullish(),
+    sortOrder: z.enum(["asc", "ascending", "desc", "descending"]).nullish(),
+    filters: zFilters.nullish(),
+    searchQuery: z.string().nullish(),
+    searchFields: z.string().array().nullish(),
+  })
+  .default({
+    limit: 10,
+    page: 1,
+  });
+
+export const API_ROUTES = ["users", "organizations", "archetypes"] as const;
 
 export type IApiRoute = (typeof API_ROUTES)[number];
 

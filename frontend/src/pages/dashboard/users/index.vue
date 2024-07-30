@@ -169,7 +169,6 @@ const columns: ColumnDef<TUser>[] = [
         :paginationBody="paginationBody"
         :paginationResult="paginationResult?.data"
       />
-      {{ paginationResult?.data }}
     </DashboardSection>
   </NuxtLayout>
 </template>
