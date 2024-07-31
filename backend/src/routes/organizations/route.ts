@@ -13,7 +13,7 @@ import { zCreateOrganization } from "@common/schemas/organization/createOrganiza
 import { zStringNotEmpty } from "@common/schemas/primitives/stringNotEmpty";
 import { FilterQuery } from "mongoose";
 import { zUpdateOrganization } from "../../../../common/schemas/organization/updateOrganization";
-import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute";
+import { zPaginateRouteQueryInput } from "@common/schemas/pagination";
 import { getReqUser } from "@/helpers/getReqUser";
 
 const organizationsRoute = new Hono()

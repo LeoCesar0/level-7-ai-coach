@@ -6,8 +6,9 @@ import { zCreateUser } from "../schemas/user/createUser";
 import { zUpdateUser } from "../schemas/user/updateUserRoute";
 import { zCreateArchetype } from "../schemas/archetype/createArchetype";
 import { zUpdateArchetype } from "../schemas/archetype/updateArchetype";
-import { zFilters } from "@common/schemas/paginateRoute";
+import { zFilters } from "@common/schemas/pagination";
 import z from "zod";
+import { zAthleteInfo } from "@common/schemas/user/athleteInfo";
 
 const zPaginateRouteQueryInput = z
   .object({
@@ -36,7 +37,7 @@ export type IApiRouteActionItem = {
   bodySchema?: ZodSchema;
 };
 export type IApiRouteActionSchema = {
-  [key in IRouteApiAction]?: IApiRouteActionItem;
+  [key in IRouteApiAction | string]?: IApiRouteActionItem;
 };
 export type IApiRouteSchema = Record<IApiRoute, IApiRouteActionSchema>;
 
@@ -96,6 +97,20 @@ export const API_ROUTE = {
       path: "/",
       method: "put",
       bodySchema: zUpdateUser,
+    },
+    me: {
+      baseUrl: "/users",
+      url: "/users/me",
+      path: "/me",
+      method: "put",
+      bodySchema: zUpdateUser,
+    },
+    athlete: {
+      baseUrl: "/users",
+      url: "/users/athlete",
+      path: "/athlete",
+      method: "put",
+      bodySchema: zAthleteInfo,
     },
     get: {
       baseUrl: "/users",

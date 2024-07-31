@@ -1,5 +1,5 @@
 import type { AppResponse, AppResponseError } from "@common/schemas/app";
-import type { IPaginationBody } from "@common/schemas/paginateRoute";
+import type { IPaginationBody } from "@common/schemas/pagination";
 import type { IPaginationResult } from "@common/schemas/pagination";
 import { nuxtApiFetcher } from "~/handlers/http/nuxtApiFetcher";
 import { parsePath } from "~/helpers/parsePath";

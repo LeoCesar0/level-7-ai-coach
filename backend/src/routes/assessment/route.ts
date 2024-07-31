@@ -13,7 +13,7 @@ import { processJournalsAssessment } from "../../services/assessment/processJour
 import { USER_POPULATES } from "@/static/populates";
 import { AppResponse } from "@common/schemas/app";
 import { parseToDate } from "@common/helpers/parseToDate";
-import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute";
+import { zPaginateRouteQueryInput } from "@common/schemas/pagination";
 import { FilterQuery } from "mongoose";
 import { EXCEPTIONS } from "@common/static/exceptions";
 import { getReqUser } from "@/helpers/getReqUser";

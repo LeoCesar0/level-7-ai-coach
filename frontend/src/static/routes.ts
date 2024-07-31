@@ -15,6 +15,7 @@ import {
 export const ROUTES = [
   "home",
   "sign-in",
+  "athlete-form",
   "dashboard",
   "chat",
   "settings",
@@ -72,6 +73,12 @@ export const ROUTE: Record<Route, IRoute> = {
     inMenuFor: ["admin", "coach", "user"],
     icon: DashboardIcon,
     name: "dashboard",
+  },
+  "athlete-form": {
+    href: "/dashboard/athlete-form",
+    label: "Athlete Form",
+    name: "athlete-form",
+    permissions: [],
   },
   chat: {
     href: "/dashboard/chat",

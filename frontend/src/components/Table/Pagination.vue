@@ -9,7 +9,7 @@ import {
   PaginationNext,
   PaginationPrev,
 } from "@/components/ui/pagination";
-import type { IPaginationBody } from "@common/schemas/paginateRoute";
+import type { IPaginationBody } from "@common/schemas/pagination";
 import type { IPaginationResult } from "@common/schemas/pagination";
 
 type Props = {

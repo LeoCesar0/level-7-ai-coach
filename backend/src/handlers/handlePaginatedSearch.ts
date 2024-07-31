@@ -1,7 +1,7 @@
 import { IUserDoc } from "@/routes/users/schemas/user";
 import { getCollection } from "@/services/mongodb/getCollection";
 import { AppResponse } from "@common/schemas/app";
-import { IPaginationBodyOutput } from "@common/schemas/paginateRoute";
+import { IPaginationBodyOutput } from "@common/schemas/pagination";
 import { IPaginationResult } from "@common/schemas/pagination";
 import { IUser } from "@common/schemas/user/user";
 import { AnyObject, FilterQuery, Model } from "mongoose";

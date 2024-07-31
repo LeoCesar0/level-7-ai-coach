@@ -7,7 +7,7 @@ import { SEARCH_INDEXES } from "@/handlers/dbIndexes/setup";
 import { IUser } from "@common/schemas/user/user";
 import { handlePaginatedSearch } from "@/handlers/handlePaginatedSearch";
 import { IUserDoc, IUserFullDoc, UserModel } from "../users/schemas/user";
-import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute";
+import { zPaginateRouteQueryInput } from "@common/schemas/pagination";
 import { routeValidator } from "@/middlewares/routeValidator";
 import { HTTPException } from "hono/http-exception";
 import { EXCEPTIONS } from "@common/static/exceptions";

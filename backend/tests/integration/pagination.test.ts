@@ -6,7 +6,7 @@ import { stubGetUserFromToken } from "../helpers/stubGetUserFromToken";
 import { ISeedResult, TestServer } from "../mongodb-memory-server";
 import sinon from "sinon";
 import { ICreateOrganization } from "@common/schemas/organization/createOrganization";
-import { IPaginationBody } from "@common/schemas/paginateRoute";
+import { IPaginationBody } from "@common/schemas/pagination";
 import { IOrganization } from "@common/schemas/organization/organization";
 
 describe("pagination integration suite", () => {

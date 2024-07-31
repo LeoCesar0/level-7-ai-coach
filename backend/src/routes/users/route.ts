@@ -16,11 +16,15 @@ import { zCreateUserRoute } from "@common/schemas/user/createUserRoute";
 import { zUpdateUser } from "@common/schemas/user/updateUserRoute";
 import { getReqUser } from "@/helpers/getReqUser";
 import { handleUpdateUser } from "./handler/handleUpdateUser";
-import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute";
+import { zPaginateRouteQueryInput } from "@common/schemas/pagination";
 import { handlePaginatedSearch } from "@/handlers/handlePaginatedSearch";
 import { COLLECTION } from "@/lib/langchain/@static";
 import { SEARCH_INDEXES } from "@/handlers/dbIndexes/setup";
 import { FilterQuery } from "mongoose";
+import { zAthleteInfo } from "@common/schemas/user/athleteInfo";
+import { API_ROUTE } from "@common/static/routes";
+
+const CURRENT_API_ROUTE = API_ROUTE.users;
 
 const userRoute = new Hono()
   // --------------------------
@@ -240,25 +244,6 @@ const userRoute = new Hono()
   // UPDATE USER
   // --------------------------
   .put(
-    "/:id",
-    routeValidator({
-      schema: zUpdateUser,
-    }),
-    authValidator({ permissionsTo: ["user", "admin", "coach"] }),
-    async (ctx) => {
-      const userId = ctx.req.param("id");
-      const inputs = ctx.req.valid("json");
-      const reqUser = getReqUser(ctx);
-
-      const res = handleUpdateUser({
-        inputs,
-        reqUser,
-        userId,
-      });
-      return ctx.json(res, 200);
-    }
-  )
-  .put(
     "/me",
     routeValidator({
       schema: zUpdateUser,
@@ -277,6 +262,47 @@ const userRoute = new Hono()
       return ctx.json(res, 200);
     }
   )
+  .put(
+    "/athlete/:id",
+    routeValidator({
+      schema: CURRENT_API_ROUTE.athlete.bodySchema,
+    }),
+    authValidator({ permissionsTo: ["user", "admin", "coach"] }),
+    async (ctx) => {
+      const userId = ctx.req.param("id");
+      const inputs = ctx.req.valid("json");
+      const reqUser = getReqUser(ctx);
+
+      const res = handleUpdateUser({
+        inputs: {
+          athleteInfo: inputs,
+        },
+        reqUser,
+        userId,
+      });
+      return ctx.json(res, 200);
+    }
+  )
+  .put(
+    "/:id",
+    routeValidator({
+      schema: zUpdateUser,
+    }),
+    authValidator({ permissionsTo: ["user", "admin", "coach"] }),
+    async (ctx) => {
+      const userId = ctx.req.param("id");
+      const inputs = ctx.req.valid("json");
+      const reqUser = getReqUser(ctx);
+
+      const res = handleUpdateUser({
+        inputs,
+        reqUser,
+        userId,
+      });
+      return ctx.json(res, 200);
+    }
+  )
+
   .delete(
     "/:id",
     authValidator({ permissionsTo: ["admin", "coach"] }),

@@ -1,8 +1,11 @@
 import { compareRoute } from "~/helpers/compareRoute";
+import { getCurrentRoute } from "~/helpers/routing/getCurrentRoute";
+import { getCurrentRouteFromPath } from "~/helpers/routing/getCurrentRouteFromPath";
 import { ROUTE, ROUTES_LIST } from "~/static/routes";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const toPath: string = to.path;
+  const fromPath: string = from.path;
 
   const userStore = useUserStore();
   const { currentUser } = storeToRefs(userStore);
@@ -26,26 +29,31 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   // HANDLE ROUTING
   // --------------------------
 
-  const currentPage = ROUTES_LIST.find((page) =>
-    compareRoute(page.href, toPath, {
-      ignoreQuery: true,
-      rootOnly: true,
-    })
-  );
+  const currentPage = getCurrentRouteFromPath(toPath);
 
   const pagePermissions = currentPage?.permissions;
 
-  if (currentPage?.href === ROUTE["sign-in"].href && currentUser.value) {
+  if (
+    toPath !== ROUTE.dashboard.href &&
+    toPath === ROUTE["sign-in"].href &&
+    currentUser.value
+  ) {
     // --------------------------
     // HAS SIGNED IN, REDIRECT TO DASHBOARD
     // --------------------------
-    return navigateTo("/dashboard");
+
+    return navigateTo(ROUTE.dashboard.href);
   }
 
-  if (pagePermissions && !currentUser.value) {
+  if (
+    toPath !== ROUTE["sign-in"].href &&
+    pagePermissions &&
+    !currentUser.value
+  ) {
     // --------------------------
     // ROUTE IS PROTECTED, USER IS NOT AUTHENTICATED
     // --------------------------
+
     return navigateTo(ROUTE["sign-in"].href);
   }
 
@@ -56,5 +64,19 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     if (!userCanAccess) {
       return abortNavigation();
     }
+  }
+
+  if (
+    toPath !== ROUTE["athlete-form"].href &&
+    pagePermissions &&
+    currentUser.value &&
+    currentUser.value.role === "user" &&
+    !currentUser.value.athleteInfo
+  ) {
+    // --------------------------
+    // ATHLETE SHOULD COMPLETE FORM
+    // --------------------------
+
+    return navigateTo(ROUTE["athlete-form"].href);
   }
 });

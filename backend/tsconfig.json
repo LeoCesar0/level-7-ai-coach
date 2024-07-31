@@ -21,8 +21,8 @@
     "./src/**/*",
     "./src/**/*.ts",
     "**/*.ts",
-    "**/*.js",
-    "src/@schemas/paginateRoute.ts",
-    "../common/schemas/pagination.ts"
+    "**/*.js"
+    // "src/@schemas/pagination.ts",
+    // "../common/schemas/pagination.ts"
   ]
 }

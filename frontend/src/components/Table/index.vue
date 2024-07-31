@@ -35,7 +35,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { valueUpdater } from "@/lib/utils";
-import type { IPaginationBody } from "@common/schemas/paginateRoute";
+import type { IPaginationBody } from "@common/schemas/pagination";
 import type { IPaginationResult } from "@common/schemas/pagination";
 
 // Define props to accept data and columns

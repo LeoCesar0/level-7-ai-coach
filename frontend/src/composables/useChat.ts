@@ -5,7 +5,7 @@ import type {
   IFormattedMessage,
   ISendChatMessageResponse,
 } from "@common/schemas/chat/message";
-import type { IPaginationBody } from "@common/schemas/paginateRoute";
+import type { IPaginationBody } from "@common/schemas/pagination";
 import type { IPaginationResult } from "@common/schemas/pagination";
 
 export const useChat = () => {

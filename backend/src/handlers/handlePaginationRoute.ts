@@ -1,7 +1,7 @@
 import { FilterQuery, Model } from "mongoose";
 import { IPaginationResult } from "@common/schemas/pagination";
 import { AppResponse } from "@common/schemas/app";
-import { IPaginationBodyOutput } from "@common/schemas/paginateRoute";
+import { IPaginationBodyOutput } from "@common/schemas/pagination";
 import { IUserDoc } from "@/routes/users/schemas/user";
 import { IUser } from "@common/schemas/user/user";
 

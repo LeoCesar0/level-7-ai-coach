@@ -23,7 +23,7 @@ import { zCreateMessage } from "@common/schemas/chat/createMessage";
 import { IUserDoc } from "../users/schemas/user.js";
 import { zStringNotEmpty } from "@common/schemas/primitives/stringNotEmpty.js";
 import { parseToDate } from "@common/helpers/parseToDate.js";
-import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute.js";
+import { zPaginateRouteQueryInput } from "@common/schemas/pagination.js";
 import { getReqUser } from "@/helpers/getReqUser.js";
 import { FilterQuery } from "mongoose";
 

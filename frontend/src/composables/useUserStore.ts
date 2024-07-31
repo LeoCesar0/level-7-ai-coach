@@ -3,7 +3,6 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import type { ISignIn } from "~/@schemas/auth";
 import { handleUnexpectedError } from "~/handlers/handleUnexpectedError";
 import { makeStoreKey } from "~/helpers/makeStoreKey";
-import { sleep } from "~/helpers/sleep";
 import { ROUTE } from "~/static/routes";
 
 export const useUserStore = defineStore(makeStoreKey("users"), () => {
@@ -18,19 +17,26 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
   const authStore = useAuthToken();
   const { authToken } = storeToRefs(authStore);
 
-  watch(currentUser, async (newVal) => {
-    console.log("❗ watch currentUser -->", newVal);
+  watch(
+    currentUser,
+    async (user) => {
+      console.log("❗ watch currentUser -->", user);
 
-    if (newVal && !newVal.active) {
-      await logout();
-      toast.error("Your account is not active. Please contact support.");
-      return;
-    }
+      if (user && !user.active) {
+        await logout();
+        toast.error("Your account is not active. Please contact support.");
+        return;
+      }
 
-    if ((newVal && route.path === "/") || route.path === "/sign-in") {
-      return await navigateTo(ROUTE.dashboard.href);
+      if (user && (route.path === "/" || route.path === "/sign-in")) {
+        return await navigateTo(ROUTE.dashboard.href);
+      }
+    },
+    {
+      deep: true,
+      immediate: true,
     }
-  });
+  );
 
   // const isServerSide = getIsServerSide();
   const isServerSide = typeof window === "undefined";
@@ -81,18 +87,7 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
   };
 
   if (!isServerSide) {
-    firebaseAuth.onAuthStateChanged(async (user) => {
-      console.log("❗ onAuthStateChanged -->", user);
-      // if (user) {
-      //   const token = await user.getIdToken();
-      //   authToken.value = token;
-      // } else {
-      //   authToken.value = "";
-      //   currentUser.value = null;
-      // }
-    });
     firebaseAuth.onIdTokenChanged(async (user) => {
-      console.log("❗ onIdTokenChanged -->", user);
       if (user) {
         const token = await user.getIdToken();
         authToken.value = token;
@@ -123,7 +118,6 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
   };
 
   const handleSessionExpired = () => {
-    console.log("❗ handleSessionExpired -->");
     logout({ expired: true });
   };
 

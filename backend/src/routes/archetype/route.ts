@@ -9,7 +9,7 @@ import { slugify } from "../../helpers/slugify";
 import { EXCEPTIONS } from "@common/static/exceptions";
 import { AppResponse } from "@common/schemas/app";
 import { zCreateArchetype } from "@common/schemas/archetype/createArchetype";
-import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute";
+import { zPaginateRouteQueryInput } from "@common/schemas/pagination";
 import { zUpdateArchetype } from "@common/schemas/archetype/updateArchetype";
 import { getReqUser } from "@/helpers/getReqUser";
 import { FilterQuery } from "mongoose";
@@ -88,7 +88,6 @@ const archetypeRoute = new Hono()
     }),
     async (ctx) => {
       const { id } = ctx.req.valid("param");
-   
 
       const result = await ArchetypeModel.findById(id);
 
@@ -168,7 +167,6 @@ const archetypeRoute = new Hono()
     }),
     async (ctx) => {
       const { id } = ctx.req.valid("param");
-
 
       const exists = await ArchetypeModel.findById(id);
 

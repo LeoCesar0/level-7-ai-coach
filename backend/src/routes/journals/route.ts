@@ -11,7 +11,7 @@ import { zCreateJournal } from "@common/schemas/journal/createJournal.js";
 import { zJournal } from "@common/schemas/journal/journal.js";
 import { IUserDoc } from "../users/schemas/user.js";
 import { zStringNotEmpty } from "@common/schemas/primitives/stringNotEmpty.js";
-import { zPaginateRouteQueryInput } from "@common/schemas/paginateRoute.js";
+import { zPaginateRouteQueryInput } from "@common/schemas/pagination.js";
 import { FilterQuery } from "mongoose";
 import { getReqUser } from "@/helpers/getReqUser.js";
 import { EXCEPTIONS } from "@common/static/exceptions.js";

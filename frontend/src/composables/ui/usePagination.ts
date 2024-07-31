@@ -1,4 +1,4 @@
-import { type IPaginationBody } from "@common/schemas/paginateRoute";
+import { type IPaginationBody } from "@common/schemas/pagination";
 import debounce from "lodash.debounce";
 
 type IUsePagination<T> = {

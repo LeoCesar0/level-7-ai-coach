@@ -2,7 +2,7 @@
 import type { ColumnDef } from "@tanstack/vue-table";
 import { h, ref } from "vue";
 import { type IUser, type IUserFull } from "@common/schemas/user/user";
-import { type IPaginationBody } from "@common/schemas/paginateRoute";
+import { type IPaginationBody } from "@common/schemas/pagination";
 import { type IRole } from "@common/schemas/roles";
 import TableActiveCell from "@/components/Table/ActiveCell.vue";
 import TableRoleCell from "@/components/Table/RoleCell.vue";
