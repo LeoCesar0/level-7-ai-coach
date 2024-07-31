@@ -5,7 +5,13 @@ import { compareRoute } from "../../../helpers/compareRoute";
 const router = useRoute();
 
 type Props = {
-  route: IRoute;
+  route:
+    | {
+        href: IRoute["href"];
+        label: IRoute["label"];
+        icon: IRoute["icon"];
+      }
+    | IRoute;
   action?: () => void;
   isLast?: boolean;
 };
