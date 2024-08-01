@@ -15,9 +15,9 @@ import { ICreateUserRoute } from "@common/schemas/user/createUserRoute";
 import { IUser, IUserFull } from "@common/schemas/user/user";
 import { IUpdateUser } from "@common/schemas/user/updateUserRoute";
 import {
-  ASSESSMENT_QUESTION,
   zAssessmentSection,
 } from "@common/schemas/assessment/enums";
+import { ATHLETE_FORM_QUESTION } from "@common/schemas/user/athleteInfo";
 
 describe("users integration suite", () => {
   console.log("🔻 Enter USERS integration suite  -->");
@@ -251,12 +251,12 @@ describe("users integration suite", () => {
         athleteInfo: {
           goals: {
             answer: "Become the best!",
-            question: ASSESSMENT_QUESTION["goals"],
+            question: ATHLETE_FORM_QUESTION["goals"],
             section: zAssessmentSection.enum.effort,
           },
           goalsAchieved: {
             answer: "Win a gold medal",
-            question: ASSESSMENT_QUESTION["goalsAchieved"],
+            question: ATHLETE_FORM_QUESTION["goalsAchieved"],
             section: zAssessmentSection.enum.goals,
           },
         },
@@ -299,12 +299,12 @@ describe("users integration suite", () => {
         athleteInfo: {
           goals: {
             answer: "Become the best!",
-            question: ASSESSMENT_QUESTION["goals"],
+            question: ATHLETE_FORM_QUESTION["goals"],
             section: zAssessmentSection.enum.effort,
           },
           goalsAchieved: {
             answer: "Win a gold medal",
-            question: ASSESSMENT_QUESTION["goalsAchieved"],
+            question: ATHLETE_FORM_QUESTION["goalsAchieved"],
             section: zAssessmentSection.enum.goals,
           },
         },
@@ -361,13 +361,13 @@ describe("users integration suite", () => {
           goalsAchieved: {
             // UPDATED
             answer: newAnswer,
-            question: ASSESSMENT_QUESTION["goalsAchieved"],
+            question: ATHLETE_FORM_QUESTION["goalsAchieved"],
             section: zAssessmentSection.enum.goals,
           },
           injuriesAndHealthIssues: {
             // ADDED
             answer: "None",
-            question: ASSESSMENT_QUESTION["injuriesAndHealthIssues"],
+            question: ATHLETE_FORM_QUESTION["injuriesAndHealthIssues"],
             section: zAssessmentSection.enum.physical,
           },
         },

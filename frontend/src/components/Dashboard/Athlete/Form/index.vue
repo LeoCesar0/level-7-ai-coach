@@ -1,24 +1,32 @@
-<script setup lang="ts" generic="T extends IUpdateOrganization">
-import { type IOrganization } from "@common/schemas/organization/organization";
+<script setup lang="ts" generic="T extends IUpdateUser">
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
-import { zCreateOrganization } from "@common/schemas/organization/createOrganization";
-import {
-  zUpdateOrganization,
-  type IUpdateOrganization,
-} from "@common/schemas/organization/updateOrganization";
 import { API_ROUTE } from "@common/static/routes";
+import type { IUpdateUser } from "@common/schemas/user/updateUserRoute";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { IAthleteFormSection } from "@common/schemas/user/athleteInfo";
+import { beautifyObjectName } from "~/components/ui/auto-form/utils";
+import SectionForm from "../SectionForm.vue";
 
 type Props = {
-  edit: boolean;
   initialValues: T;
   onSubmit: (values: T) => Promise<void>;
   isLoading: boolean;
 };
 
 const props = defineProps<Props>();
+const currentTab = ref<IAthleteFormSection>("personal");
+const tabOptions: IAthleteFormSection[] = [
+  "personal",
+  "effort",
+  "emotional",
+  "goals",
+  "mental",
+  "others",
+  "progress",
+];
 
-const schema = props.edit ? zUpdateOrganization : zCreateOrganization;
+const schema = API_ROUTE.users.update.bodySchema;
 
 // --------------------------
 // COMPOSABLES
@@ -30,10 +38,6 @@ const { currentUser } = storeToRefs(userStore);
 // --------------------------
 // GET ORGANIZATION OPTIONS
 // --------------------------
-
-const { data: orgRes } = await useListApi<IOrganization>({
-  url: API_ROUTE.organizations.list.url,
-});
 
 // --------------------------
 // FORM
@@ -70,11 +74,32 @@ const handleSubmit = form.handleSubmit(async (values) => {
 </script>
 
 <template>
-  <!-- <p>initial: {{ initialValues }}</p> -->
-  <!-- <p>currentValues: {{ form.values }}</p> -->
+  <div>Values: {{ form.values }}</div>
   <Form @submit="handleSubmit">
-    <FormField :name="'name'" label="Name" :required="true" />
-    <FormField :name="'active'" label="Active" v-if="edit" />
-    <UiButton type="submit" :disabled="!formIsValid">Submit</UiButton>
+    <header class="">
+      <h2 class="text-2xl font-medium mb-6">How would you</h2>
+      <Tabs v-model="currentTab" class="w-full">
+        <TabsList class="mb-4">
+          <TabsTrigger
+            v-for="option in tabOptions"
+            :key="option"
+            :value="option"
+          >
+            {{ beautifyObjectName(option) }}
+          </TabsTrigger>
+        </TabsList>
+        <div class="min-h-[300px]">
+          <TabsContent value="personal">
+            <SectionForm section="personal" />
+          </TabsContent>
+        </div>
+      </Tabs>
+    </header>
+    <div class="flex items-center gap-4">
+      <UiButton type="button" :disabled="isLoading" :variant="'outline'"
+        >Back</UiButton
+      >
+      <UiButton type="submit" :disabled="!formIsValid">Submit</UiButton>
+    </div>
   </Form>
 </template>

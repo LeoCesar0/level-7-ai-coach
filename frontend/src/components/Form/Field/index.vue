@@ -17,6 +17,7 @@ type Props = {
   disabled?: boolean;
   calendarProps?: VCalendarProps;
   required?: boolean;
+  greatDescription?: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -30,6 +31,9 @@ const props = withDefaults(defineProps<Props>(), {
   <Field v-slot="{ componentField }" :name="name">
     <UiFormItem :class="cn(props.class ?? '')" v-auto-animate>
       <UiFormLabel :required="required">{{ label }}</UiFormLabel>
+      <div v-if="greatDescription">
+        <p class="" >{{ greatDescription }}</p>
+      </div>
       <UiFormControl>
         <!-- INPUT -->
         <UiInput

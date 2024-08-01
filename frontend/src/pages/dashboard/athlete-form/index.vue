@@ -1,20 +1,50 @@
 <script setup lang="ts">
 import { zSignIn, type ISignIn } from "@/@schemas/auth";
+import type { IAthleteInfo } from "@common/schemas/user/athleteInfo";
+import type { IUpdateUser } from "@common/schemas/user/updateUserRoute";
 
 const userStore = useUserStore();
-const { currentUser, loading } = storeToRefs(userStore);
+const { currentUser } = storeToRefs(userStore);
 const { login } = userStore;
 
-const token = useAuthToken();
+const isLoading = ref(false);
 
-type Props = {};
+const onSubmit = async (values: IUpdateUser) => {};
+const initialValues = ref<IUpdateUser | null>(null);
 
-const props = defineProps<Props>();
-
-const onSubmit = async (values: ISignIn) => {};
+watch(
+  currentUser,
+  (user) => {
+    if (user && !initialValues.value) {
+      initialValues.value = {
+        athleteInfo: {
+          ...(user.athleteInfo ?? {}),
+        },
+        birthDate: user.birthDate,
+      };
+    }
+  },
+  {
+    immediate: true,
+    deep: true,
+  }
+);
 </script>
 <template>
-  <div class="container p-[20px] py-[20%] flex-1 flex flex-col animate-fade">
-    <h2 class="text-2xl font-medium mb-6">How would you</h2>
+  <div
+    class="form-container container p-[20px] flex-1 flex flex-col animate-fade"
+  >
+    <DashboardAthleteForm
+      v-if="initialValues"
+      :initialValues="initialValues"
+      :onSubmit="onSubmit"
+      :isLoading="isLoading"
+    />
   </div>
 </template>
+
+<style lang="scss">
+.form-container {
+  padding-top: min(15%, 100px);
+}
+</style>
