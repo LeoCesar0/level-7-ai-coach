@@ -26,7 +26,7 @@ const routes = computed<IRoute[]>(() => {
   <nav
     :class="
       cn([
-        'w-[var(--drawer-width)] shadow-lg transition-transform duration-300',
+        'w-[var(--drawer-width)] shadow-lg transition-transform duration-300 border-border border-r',
         'fixed top-0 left-0 h-screen flex flex-col',
         'bg-card text-card-foreground',
         { '-translate-x-full': !menuIsOpen },
@@ -42,12 +42,6 @@ const routes = computed<IRoute[]>(() => {
           }}</span>
         </span>
       </NuxtLink>
-      <div className="">
-        <h3 class="text-base">
-          Hello,
-          <span class="font-semibold text-xl">{{ currentUser?.name }}</span> 👋
-        </h3>
-      </div>
     </header>
     <ul class="flex flex-col flex-1 pb-4">
       <template v-for="route in routes" :key="route.href">

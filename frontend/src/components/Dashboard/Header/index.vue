@@ -4,12 +4,14 @@ const { currentUser } = storeToRefs(userStore);
 </script>
 
 <template>
-  <header class="w-full py-2">
-    <UiCard
-      class="container h-[70px] mx-auto flex items-center justify-between"
-    >
-      <div></div>
-      <div>{{ currentUser?.name }}</div>
-    </UiCard>
+  <header class="w-full border-border border-b py-6 px-6">
+    <div class="mx-auto flex items-center justify-between">
+      <div>
+        <DashboardHeaderProfile />
+      </div>
+      <div>
+        <GlobalThemeSwitcher />
+      </div>
+    </div>
   </header>
 </template>
