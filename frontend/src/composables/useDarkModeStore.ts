@@ -5,10 +5,11 @@ export const useDarkModeStore = defineStore(
   makeStoreKey("dark-mode-store"),
   () => {
     const isDark = ref(false);
+    const storeKey = makeStoreKey("dark-mode");
 
     const toggleDarkMode = () => {
       isDark.value = !isDark.value;
-      localStorage.setItem(makeStoreKey("dark-mode"), isDark.value.toString());
+      localStorage.setItem(storeKey, isDark.value.toString());
 
       if (isDark.value) {
         document.documentElement.classList.add("dark");
@@ -18,7 +19,8 @@ export const useDarkModeStore = defineStore(
     };
 
     onMounted(() => {
-      const savedMode = localStorage.getItem(makeStoreKey("dark-mode"));
+      const savedMode = localStorage.getItem(storeKey);
+      console.log("❗ saved dark mode -->", savedMode);
       if (savedMode === "true") {
         isDark.value = true;
         document.documentElement.classList.add("dark");

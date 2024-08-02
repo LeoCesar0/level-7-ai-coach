@@ -7,7 +7,7 @@ import type { VCalendarProps } from "~/components/ui/v-calendar/Calendar.vue";
 
 type Props = {
   name: string;
-  label: string;
+  label?: string;
   inputVariant?: "input" | "select" | "date" | "calendar" | "textarea";
   inputProps?: Record<string, any>;
   placeholder?: string;
@@ -30,9 +30,10 @@ const props = withDefaults(defineProps<Props>(), {
 <template>
   <Field v-slot="{ componentField }" :name="name">
     <UiFormItem :class="cn(props.class ?? '')" v-auto-animate>
-      <UiFormLabel :required="required">{{ label }}</UiFormLabel>
+      <UiFormLabel v-if="label" :required="required">{{ label }}</UiFormLabel>
+      <slot name="field-header" />
       <div v-if="greatDescription">
-        <p class="" >{{ greatDescription }}</p>
+        <p class="">{{ greatDescription }}</p>
       </div>
       <UiFormControl>
         <!-- INPUT -->

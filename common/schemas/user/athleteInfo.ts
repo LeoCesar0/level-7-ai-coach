@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { zAssessmentKey, zAssessmentSection } from "../assessment/enums";
+import {
+  ASSESSMENT_SECTIONS,
+  zAssessmentKey,
+  zAssessmentSection,
+} from "../assessment/enums";
 
 export type IAthleteInfo = z.output<typeof zAthleteInfo>;
 export type IAthleteInfoKey = z.infer<typeof zAthleteInfoKey>;
@@ -11,7 +15,13 @@ export type IAthleteFormQuestion = {
   question: string;
 };
 
-export const zAthleteInfoSection = zAssessmentSection.or(z.enum(["personal"]));
+export const ATHLETE_INFO_SECTIONS = [
+  "personal",
+  ...ASSESSMENT_SECTIONS,
+] as const;
+
+export const zAthleteInfoSection = z.enum(ATHLETE_INFO_SECTIONS);
+
 export const zAthleteInfoKey = z
   .enum(["sportAndExperience", "currentTrainingRegime"])
   .or(zAssessmentKey);

@@ -3,15 +3,17 @@ import { z } from "zod";
 export type IAssessmentKey = z.infer<typeof zAssessmentKey>;
 export type IAssessmentSection = z.infer<typeof zAssessmentSection>;
 
-export const zAssessmentSection = z.enum([
+export const ASSESSMENT_SECTIONS = [
   "effort",
+  "physical",
   "mental",
   "emotional",
-  "physical",
   "goals",
   "progress",
   "others",
-]);
+] as const;
+
+export const zAssessmentSection = z.enum(ASSESSMENT_SECTIONS);
 
 export const zAssessmentKey = z.enum([
   // --------------------------

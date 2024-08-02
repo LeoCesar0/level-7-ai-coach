@@ -4,7 +4,10 @@ import { toTypedSchema } from "@vee-validate/zod";
 import { API_ROUTE } from "@common/static/routes";
 import type { IUpdateUser } from "@common/schemas/user/updateUserRoute";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { IAthleteFormSection } from "@common/schemas/user/athleteInfo";
+import {
+  ATHLETE_INFO_SECTIONS,
+  type IAthleteFormSection,
+} from "@common/schemas/user/athleteInfo";
 import { beautifyObjectName } from "~/components/ui/auto-form/utils";
 import SectionForm from "../SectionForm.vue";
 
@@ -74,28 +77,32 @@ const handleSubmit = form.handleSubmit(async (values) => {
 </script>
 
 <template>
-  <div>Values: {{ form.values }}</div>
-  <Form @submit="handleSubmit">
+  <Form @submit="handleSubmit" :full-width="true">
     <header class="">
-      <h2 class="text-2xl font-medium mb-6">How would you</h2>
+      <h2 class="text-4xl font-medium mb-10 border-b border-border pb-2">
+        Athlete's Questionnaire
+      </h2>
       <Tabs v-model="currentTab" class="w-full">
-        <TabsList class="mb-4">
+        <TabsList class="mb-10">
           <TabsTrigger
-            v-for="option in tabOptions"
-            :key="option"
-            :value="option"
+            v-for="section in ATHLETE_INFO_SECTIONS"
+            :key="section"
+            :value="section"
           >
-            {{ beautifyObjectName(option) }}
+            {{ beautifyObjectName(section) }}
           </TabsTrigger>
         </TabsList>
         <div class="min-h-[300px]">
-          <TabsContent value="personal">
-            <SectionForm section="personal" />
+          <TabsContent
+            v-for="section in ATHLETE_INFO_SECTIONS"
+            :value="section"
+          >
+            <SectionForm :section="section" />
           </TabsContent>
         </div>
       </Tabs>
     </header>
-    <div class="flex items-center gap-4">
+    <div class="flex items-center justify-end gap-4">
       <UiButton type="button" :disabled="isLoading" :variant="'outline'"
         >Back</UiButton
       >

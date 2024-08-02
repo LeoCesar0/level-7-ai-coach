@@ -17,11 +17,23 @@ const fields = ATHLETE_QUESTIONS.filter(
 </script>
 
 <template>
-  <div class="space-y-4">
+  <div class="space-y-8 animate-fade ">
     <FormField
       v-for="field of fields"
-      :name="`athleteInfo.${field.key}`"
-      :label="beautifyObjectName(field.key)"
-    />
+      :input-variant="'textarea'"
+      :rows="1"
+      :name="`athleteInfo.${field.key}.answer`"
+    >
+      ]<template v-slot:field-header>
+        <div class="mb-8">
+          <label
+            class="text-2xl font-semibold inline-block mb-4"
+            :for="`athleteInfo.${field.key}`"
+            >{{ beautifyObjectName(field.key) }}</label
+          >
+          <p class="text-lg">{{ field.question }}</p>
+        </div>
+      </template>
+    </FormField>
   </div>
 </template>

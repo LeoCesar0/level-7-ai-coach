@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { zSignIn, type ISignIn } from "@/@schemas/auth";
-import type { IAthleteInfo } from "@common/schemas/user/athleteInfo";
+import {
+  ATHLETE_QUESTIONS,
+  type IAthleteInfo,
+} from "@common/schemas/user/athleteInfo";
 import type { IUpdateUser } from "@common/schemas/user/updateUserRoute";
 
 const userStore = useUserStore();
@@ -12,12 +15,25 @@ const isLoading = ref(false);
 const onSubmit = async (values: IUpdateUser) => {};
 const initialValues = ref<IUpdateUser | null>(null);
 
+const athleteInfoInitialValues: IAthleteInfo =
+  ATHLETE_QUESTIONS.reduce<IAthleteInfo>((acc, entry) => {
+    if (!acc[entry.key]) {
+      acc[entry.key] = {
+        answer: "",
+        question: entry.question,
+        section: entry.section,
+      };
+    }
+    return acc;
+  }, {});
+
 watch(
   currentUser,
   (user) => {
     if (user && !initialValues.value) {
       initialValues.value = {
         athleteInfo: {
+          ...athleteInfoInitialValues,
           ...(user.athleteInfo ?? {}),
         },
         birthDate: user.birthDate,
