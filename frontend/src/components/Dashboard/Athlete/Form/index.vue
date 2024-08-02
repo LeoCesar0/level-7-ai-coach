@@ -50,6 +50,7 @@ const form = useForm<T>({
   validationSchema: toTypedSchema(schema),
   // @ts-ignore
   initialValues: props.initialValues,
+  keepValuesOnUnmount: true,
 });
 watch(
   () => props.initialValues,
@@ -78,6 +79,8 @@ const handleSubmit = form.handleSubmit(async (values) => {
 
 <template>
   <Form @submit="handleSubmit" :full-width="true">
+    <!-- <pre>{{ JSON.stringify(form.values, null, 2) }}</pre> -->
+    <p>{{ JSON.stringify(form.values) }}</p>
     <header class="">
       <h2 class="text-4xl font-medium mb-10 border-b border-border pb-2">
         Athlete's Questionnaire
@@ -96,6 +99,7 @@ const handleSubmit = form.handleSubmit(async (values) => {
           <TabsContent
             v-for="section in ATHLETE_INFO_SECTIONS"
             :value="section"
+            :key="section"
           >
             <SectionForm :section="section" />
           </TabsContent>

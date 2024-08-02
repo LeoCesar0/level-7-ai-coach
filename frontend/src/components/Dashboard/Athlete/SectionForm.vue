@@ -20,6 +20,7 @@ const fields = ATHLETE_QUESTIONS.filter(
   <div class="space-y-8 animate-fade ">
     <FormField
       v-for="field of fields"
+      :key="`${section}-${field.key}`"
       :input-variant="'textarea'"
       :rows="1"
       :name="`athleteInfo.${field.key}.answer`"

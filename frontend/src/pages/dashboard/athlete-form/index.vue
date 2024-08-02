@@ -33,7 +33,7 @@ watch(
     if (user && !initialValues.value) {
       initialValues.value = {
         athleteInfo: {
-          ...athleteInfoInitialValues,
+          // ...athleteInfoInitialValues,
           ...(user.athleteInfo ?? {}),
         },
         birthDate: user.birthDate,
