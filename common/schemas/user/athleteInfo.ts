@@ -13,6 +13,7 @@ export type IAthleteFormQuestion = {
   section: IAthleteFormSection;
   key: IAthleteInfoKey;
   question: string;
+  inputType: "text" | "slider";
 };
 
 export const ATHLETE_INFO_SECTIONS = [
@@ -29,7 +30,7 @@ export const zAthleteInfoKey = z
 export const zAthleteInfoItem = z.object({
   section: zAthleteInfoSection,
   question: z.string(),
-  answer: z.string().or(z.number()),
+  answer: z.string().or(z.number()).or(z.number().array()),
 });
 
 export const zAthleteInfo = z.record(zAthleteInfoKey, zAthleteInfoItem);
@@ -113,170 +114,204 @@ export const ATHLETE_QUESTIONS: IAthleteFormQuestion[] = [
     key: "sportAndExperience",
     question: ATHLETE_FORM_QUESTION["sportAndExperience"],
     section: "personal",
+    inputType: "text",
   },
   {
     key: "currentTrainingRegime",
     question: ATHLETE_FORM_QUESTION["currentTrainingRegime"],
     section: "personal",
+    inputType: "text",
   },
   {
     key: "rating",
     question: ATHLETE_FORM_QUESTION["rating"],
     section: "effort",
+    inputType: "slider",
   },
   {
     key: "satisfaction",
     question: ATHLETE_FORM_QUESTION["satisfaction"],
     section: "effort",
+    inputType: "text",
   },
   {
     key: "areasForImprovement",
     question: ATHLETE_FORM_QUESTION["areasForImprovement"],
     section: "effort",
+    inputType: "text",
   },
   {
     key: "goals",
     question: ATHLETE_FORM_QUESTION["goals"],
     section: "goals",
+    inputType: "text",
   },
   {
     key: "moodAndMindsetRating",
     question: ATHLETE_FORM_QUESTION["moodAndMindsetRating"],
     section: "mental",
+    inputType: "slider",
   },
   {
     key: "sourcesOfStress",
     question: ATHLETE_FORM_QUESTION["sourcesOfStress"],
     section: "mental",
+    inputType: "text",
   },
   {
     key: "motivationalFactors",
     question: ATHLETE_FORM_QUESTION["motivationalFactors"],
     section: "mental",
+    inputType: "text",
   },
   {
     key: "handlingFailure",
     question: ATHLETE_FORM_QUESTION["handlingFailure"],
     section: "mental",
+    inputType: "text",
   },
   {
     key: "physicalHealthRating",
     question: ATHLETE_FORM_QUESTION["physicalHealthRating"],
     section: "physical",
+    inputType: "slider",
   },
   {
     key: "injuriesAndHealthIssues",
     question: ATHLETE_FORM_QUESTION["injuriesAndHealthIssues"],
     section: "physical",
+    inputType: "text",
   },
   {
     key: "sleepQuality",
     question: ATHLETE_FORM_QUESTION["sleepQuality"],
     section: "physical",
+    inputType: "slider",
   },
   {
     key: "dietAndNutrition",
     question: ATHLETE_FORM_QUESTION["dietAndNutrition"],
     section: "physical",
+    inputType: "text",
   },
   {
     key: "balancingTrainingAndRest",
     question: ATHLETE_FORM_QUESTION["balancingTrainingAndRest"],
     section: "physical",
+    inputType: "text",
   },
   {
     key: "trackingMethods",
     question: ATHLETE_FORM_QUESTION["trackingMethods"],
     section: "progress",
+    inputType: "text",
   },
   {
     key: "toolsAndApps",
     question: ATHLETE_FORM_QUESTION["toolsAndApps"],
     section: "progress",
+    inputType: "text",
   },
   {
     key: "reviewAndAdjustment",
     question: ATHLETE_FORM_QUESTION["reviewAndAdjustment"],
     section: "progress",
+    inputType: "text",
   },
   {
     key: "teamRole",
     question: ATHLETE_FORM_QUESTION["teamRole"],
     section: "goals",
+    inputType: "text",
   },
   {
     key: "supportAndMotivation",
     question: ATHLETE_FORM_QUESTION["supportAndMotivation"],
     section: "goals",
+    inputType: "text",
   },
   {
     key: "adaptationToTrainingMethods",
     question: ATHLETE_FORM_QUESTION["adaptationToTrainingMethods"],
     section: "goals",
+    inputType: "text",
   },
   {
     key: "experimentalApproaches",
     question: ATHLETE_FORM_QUESTION["experimentalApproaches"],
     section: "goals",
+    inputType: "text",
   },
   {
     key: "evaluatingEffectiveness",
     question: ATHLETE_FORM_QUESTION["evaluatingEffectiveness"],
     section: "goals",
+    inputType: "text",
   },
   {
     key: "goalsAchieved",
     question: ATHLETE_FORM_QUESTION["goalsAchieved"],
     section: "goals",
+    inputType: "text",
   },
   {
     key: "progressMilestones",
     question: ATHLETE_FORM_QUESTION["progressMilestones"],
     section: "goals",
+    inputType: "text",
   },
   {
     key: "selfAwareness",
     question: ATHLETE_FORM_QUESTION["selfAwareness"],
     section: "emotional",
+    inputType: "text",
   },
   {
     key: "impactOnPerformance",
     question: ATHLETE_FORM_QUESTION["impactOnPerformance"],
     section: "emotional",
+    inputType: "text",
   },
   {
     key: "copingStrategies",
     question: ATHLETE_FORM_QUESTION["copingStrategies"],
     section: "emotional",
+    inputType: "text",
   },
   {
     key: "adjustmentsMade",
     question: ATHLETE_FORM_QUESTION["adjustmentsMade"],
     section: "others",
+    inputType: "text",
   },
   {
     key: "biggestStrengths",
     question: ATHLETE_FORM_QUESTION["biggestStrengths"],
     section: "others",
+    inputType: "text",
   },
   {
     key: "biggestChallenges",
     question: ATHLETE_FORM_QUESTION["biggestChallenges"],
     section: "others",
+    inputType: "text",
   },
   {
     key: "additionalSupport",
     question: ATHLETE_FORM_QUESTION["additionalSupport"],
     section: "others",
+    inputType: "text",
   },
   {
     key: "personalLifeBalance",
     question: ATHLETE_FORM_QUESTION["personalLifeBalance"],
     section: "others",
+    inputType: "text",
   },
   {
     key: "activitiesOutsideTraining",
     question: ATHLETE_FORM_QUESTION["activitiesOutsideTraining"],
     section: "others",
+    inputType: "text",
   },
 ];

@@ -8,7 +8,13 @@ import type { VCalendarProps } from "~/components/ui/v-calendar/Calendar.vue";
 type Props = {
   name: string;
   label?: string;
-  inputVariant?: "input" | "select" | "date" | "calendar" | "textarea";
+  inputVariant?:
+    | "input"
+    | "select"
+    | "date"
+    | "calendar"
+    | "textarea"
+    | "slider";
   inputProps?: Record<string, any>;
   placeholder?: string;
   description?: string;
@@ -56,6 +62,16 @@ const props = withDefaults(defineProps<Props>(), {
             ...(props.inputProps ?? {}),
           }"
           :rows="5"
+        />
+        <!-- SLIDER -->
+        <UiSlider
+          v-if="inputVariant === 'slider'"
+          :placeholder="placeholder ?? ''"
+          v-bind="{
+            ...componentField,
+            disabled,
+            ...(props.inputProps ?? {}),
+          }"
         />
         <!-- SELECT -->
         <UiSelect

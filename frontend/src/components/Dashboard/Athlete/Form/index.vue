@@ -101,7 +101,7 @@ const handleSubmit = form.handleSubmit(async (values) => {
             :value="section"
             :key="section"
           >
-            <SectionForm :section="section" />
+            <SectionForm :section="section" :form="form" />
           </TabsContent>
         </div>
       </Tabs>

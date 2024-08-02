@@ -49,6 +49,7 @@ watch(
 <template>
   <div
     class="form-container container p-[20px] flex-1 flex flex-col animate-fade"
+    
   >
     <DashboardAthleteForm
       v-if="initialValues"
