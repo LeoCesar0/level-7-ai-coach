@@ -37,6 +37,19 @@ const sliderProps = {
 
 <template>
   <div class="space-y-8 animate-fade">
+    <template v-if="section === 'personal'">
+      <FormField :input-variant="'date'" name="birthDate" class="max-w-[300px]">
+        <template v-slot:field-header>
+          <div class="mb-4">
+            <label
+              class="text-2xl font-semibold inline-block"
+              :for="`birthDate`"
+              >Date of Birth</label
+            >
+          </div>
+        </template>
+      </FormField>
+    </template>
     <div
       v-for="field of fields"
       :key="`${section}-${field.key}`"
@@ -52,7 +65,7 @@ const sliderProps = {
           ...(field.inputType === 'slider' ? sliderProps : {}),
         }"
       >
-        ]<template v-slot:field-header>
+        <template v-slot:field-header>
           <div class="mb-8">
             <label
               class="text-2xl font-semibold inline-block mb-4"

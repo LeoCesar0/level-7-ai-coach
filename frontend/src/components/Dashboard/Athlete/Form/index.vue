@@ -10,6 +10,7 @@ import {
 } from "@common/schemas/user/athleteInfo";
 import { beautifyObjectName } from "~/components/ui/auto-form/utils";
 import SectionForm from "../SectionForm.vue";
+import { ArrowLeftIcon, ArrowRightIcon } from "lucide-vue-next";
 
 type Props = {
   initialValues: T;
@@ -19,15 +20,29 @@ type Props = {
 
 const props = defineProps<Props>();
 const currentTab = ref<IAthleteFormSection>("personal");
-const tabOptions: IAthleteFormSection[] = [
-  "personal",
-  "effort",
-  "emotional",
-  "goals",
-  "mental",
-  "others",
-  "progress",
-];
+
+const prevTab = computed(() => {
+  const currentIndex = ATHLETE_INFO_SECTIONS.findIndex(
+    (item) => item === currentTab.value
+  );
+  return ATHLETE_INFO_SECTIONS[currentIndex - 1] ?? null;
+});
+const nextTab = computed(() => {
+  const currentIndex = ATHLETE_INFO_SECTIONS.findIndex(
+    (item) => item === currentTab.value
+  );
+  return ATHLETE_INFO_SECTIONS[currentIndex + 1] ?? null;
+});
+const goNext = () => {
+  if (nextTab.value) {
+    currentTab.value = nextTab.value;
+  }
+};
+const goPrev = () => {
+  if (prevTab.value) {
+    currentTab.value = prevTab.value;
+  }
+};
 
 const schema = API_ROUTE.users.update.bodySchema;
 
@@ -79,8 +94,7 @@ const handleSubmit = form.handleSubmit(async (values) => {
 
 <template>
   <Form @submit="handleSubmit" :full-width="true">
-    <!-- <pre>{{ JSON.stringify(form.values, null, 2) }}</pre> -->
-    <p>{{ JSON.stringify(form.values) }}</p>
+    <!-- <p>{{ JSON.stringify(form.values) }}</p> -->
     <header class="">
       <h2 class="text-4xl font-medium mb-10 border-b border-border pb-2">
         Athlete's Questionnaire
@@ -106,11 +120,25 @@ const handleSubmit = form.handleSubmit(async (values) => {
         </div>
       </Tabs>
     </header>
-    <div class="flex items-center justify-end gap-4">
-      <UiButton type="button" :disabled="isLoading" :variant="'outline'"
-        >Back</UiButton
+    <div class="flex items-center justify-end gap-6">
+      <UiButton
+        type="button"
+        :disabled="isLoading || !prevTab"
+        :variant="'outline'"
+        @click="goPrev"
+        :size="'icon'"
       >
-      <UiButton type="submit" :disabled="!formIsValid">Submit</UiButton>
+        <ArrowLeftIcon />
+      </UiButton>
+      <UiButton
+        type="button"
+        :disabled="isLoading || !nextTab"
+        :variant="'outline'"
+        @click="goNext"
+        :size="'icon'"
+        ><ArrowRightIcon
+      /></UiButton>
+      <UiButton type="submit" :disabled="!formIsValid || nextTab">Save</UiButton>
     </div>
   </Form>
 </template>
