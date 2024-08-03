@@ -32,37 +32,67 @@ const isSelected = computed(() => {
 </script>
 
 <template>
-  <NuxtLink :to="route.href">
-    <li
-      :class="
-        cn(
-          [
-            'px-6 py-6 border-border border-b flex items-center gap-6 transition-colors pointer',
-          ],
-          {
-            'bg-primary/60 text-primary-foreground hover:bg-primary/80':
-              isSelected,
-            'hover:bg-accent hover:text-accent-foreground': !isSelected,
-            'border-b-0': !!isLast,
+  <div class="item-wrapper">
+    <NuxtLink :to="route.href">
+      <li
+        :data-selected="!!isSelected"
+        :class="
+          cn(
+            [
+              'menu-item relative px-6 py-4 border-border border-b flex items-center gap-6 transition-colors pointer ',
+            ],
+            {
+              ' text-primary-foreground ': isSelected,
+              'hover:bg-accent hover:text-accent-foreground': !isSelected,
+              'border-b-0': !!isLast,
+            }
+          )
+        "
+        @click="
+          () => {
+            if (action) {
+              action();
+            }
           }
-        )
-      "
-      @click="
-        () => {
-          if (action) {
-            action();
-          }
-        }
-      "
-    >
-      <component
-        v-if="route.icon"
-        :is="route.icon"
-        class="text-current size-[20px]"
-      />
-      <span class="font-semibold"> {{ route.label }}</span>
-    </li>
-  </NuxtLink>
+        "
+      >
+        <div class="border-effect" v-if="isSelected"></div>
+        <component
+          v-if="route.icon"
+          :is="route.icon"
+          class="text-current size-[20px]"
+        />
+        <span class="font-semibold"> {{ route.label }}</span>
+      </li>
+    </NuxtLink>
+  </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+$itemWrapperPaddingLeft: 8px;
+$itemWrapperPaddingRight: calc($itemWrapperPaddingLeft + 4px);
+$rounded: 8px;
+.item-wrapper {
+  padding-left: $itemWrapperPaddingLeft;
+  padding-right: $itemWrapperPaddingRight;
+}
+.menu-item {
+  border-radius: $rounded;
+}
+.menu-item[data-selected="true"] {
+  border-radius: $rounded;
+  @apply bg-primary/80 hover:bg-primary/100;
+}
+
+.border-effect {
+  position: absolute;
+  height: 100%;
+  right: -$itemWrapperPaddingRight;
+  width: 4px;
+  border-radius: $rounded;
+  @apply bg-primary/80 transition-colors;
+}
+.menu-item:hover .border-effect {
+  @apply bg-primary/100;
+}
+</style>

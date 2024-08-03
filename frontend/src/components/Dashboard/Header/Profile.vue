@@ -18,9 +18,9 @@ const roleLabel = computed(() => {
     >
       {{ currentUser?.name ? currentUser?.name.slice(0, 1) : "" }}
     </div>
-    <div class="flex flex-col gap-1 font-medium">
+    <div class="flex flex-col font-medium">
       <p>{{ currentUser?.name }}</p>
-      <p class="text-muted-foreground">{{ roleLabel }}</p>
+      <p class="text-muted-foreground text-sm">{{ roleLabel }}</p>
     </div>
   </div>
 </template>
