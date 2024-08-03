@@ -3,11 +3,15 @@ import { makeCreateToastOptions } from "~/helpers/fetch/toastOptions";
 import { getCurrentRouteBackToHref } from "~/helpers/routing/getRouteBackToHref";
 import { API_ROUTE } from "@common/static/routes";
 import type { ICreateJournal } from "@common/schemas/journal/createJournal";
+import { format } from "date-fns";
+
+const now = new Date();
+const formattedNow = format(now, "MM/dd/yyyy");
 
 const initialValues: ICreateJournal = {
-  date: new Date(),
+  date: now,
   text: "",
-  title: "",
+  title: "My Daily Journal - " + formattedNow,
   draft: true,
 };
 
@@ -34,13 +38,12 @@ const onSubmit = async (values: ICreateJournal) => {
 
 <template>
   <NuxtLayout name="dashboard-layout">
-    <DashboardSection title="New Journal">
-      <DashboardJournalForm
-        :initialValues="initialValues"
-        :edit="false"
-        :onSubmit="onSubmit"
-        :isLoading="isLoading"
-      />
-    </DashboardSection>
+    <DashboardJournalForm
+      :initialValues="initialValues"
+      :edit="false"
+      :onSubmit="onSubmit"
+      :isLoading="isLoading"
+      :formattedNow="formattedNow"
+    />
   </NuxtLayout>
 </template>

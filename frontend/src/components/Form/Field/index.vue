@@ -13,7 +13,8 @@ export type IFieldInputVariant =
   | "textarea"
   | "slider"
   | "checkbox"
-  | "switch";
+  | "switch"
+  | "custom";
 
 type Props = {
   name: string;
@@ -28,6 +29,7 @@ type Props = {
   calendarProps?: VCalendarProps;
   required?: boolean;
   greatDescription?: string;
+  inLineInput?: boolean;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -36,7 +38,8 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
 });
 const inLineComponents: IFieldInputVariant[] = ["checkbox", "switch"];
-const isLineInput = inLineComponents.includes(props.inputVariant);
+const isInLineInput =
+  props.inLineInput || inLineComponents.includes(props.inputVariant);
 </script>
 
 <template>
@@ -45,7 +48,8 @@ const isLineInput = inLineComponents.includes(props.inputVariant);
       :class="
         cn([
           {
-            'flex items-center gap-3': isLineInput,
+            'flex items-center gap-3': isInLineInput,
+            'flex gap-3 flex-col items-start': !isInLineInput,
           },
           props.class ?? '',
         ])
@@ -61,6 +65,7 @@ const isLineInput = inLineComponents.includes(props.inputVariant);
         <!-- INPUT -->
         <UiInput
           v-if="inputVariant === 'input'"
+          class="!mt-0"
           :placeholder="placeholder ?? ''"
           v-bind="{
             ...componentField,
@@ -71,17 +76,19 @@ const isLineInput = inLineComponents.includes(props.inputVariant);
         <!-- TEXTAREA -->
         <UiTextarea
           v-if="inputVariant === 'textarea'"
+          class="!mt-0"
           :placeholder="placeholder ?? ''"
           v-bind="{
             ...componentField,
             disabled,
             ...(props.inputProps ?? {}),
           }"
-          :rows="5"
+          :rows="props.inputProps?.rows || 5"
         />
         <!-- SLIDER -->
         <UiSlider
           v-if="inputVariant === 'slider'"
+          class="!mt-0"
           :placeholder="placeholder ?? ''"
           v-bind="{
             ...componentField,
@@ -116,6 +123,7 @@ const isLineInput = inLineComponents.includes(props.inputVariant);
         <!-- SELECT -->
         <UiSelect
           v-if="inputVariant === 'select'"
+          class="!mt-0"
           v-bind="{
             ...componentField,
             disabled,
@@ -138,6 +146,7 @@ const isLineInput = inLineComponents.includes(props.inputVariant);
         <!-- DATE -->
         <div v-if="inputVariant === 'date'">
           <FormFieldCalendar
+            class="!mt-0"
             v-bind="{
               ...componentField,
               disabled,
@@ -149,6 +158,7 @@ const isLineInput = inLineComponents.includes(props.inputVariant);
         <!-- CALENDAR -->
         <div v-if="inputVariant === 'calendar'">
           <UiVCalendar
+            class="!mt-0"
             v-bind="{
               ...componentField,
               disabled,
@@ -158,6 +168,18 @@ const isLineInput = inLineComponents.includes(props.inputVariant);
           />
           />
         </div>
+        <!-- CUSTOM -->
+        <component
+          v-if="inputVariant === 'custom'"
+          :is="props.inputProps?.as || 'input'"
+          class="!mt-0 w-full"
+          v-bind="{
+            ...componentField,
+            disabled,
+            ...(props.inputProps ?? {}),
+          }"
+          :value="componentField.modelValue"
+        />
       </UiFormControl>
       <UiFormDescription v-if="description">{{
         description

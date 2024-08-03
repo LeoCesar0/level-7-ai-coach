@@ -25,5 +25,8 @@ const props = defineProps<Props>();
     @submit="onSubmit"
   >
     <slot />
+    <FormActions>
+      <slot name="actions" />
+    </FormActions>
   </form>
 </template>
