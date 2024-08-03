@@ -18,6 +18,10 @@ export const handleUpdateUser = async ({
   reqUser,
   userId,
 }: IHandleUpdateUser) => {
+  delete inputs.firebaseId;
+  delete inputs._id;
+  delete inputs.email;
+
   if (!inputs || !Object.keys(inputs).length) {
     throw new HTTPException(400, { message: "No data to update" });
   }

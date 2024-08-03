@@ -279,7 +279,7 @@ const run = async () => {
               }
             : undefined,
           phone: fakePhone ? faker.phone.number() : undefined,
-          birthDate: fakeBirth ? new Date(1990, 1, 1) : undefined,
+          birthDate: fakeBirth ? new Date(2000, 1, 1) : undefined,
         },
       },
       firebaseId: firebaseRandomUser.uid,

@@ -4,7 +4,7 @@ const { currentUser } = storeToRefs(userStore);
 </script>
 
 <template>
-  <header class="w-full border-border border-b py-4 px-6">
+  <header class="w-full border-border border-b py-4 px-6 mb-10">
     <div class="mx-auto flex items-center justify-between">
       <div>
         <DashboardHeaderProfile />

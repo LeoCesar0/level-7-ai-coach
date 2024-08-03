@@ -16,6 +16,7 @@
   "devDependencies": {
     "@radix-icons/vue": "^1.0.0",
     "@types/lodash.debounce": "^4.0.9",
+    "@types/lodash.isempty": "^4.4.9",
     "@vue/devtools-api": "^6.6.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -42,6 +43,7 @@
     "embla-carousel-vue": "^8.1.6",
     "firebase": "^10.12.3",
     "lodash.debounce": "^4.0.8",
+    "lodash.isempty": "^4.4.0",
     "lucide-vue-next": "^0.408.0",
     "marked": "^13.0.2",
     "mongoose": "^8.4.3",

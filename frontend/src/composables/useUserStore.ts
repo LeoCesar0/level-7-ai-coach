@@ -68,6 +68,7 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
   const refreshCurrentUser = async () => {
     const res = await fetchCurrentUser();
     if (res.data) {
+      console.log("❗ refresh res -->", res);
       currentUser.value = res.data;
     }
   };

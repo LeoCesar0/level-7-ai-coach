@@ -76,7 +76,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     // --------------------------
     // ATHLETE SHOULD COMPLETE FORM
     // --------------------------
-
     return navigateTo(ROUTE["athlete-form"].href);
   }
 });

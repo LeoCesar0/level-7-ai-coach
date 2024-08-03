@@ -79,7 +79,7 @@ const onSubmit = async (values: IUpdateUser) => {
   }
   await fetchApi({
     method: "PUT",
-    url: API_ROUTE.users.update.url(currentUser.value._id ?? ""),
+    url: API_ROUTE.users.updateMe.url,
     body: values,
     toastOptions: makeUpdateToastOptions({ label: "User" }),
     loadingRefs: [isLoading],

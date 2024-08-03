@@ -259,7 +259,7 @@ const userRoute = new Hono()
       const reqUser = getReqUser(ctx);
       const userId = reqUser?._id.toString();
 
-      const res = handleUpdateUser({
+      const res = await handleUpdateUser({
         inputs,
         reqUser,
         userId,
@@ -278,7 +278,7 @@ const userRoute = new Hono()
       const inputs = ctx.req.valid("json");
       const reqUser = getReqUser(ctx);
 
-      const res = handleUpdateUser({
+      const res = await handleUpdateUser({
         inputs,
         reqUser,
         userId,

@@ -49,10 +49,10 @@ export const nuxtApiFetcher = async <T>({
   if (isServerSide) {
     url = url.replace("localhost", "backend");
   }
-  console.log("❗nuxt fetcher fullUrl -->", fullUrl);
+  console.log("fetcher fullUrl -->", fullUrl);
+  console.log("❗ method -->", method);
   console.log("❗ !!token -->", !!token);
   console.log("❗ body -->", body);
-  console.log("❗ method -->", method);
 
   const handleError = async (err: AppResponseError) => {
     if (onError) {

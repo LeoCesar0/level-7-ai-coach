@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import { zSignIn, type ISignIn } from "@/@schemas/auth";
+import type { AppResponse } from "@common/schemas/app";
 import {
   ATHLETE_QUESTIONS,
   zAthleteInfo,
   type IAthleteInfo,
 } from "@common/schemas/user/athleteInfo";
 import type { IUpdateUser } from "@common/schemas/user/updateUserRoute";
+import type { IUserFull } from "@common/schemas/user/user";
 import { API_ROUTE } from "@common/static/routes";
 import { makeUpdateToastOptions } from "~/helpers/fetch/toastOptions";
 import { ROUTE } from "~/static/routes";
 
 const userStore = useUserStore();
 const { currentUser } = storeToRefs(userStore);
-const { login, refreshCurrentUser } = userStore;
 
 const isLoading = ref(false);
 
@@ -23,12 +24,14 @@ const onSubmit = async (values: IUpdateUser) => {
   if (!id) return;
   await fetchApi({
     method: "PUT",
-    url: API_ROUTE.users.update.url(id),
+    url: API_ROUTE.users.updateMe.url,
     body: values,
     toastOptions: makeUpdateToastOptions({ label: "Athlete profile" }),
     loadingRefs: [isLoading],
-    onSuccess: async (data) => {
-      await refreshCurrentUser();
+    onSuccess: async (data: AppResponse<IUserFull>) => {
+      if (data.data) {
+        currentUser.value = data.data;
+      }
       await navigateTo(ROUTE.dashboard.href);
     },
   });
@@ -56,7 +59,7 @@ watch(
           ...athleteInfoInitialValues,
           ...(user.athleteInfo ?? {}),
         },
-        birthDate: user.birthDate,
+        birthDate: user.birthDate || new Date(2000, 0, 1),
       };
     }
   },
