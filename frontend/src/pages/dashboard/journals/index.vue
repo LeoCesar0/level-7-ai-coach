@@ -10,6 +10,7 @@ import { PERMISSION } from "@common/static/permissions";
 import { verifyRoutePermission } from "@common/helpers/verifyRoutePermission";
 import { API_ROUTE } from "@common/static/routes";
 import type { IJournal } from "@common/schemas/journal/journal";
+import TableDraftCell from "@/components/Table/DraftCell.vue";
 
 const userStore = useUserStore();
 const { currentUser } = storeToRefs(userStore);
@@ -92,19 +93,25 @@ const columns: ColumnDef<IJournal>[] = [
   {
     accessorKey: "title",
     header: "Title",
-    cell: ({ row }) => row.getValue("title"),
+    cell: ({ row }) => {
+      let title = row.original.title;
+      const draft = row.original.draft;
+      return h("p", undefined, [
+        h(
+          "span",
+          {
+            class: "text-yellow-600",
+          },
+          draft ? "(Draft) " : ""
+        ),
+        h("span", undefined, title),
+      ]);
+    },
   },
   {
-    accessorKey: "createdAt",
-    header: "Created at",
-    cell: ({ row }) =>
-      formatDate(row.getValue<Date>("createdAt"), { time: true }),
-  },
-  {
-    accessorKey: "updatedAt",
-    header: "Updated at",
-    cell: ({ row }) =>
-      formatDate(row.getValue<Date>("updatedAt"), { time: true }),
+    accessorKey: "date",
+    header: "Date",
+    cell: ({ row }) => formatDate(row.getValue<Date>("date"), { time: false }),
   },
   {
     id: "actions",
