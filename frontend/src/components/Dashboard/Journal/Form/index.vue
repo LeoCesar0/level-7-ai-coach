@@ -61,6 +61,13 @@ const handleSubmit = form.handleSubmit(async (values) => {
 
 <template>
   <Form @submit="handleSubmit">
+    <FormField
+      :name="'date'"
+      input-variant="date"
+      label="Date"
+      :required="true"
+    />
+    <FormField :name="'draft'" input-variant="switch" label="Draft" />
     <FormField :name="'title'" label="Title" :required="true" />
     <FormField
       :name="'text'"

@@ -90,9 +90,9 @@ const getDropdownItems = (item: IJournal): IDropdownItem[] => {
 
 const columns: ColumnDef<IJournal>[] = [
   {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => row.getValue("name"),
+    accessorKey: "title",
+    header: "Title",
+    cell: ({ row }) => row.getValue("title"),
   },
   {
     accessorKey: "createdAt",
@@ -100,7 +100,6 @@ const columns: ColumnDef<IJournal>[] = [
     cell: ({ row }) =>
       formatDate(row.getValue<Date>("createdAt"), { time: true }),
   },
-
   {
     accessorKey: "updatedAt",
     header: "Updated at",

@@ -5,16 +5,20 @@ import { vAutoAnimate } from "@formkit/auto-animate";
 import { cn } from "@lib/utils";
 import type { VCalendarProps } from "~/components/ui/v-calendar/Calendar.vue";
 
+export type IFieldInputVariant =
+  | "input"
+  | "select"
+  | "date"
+  | "calendar"
+  | "textarea"
+  | "slider"
+  | "checkbox"
+  | "switch";
+
 type Props = {
   name: string;
   label?: string;
-  inputVariant?:
-    | "input"
-    | "select"
-    | "date"
-    | "calendar"
-    | "textarea"
-    | "slider";
+  inputVariant?: IFieldInputVariant;
   inputProps?: Record<string, any>;
   placeholder?: string;
   description?: string;
@@ -31,11 +35,23 @@ const props = withDefaults(defineProps<Props>(), {
   selectOptions: () => [],
   disabled: false,
 });
+const inLineComponents: IFieldInputVariant[] = ["checkbox", "switch"];
+const isLineInput = inLineComponents.includes(props.inputVariant);
 </script>
 
 <template>
   <Field v-slot="{ componentField }" :name="name">
-    <UiFormItem :class="cn(props.class ?? '')" v-auto-animate>
+    <UiFormItem
+      :class="
+        cn([
+          {
+            'flex items-center gap-3': isLineInput,
+          },
+          props.class ?? '',
+        ])
+      "
+      v-auto-animate
+    >
       <UiFormLabel v-if="label" :required="required">{{ label }}</UiFormLabel>
       <slot name="field-header" />
       <div v-if="greatDescription">
@@ -72,6 +88,30 @@ const props = withDefaults(defineProps<Props>(), {
             disabled,
             ...(props.inputProps ?? {}),
           }"
+        />
+        <!-- CHECKBOX -->
+        <UiCheckbox
+          v-if="inputVariant === 'checkbox'"
+          class="!mt-0"
+          v-bind="{
+            ...componentField,
+            disabled,
+            ...(props.inputProps ?? {}),
+          }"
+          :checked="componentField.modelValue"
+          @update:checked="componentField['onUpdate:modelValue']"
+        />
+        <!-- SWITCH -->
+        <UiSwitch
+          v-if="inputVariant === 'switch'"
+          class="!mt-0"
+          v-bind="{
+            ...componentField,
+            disabled,
+            ...(props.inputProps ?? {}),
+          }"
+          :checked="componentField.modelValue"
+          @update:checked="componentField['onUpdate:modelValue']"
         />
         <!-- SELECT -->
         <UiSelect

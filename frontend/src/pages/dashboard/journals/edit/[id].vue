@@ -57,7 +57,7 @@ const onSubmit = async (values: IUpdateJournal) => {
 
 <template>
   <NuxtLayout name="dashboard-layout">
-    <DashboardSection :title="`Editing ${item?.title ?? ''}`">
+    <DashboardSection :title="`Editing: ${item?.title ?? ''}`">
       <DashboardJournalForm
         v-if="initialValues"
         :initialValues="initialValues"

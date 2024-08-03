@@ -7,7 +7,7 @@ import type { ICreateJournal } from "@common/schemas/journal/createJournal";
 const initialValues: ICreateJournal = {
   date: new Date(),
   text: "",
-  title: "Title",
+  title: "",
   draft: true,
 };
 
@@ -34,7 +34,7 @@ const onSubmit = async (values: ICreateJournal) => {
 
 <template>
   <NuxtLayout name="dashboard-layout">
-    <DashboardSection title="Create Journal">
+    <DashboardSection title="New Journal">
       <DashboardJournalForm
         :initialValues="initialValues"
         :edit="false"

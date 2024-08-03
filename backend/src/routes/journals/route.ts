@@ -7,9 +7,6 @@ import { getUserFull } from "../../services/getUserFull.js";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute.js";
 import { z } from "zod";
 import { AppResponse } from "@common/schemas/app.js";
-import { zCreateJournal } from "@common/schemas/journal/createJournal.js";
-import { zJournal } from "@common/schemas/journal/journal.js";
-import { IUserDoc } from "../users/schemas/user.js";
 import { zStringNotEmpty } from "@common/schemas/primitives/stringNotEmpty.js";
 import { zPaginateRouteQueryInput } from "@common/schemas/pagination.js";
 import { FilterQuery } from "mongoose";
@@ -117,7 +114,7 @@ export const journalRoute = new Hono()
     }),
     async (ctx) => {
       const body = ctx.req.valid("json");
-      const { date, images, draft, text } = body;
+      const { date, images, draft, text, title } = body;
 
       const reqUser = getReqUser(ctx);
 
@@ -138,6 +135,7 @@ export const journalRoute = new Hono()
         date: date,
         images: images ?? [],
         text,
+        title,
         draft,
       });
       const journal = newJournal.toObject();

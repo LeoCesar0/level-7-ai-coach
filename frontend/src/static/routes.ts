@@ -206,7 +206,7 @@ export const ROUTE: Record<Route, IRoute> = {
     href: "/dashboard/journals/edit",
     label: "Edit Journal",
     permissions: PERMISSION.journals.update,
-    backsTo: "archetypes",
+    backsTo: "journals",
     name: "editJournal",
   },
   // --------------------------
