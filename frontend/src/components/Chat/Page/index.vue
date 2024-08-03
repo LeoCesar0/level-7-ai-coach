@@ -2,7 +2,6 @@
 import { ROUTE } from "~/static/routes";
 import { type IFormattedMessage } from "@common/schemas/chat/message";
 
-
 // --------------------------
 // SETUP
 // --------------------------
@@ -107,7 +106,7 @@ const scrollToLastMessage = () => {
 onMounted(async () => {
   if (!props.chatId) {
     toast.error("Chat not found");
-    navigateTo(ROUTE["chat"].href);
+    navigateTo(ROUTE["chats"].href);
     return;
   }
 
@@ -121,7 +120,7 @@ onMounted(async () => {
     currentChat.value = data;
     await handleGetHistory();
   } else {
-    await navigateTo(ROUTE.chat.href);
+    await navigateTo(ROUTE.chats.href);
   }
 });
 // :ref="el => messagesContainerRef.push(el)"

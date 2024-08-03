@@ -9,12 +9,15 @@ import { IUserDoc, UserModel } from "../users/schemas/user";
 import { firebaseAuth } from "../../lib/firebase";
 import { handlePaginationRoute } from "../../handlers/handlePaginationRoute";
 import { AppResponse } from "@common/schemas/app";
-import { zCreateOrganization } from "@common/schemas/organization/createOrganization";
 import { zStringNotEmpty } from "@common/schemas/primitives/stringNotEmpty";
 import { FilterQuery } from "mongoose";
-import { zUpdateOrganization } from "../../../../common/schemas/organization/updateOrganization";
 import { zPaginateRouteQueryInput } from "@common/schemas/pagination";
 import { getReqUser } from "@/helpers/getReqUser";
+import { API_ROUTE } from "@common/static/routes";
+import { PERMISSION } from "@common/static/permissions";
+
+const ROUTE = API_ROUTE.organizations;
+const ROUTE_PERMISSION = PERMISSION.organizations;
 
 const organizationsRoute = new Hono()
   // --------------------------
@@ -22,7 +25,7 @@ const organizationsRoute = new Hono()
   // --------------------------
   .get(
     "/list",
-    authValidator({ permissionsTo: ["admin", "coach"] }),
+    authValidator({ permissionsTo: ROUTE_PERMISSION.list }),
     async (ctx) => {
       const reqUser = getReqUser(ctx);
 
@@ -53,7 +56,7 @@ const organizationsRoute = new Hono()
   // --------------------------
   .post(
     "/paginate",
-    authValidator({ permissionsTo: ["admin", "user", "coach"] }),
+    authValidator({ permissionsTo: ROUTE_PERMISSION.paginate }),
     routeValidator({
       schema: zPaginateRouteQueryInput,
       target: "json",
@@ -94,7 +97,7 @@ const organizationsRoute = new Hono()
       target: "param",
       schema: z.object({ id: zStringNotEmpty }),
     }),
-    authValidator({ permissionsTo: ["admin"] }),
+    authValidator({ permissionsTo: ROUTE_PERMISSION.get }),
     async (ctx) => {
       const id = ctx.req.param("id");
 
@@ -117,8 +120,8 @@ const organizationsRoute = new Hono()
   // --------------------------
   .post(
     "/",
-    routeValidator({ schema: zCreateOrganization }),
-    authValidator({ permissionsTo: ["admin"] }),
+    routeValidator({ schema: ROUTE.create.bodySchema }),
+    authValidator({ permissionsTo: ROUTE_PERMISSION.create }),
     async (ctx) => {
       const input = ctx.req.valid("json");
 
@@ -135,8 +138,8 @@ const organizationsRoute = new Hono()
   )
   .put(
     "/:id",
-    routeValidator({ schema: zUpdateOrganization }),
-    authValidator({ permissionsTo: ["admin", "coach"] }),
+    routeValidator({ schema: ROUTE.update.bodySchema }),
+    authValidator({ permissionsTo: ROUTE_PERMISSION.update }),
     async (ctx) => {
       const orgId = ctx.req.param("id");
       const inputs = ctx.req.valid("json");
@@ -182,65 +185,69 @@ const organizationsRoute = new Hono()
       return ctx.json(resData, 200);
     }
   )
-  .delete("/:id", authValidator({ permissionsTo: ["admin"] }), async (ctx) => {
-    const orgId = ctx.req.param("id");
+  .delete(
+    "/:id",
+    authValidator({ permissionsTo: ROUTE_PERMISSION.delete }),
+    async (ctx) => {
+      const orgId = ctx.req.param("id");
 
-    if (!orgId) {
-      throw new HTTPException(400, {
-        message: "Organization id is required",
+      if (!orgId) {
+        throw new HTTPException(400, {
+          message: "Organization id is required",
+        });
+      }
+
+      const orgToDelete = await OrganizationModel.findById<
+        Omit<IOrganizationDoc, "users"> & { users: IUserDoc[] }
+      >(orgId).populate("users");
+
+      if (!orgToDelete) {
+        throw new HTTPException(404, {
+          message: "Organization not found",
+        });
+      }
+
+      const orgIsAdmin = orgToDelete.adminOrganization;
+
+      if (orgIsAdmin) {
+        const resData: AppResponse<boolean> = {
+          data: null,
+          error: {
+            message: "Cannot delete admin organization",
+            _isAppError: true,
+          },
+        };
+        return ctx.json(resData, 403);
+      }
+
+      const usersOnOrg = orgToDelete.users.filter(
+        (user) => user.role !== "admin"
+      );
+
+      await OrganizationModel.deleteOne({
+        _id: orgId,
       });
-    }
-
-    const orgToDelete = await OrganizationModel.findById<
-      Omit<IOrganizationDoc, "users"> & { users: IUserDoc[] }
-    >(orgId).populate("users");
-
-    if (!orgToDelete) {
-      throw new HTTPException(404, {
-        message: "Organization not found",
+      await UserModel.deleteMany({
+        organization: orgId,
       });
-    }
 
-    const orgIsAdmin = orgToDelete.adminOrganization;
-
-    if (orgIsAdmin) {
-      const resData: AppResponse<boolean> = {
-        data: null,
-        error: {
-          message: "Cannot delete admin organization",
-          _isAppError: true,
-        },
-      };
-      return ctx.json(resData, 403);
-    }
-
-    const usersOnOrg = orgToDelete.users.filter(
-      (user) => user.role !== "admin"
-    );
-
-    await OrganizationModel.deleteOne({
-      _id: orgId,
-    });
-    await UserModel.deleteMany({
-      organization: orgId,
-    });
-
-    for (const user of usersOnOrg) {
-      try {
-        await firebaseAuth.deleteUser(user.firebaseId);
-      } catch (err) {
-        if (process.env.NODE_ENV !== "test") {
-          console.log("❌ Error deleting user from firebase", err);
+      for (const user of usersOnOrg) {
+        try {
+          await firebaseAuth.deleteUser(user.firebaseId);
+        } catch (err) {
+          if (process.env.NODE_ENV !== "test") {
+            console.log("❌ Error deleting user from firebase", err);
+          }
         }
       }
+
+      const resData: AppResponse<boolean> = {
+        data: true,
+        error: null,
+      };
+
+      return ctx.json(resData, 200);
     }
-
-    const resData: AppResponse<boolean> = {
-      data: true,
-      error: null,
-    };
-
-    return ctx.json(resData, 200);
-  });
+  );
 
 export default organizationsRoute;

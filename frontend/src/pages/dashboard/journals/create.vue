@@ -1,39 +1,26 @@
 <script setup lang="ts">
 import { makeCreateToastOptions } from "~/helpers/fetch/toastOptions";
-import { type ICreateUserRoute } from "@common/schemas/user/createUserRoute";
-import type { IUser } from "@common/schemas/user/user";
 import { getCurrentRouteBackToHref } from "~/helpers/routing/getRouteBackToHref";
 import { API_ROUTE } from "@common/static/routes";
+import type { ICreateJournal } from "@common/schemas/journal/createJournal";
 
-const initialValues: ICreateUserRoute = {
-  user: {
-    organization: "",
-    email: "",
-    name: "",
-    imageUrl: "",
-    role: "user",
-    address: {
-      address: "",
-      city: "",
-      country: "",
-      state: "",
-    },
-    phone: "",
-    phoneCode: "",
-  },
-  password: "",
+const initialValues: ICreateJournal = {
+  date: new Date(),
+  text: "",
+  title: "Title",
+  draft: true,
 };
 
 const isLoading = ref(false);
 
 const { fetchApi } = useFetchApi();
 
-const onSubmit = async (values: ICreateUserRoute) => {
-  await fetchApi<IUser>({
+const onSubmit = async (values: ICreateJournal) => {
+  await fetchApi<ICreateJournal>({
     method: "POST",
-    url: API_ROUTE.users.create.url,
+    url: API_ROUTE.journals.create.url,
     body: values,
-    toastOptions: makeCreateToastOptions({ label: "User" }),
+    toastOptions: makeCreateToastOptions({ label: "Journal" }),
     loadingRefs: [isLoading],
     onSuccess: async (data) => {
       const backToHref = getCurrentRouteBackToHref();
@@ -47,8 +34,8 @@ const onSubmit = async (values: ICreateUserRoute) => {
 
 <template>
   <NuxtLayout name="dashboard-layout">
-    <DashboardSection title="Create User">
-      <DashboardUserForm
+    <DashboardSection title="Create Journal">
+      <DashboardJournalForm
         :initialValues="initialValues"
         :edit="false"
         :onSubmit="onSubmit"

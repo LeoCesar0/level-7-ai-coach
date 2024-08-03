@@ -11,16 +11,16 @@ import {
   UserIcon,
   MedalIcon,
 } from "lucide-vue-next";
+import { PERMISSION } from "@common/static/permissions";
 
 export const ROUTES = [
   "home",
   "sign-in",
   "athlete-form",
   "dashboard",
-  "chat",
+  "chats",
   "settings",
   "profile",
-  "journal",
   // --------------------------
   // users
   // --------------------------
@@ -41,6 +41,12 @@ export const ROUTES = [
   "archetypes",
   "createArchetype",
   "editArchetype",
+  // --------------------------
+  // journals
+  // --------------------------
+  "journals",
+  "createJournal",
+  "editJournal",
 ] as const;
 
 export type Route = (typeof ROUTES)[number];
@@ -80,21 +86,13 @@ export const ROUTE: Record<Route, IRoute> = {
     name: "athlete-form",
     permissions: [],
   },
-  chat: {
+  chats: {
     href: "/dashboard/chat",
-    label: "Chat",
-    permissions: [],
+    label: "Chats",
+    permissions: PERMISSION.chats.paginate,
     inMenuFor: ["user"],
     icon: IconChat,
-    name: "chat",
-  },
-  journal: {
-    href: "/dashboard/journal",
-    label: "Journal",
-    permissions: [],
-    inMenuFor: ["user"],
-    icon: IconJournal,
-    name: "journal",
+    name: "chats",
   },
 
   // --------------------------
@@ -103,29 +101,29 @@ export const ROUTE: Record<Route, IRoute> = {
   users: {
     href: "/dashboard/users",
     label: "Users",
-    permissions: ["admin", "coach"],
-    inMenuFor: ["admin", "coach"],
+    permissions: PERMISSION.users.paginate,
+    inMenuFor: PERMISSION.users.paginate,
     icon: UsersIcon,
     name: "users",
   },
   createUser: {
     href: "/dashboard/users/create",
     label: "Create User",
-    permissions: ["admin", "coach"],
+    permissions: PERMISSION.users.create,
     backsTo: "users",
     name: "createUser",
   },
   editUser: {
     href: "/dashboard/users/edit",
     label: "Edit User",
-    permissions: ["admin", "coach"],
+    permissions: PERMISSION.users.update,
     backsTo: "users",
     name: "editUser",
   },
   viewUser: {
     href: "/dashboard/users/view",
     label: "View User",
-    permissions: ["admin", "coach"],
+    permissions: PERMISSION.users.get,
     backsTo: "users",
     name: "viewUser",
   },
@@ -135,29 +133,29 @@ export const ROUTE: Record<Route, IRoute> = {
   organizations: {
     href: "/dashboard/organizations",
     label: "Teams",
-    permissions: ["admin", "coach"],
-    inMenuFor: ["admin", "coach"],
+    permissions: PERMISSION.organizations.paginate,
+    inMenuFor: PERMISSION.organizations.paginate,
     icon: MedalIcon,
     name: "organizations",
   },
   createOrganization: {
     href: "/dashboard/organizations/create",
     label: "Create Team",
-    permissions: ["admin", "coach"],
+    permissions: PERMISSION.organizations.create,
     backsTo: "organizations",
     name: "createOrganization",
   },
   editOrganization: {
     href: "/dashboard/organizations/edit",
     label: "Edit Team",
-    permissions: ["admin", "coach"],
+    permissions: PERMISSION.organizations.update,
     backsTo: "organizations",
     name: "editOrganization",
   },
   viewOrganization: {
     href: "/dashboard/organizations/view",
     label: "View Team",
-    permissions: ["admin", "coach"],
+    permissions: PERMISSION.organizations.get,
     backsTo: "organizations",
     name: "viewOrganization",
   },
@@ -167,24 +165,49 @@ export const ROUTE: Record<Route, IRoute> = {
   archetypes: {
     href: "/dashboard/archetypes",
     label: "Archetypes",
-    permissions: ["admin"],
-    inMenuFor: ["admin"],
+    permissions: PERMISSION.archetypes.paginate,
+    inMenuFor: PERMISSION.archetypes.paginate,
     icon: BookUserIcon,
     name: "archetypes",
   },
   createArchetype: {
     href: "/dashboard/archetypes/create",
     label: "Create Archetype",
-    permissions: ["admin"],
+    permissions: PERMISSION.archetypes.create,
     backsTo: "archetypes",
     name: "createArchetype",
   },
   editArchetype: {
     href: "/dashboard/archetypes/edit",
     label: "Edit Archetype",
-    permissions: ["admin"],
+    permissions: PERMISSION.archetypes.update,
     backsTo: "archetypes",
     name: "editArchetype",
+  },
+  // --------------------------
+  // journals
+  // --------------------------
+  journals: {
+    href: "/dashboard/journals",
+    label: "Journals",
+    permissions: PERMISSION.journals.paginate,
+    inMenuFor: ["user", "admin", "coach"],
+    icon: IconJournal,
+    name: "journals",
+  },
+  createJournal: {
+    href: "/dashboard/journals/create",
+    label: "Create Journal",
+    permissions: PERMISSION.journals.create,
+    backsTo: "journals",
+    name: "createJournal",
+  },
+  editJournal: {
+    href: "/dashboard/journals/edit",
+    label: "Edit Journal",
+    permissions: PERMISSION.journals.update,
+    backsTo: "archetypes",
+    name: "editJournal",
   },
   // --------------------------
   // other
@@ -192,8 +215,8 @@ export const ROUTE: Record<Route, IRoute> = {
   profile: {
     href: "/dashboard/profile",
     label: "Profile",
-    permissions: [],
-    inMenuFor: ["user", "admin", "coach"],
+    permissions: PERMISSION.users.updateMe,
+    inMenuFor: PERMISSION.users.updateMe,
     name: "profile",
     icon: UserIcon,
   },

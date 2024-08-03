@@ -1,11 +1,12 @@
 import { z } from "zod";
-import { zIsoDate } from "../primitives/isoDate";
 import { zStringNotEmpty } from "../primitives/stringNotEmpty";
+import { zFlexDate } from "../primitives/zFlexDate";
 
 export const zCreateJournal = z.object({
+  title: z.string().default("title"),
   text: z.string().default(""),
   images: z.array(zStringNotEmpty).optional(),
-  date: zIsoDate,
+  date: zFlexDate,
   draft: z.boolean().optional(),
 });
 

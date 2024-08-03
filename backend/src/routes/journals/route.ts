@@ -15,6 +15,11 @@ import { zPaginateRouteQueryInput } from "@common/schemas/pagination.js";
 import { FilterQuery } from "mongoose";
 import { getReqUser } from "@/helpers/getReqUser.js";
 import { EXCEPTIONS } from "@common/static/exceptions.js";
+import { API_ROUTE } from "@common/static/routes.js";
+import { PERMISSION } from "@common/static/permissions";
+
+const ROUTE = API_ROUTE.journals;
+const ROUTE_PERMISSION = PERMISSION.journals;
 
 // --------------------------
 // GET
@@ -26,7 +31,7 @@ export const journalRoute = new Hono()
       schema: z.object({ id: zStringNotEmpty }),
       target: "param",
     }),
-    authValidator({ permissionsTo: ["admin", "coach", "user"] }),
+    authValidator({ permissionsTo: ROUTE_PERMISSION.get }),
     async (ctx) => {
       const reqUser = getReqUser(ctx);
 
@@ -66,7 +71,7 @@ export const journalRoute = new Hono()
   // --------------------------
   .post(
     "/paginate",
-    authValidator({ permissionsTo: ["admin", "user", "coach"] }),
+    authValidator({ permissionsTo: ROUTE_PERMISSION.paginate }),
     routeValidator({
       schema: zPaginateRouteQueryInput,
       target: "json",
@@ -105,10 +110,10 @@ export const journalRoute = new Hono()
   .post(
     "/",
     routeValidator({
-      schema: zCreateJournal,
+      schema: ROUTE.create.bodySchema,
     }),
     authValidator({
-      permissionsTo: ["user"],
+      permissionsTo: ROUTE_PERMISSION.create,
     }),
     async (ctx) => {
       const body = ctx.req.valid("json");
@@ -152,10 +157,10 @@ export const journalRoute = new Hono()
       target: "param",
     }),
     routeValidator({
-      schema: zJournal.partial(),
+      schema: ROUTE.update.bodySchema,
     }),
     authValidator({
-      permissionsTo: ["user"],
+      permissionsTo: ROUTE_PERMISSION.update,
     }),
     async (ctx) => {
       const values = ctx.req.valid("json");
@@ -212,7 +217,7 @@ export const journalRoute = new Hono()
       target: "param",
     }),
     authValidator({
-      permissionsTo: ["user", "admin"],
+      permissionsTo: ROUTE_PERMISSION.delete,
     }),
     async (ctx) => {
       const values = ctx.req.valid("json");

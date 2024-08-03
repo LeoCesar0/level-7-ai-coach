@@ -5,7 +5,7 @@ import type { IApiRoute } from "./routes";
 export type IPermissionRecord = Record<IApiRoute, IPermissionItem>;
 
 export type IPermissionItem = {
-  [key in IRouteApiAction]?: IRole[];
+  [key in IRouteApiAction | string]?: IRole[];
 };
 
 export const PERMISSION = {
@@ -20,18 +20,33 @@ export const PERMISSION = {
   users: {
     get: ["admin", "coach"],
     create: ["admin", "coach"],
-    update: ["admin", "coach", "user"],
+    update: ["admin", "coach"],
     delete: ["admin", "coach"],
-    me: ["admin", "coach", "user"],
     list: ["admin", "coach"],
     paginate: ["admin", "coach"],
+    updateMe: ["admin", "coach", "user"],
+    getMe: ["admin", "coach", "user"],
   },
   archetypes: {
     get: ["admin"],
     create: ["admin"],
-    update: ["admin", "user"],
+    update: ["admin"],
     delete: ["admin"],
     list: ["admin"],
     paginate: ["admin"],
+  },
+  journals: {
+    get: ["admin", "coach", "user"],
+    create: ["user"],
+    update: ["user"],
+    delete: ["user"],
+    paginate: ["admin", "user", "coach"],
+  },
+  chats: {
+    get: ["admin", "coach", "user"],
+    create: ["user"],
+    update: ["user"],
+    delete: ["user"],
+    paginate: ["admin", "user", "coach"],
   },
 } satisfies IPermissionRecord;

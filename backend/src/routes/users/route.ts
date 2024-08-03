@@ -12,8 +12,6 @@ import { getUserFull } from "../../services/getUserFull";
 import { USER_POPULATES } from "@/static/populates";
 import { AppResponse } from "@common/schemas/app";
 import { IUserDoc, IUserFullDoc, UserModel } from "./schemas/user";
-import { zCreateUserRoute } from "@common/schemas/user/createUserRoute";
-import { zUpdateUser } from "@common/schemas/user/updateUserRoute";
 import { getReqUser } from "@/helpers/getReqUser";
 import { handleUpdateUser } from "./handler/handleUpdateUser";
 import { zPaginateRouteQueryInput } from "@common/schemas/pagination";
@@ -21,10 +19,11 @@ import { handlePaginatedSearch } from "@/handlers/handlePaginatedSearch";
 import { COLLECTION } from "@/lib/langchain/@static";
 import { SEARCH_INDEXES } from "@/handlers/dbIndexes/setup";
 import { FilterQuery } from "mongoose";
-import { zAthleteInfo } from "@common/schemas/user/athleteInfo";
 import { API_ROUTE } from "@common/static/routes";
+import { PERMISSION } from "@common/static/permissions";
 
 const CURRENT_API_ROUTE = API_ROUTE.users;
+const CURRENT_PERMISSION = PERMISSION.users;
 
 const userRoute = new Hono()
   // --------------------------
@@ -32,7 +31,7 @@ const userRoute = new Hono()
   // --------------------------
   .post(
     "/paginate",
-    authValidator({ permissionsTo: ["admin", "coach"] }),
+    authValidator({ permissionsTo: CURRENT_PERMISSION.paginate }),
     routeValidator({
       schema: zPaginateRouteQueryInput,
       target: "json",
@@ -82,36 +81,42 @@ const userRoute = new Hono()
       return ctx.json(resData, 200);
     }
   )
-  .get("/me", authValidator(), async (ctx) => {
-    const reqUser = getReqUser(ctx);
+  .get(
+    "/me",
+    authValidator({
+      permissionsTo: CURRENT_PERMISSION.getMe,
+    }),
+    async (ctx) => {
+      const reqUser = getReqUser(ctx);
 
-    if (!reqUser) {
-      throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
+
+      const user = await getUserFull({ userId: reqUser._id.toString() });
+
+      if (!user) {
+        throw new HTTPException(404, { message: "User not found" });
+      }
+
+      if (user && !user.active && reqUser.role === "user") {
+        throw new HTTPException(401, { message: EXCEPTIONS.USER_NOT_ACTIVE });
+      }
+
+      const resData: AppResponse<IUserFullDoc> = {
+        data: user,
+        error: null,
+      };
+
+      return ctx.json(resData, 200);
     }
-
-    const user = await getUserFull({ userId: reqUser._id.toString() });
-
-    if (!user) {
-      throw new HTTPException(404, { message: "User not found" });
-    }
-
-    if (user && !user.active && reqUser.role === "user") {
-      throw new HTTPException(401, { message: EXCEPTIONS.USER_NOT_ACTIVE });
-    }
-
-    const resData: AppResponse<IUserFullDoc> = {
-      data: user,
-      error: null,
-    };
-
-    return ctx.json(resData, 200);
-  })
+  )
   // --------------------------
   // GET USER BY ID
   // --------------------------
   .get(
     "/:id",
-    authValidator({ permissionsTo: ["admin", "coach", "user"] }),
+    authValidator({ permissionsTo: CURRENT_PERMISSION.get }),
     async (ctx) => {
       const userId = ctx.req.param("id");
 
@@ -144,8 +149,8 @@ const userRoute = new Hono()
   // --------------------------
   .post(
     "/",
-    routeValidator({ schema: zCreateUserRoute }),
-    authValidator({ permissionsTo: ["admin", "coach"] }),
+    routeValidator({ schema: CURRENT_API_ROUTE.create.bodySchema }),
+    authValidator({ permissionsTo: CURRENT_PERMISSION.create }),
     async (ctx) => {
       const inputs = ctx.req.valid("json");
       let resData: AppResponse<IUserDoc>;
@@ -246,9 +251,9 @@ const userRoute = new Hono()
   .put(
     "/me",
     routeValidator({
-      schema: zUpdateUser,
+      schema: CURRENT_API_ROUTE.updateMe.bodySchema,
     }),
-    authValidator({ permissionsTo: ["user", "admin", "coach"] }),
+    authValidator({ permissionsTo: CURRENT_PERMISSION.updateMe }),
     async (ctx) => {
       const inputs = ctx.req.valid("json");
       const reqUser = getReqUser(ctx);
@@ -263,32 +268,11 @@ const userRoute = new Hono()
     }
   )
   .put(
-    "/athlete/:id",
-    routeValidator({
-      schema: CURRENT_API_ROUTE.athlete.bodySchema,
-    }),
-    authValidator({ permissionsTo: ["user", "admin", "coach"] }),
-    async (ctx) => {
-      const userId = ctx.req.param("id");
-      const inputs = ctx.req.valid("json");
-      const reqUser = getReqUser(ctx);
-
-      const res = handleUpdateUser({
-        inputs: {
-          athleteInfo: inputs,
-        },
-        reqUser,
-        userId,
-      });
-      return ctx.json(res, 200);
-    }
-  )
-  .put(
     "/:id",
     routeValidator({
-      schema: zUpdateUser,
+      schema: CURRENT_API_ROUTE.update.bodySchema,
     }),
-    authValidator({ permissionsTo: ["user", "admin", "coach"] }),
+    authValidator({ permissionsTo: CURRENT_PERMISSION.update }),
     async (ctx) => {
       const userId = ctx.req.param("id");
       const inputs = ctx.req.valid("json");
@@ -302,10 +286,9 @@ const userRoute = new Hono()
       return ctx.json(res, 200);
     }
   )
-
   .delete(
     "/:id",
-    authValidator({ permissionsTo: ["admin", "coach"] }),
+    authValidator({ permissionsTo: CURRENT_PERMISSION.delete }),
     async (ctx) => {
       const userId = ctx.req.param("id");
       let resData: AppResponse<boolean>;

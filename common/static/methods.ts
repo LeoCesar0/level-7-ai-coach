@@ -14,7 +14,6 @@ export const ROUTE_API_ACTION_TYPES = [
   "create",
   "update",
   "delete",
-  "me",
   "list",
   "paginate",
 ] as const;

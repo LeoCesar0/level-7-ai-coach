@@ -9,6 +9,10 @@ import { zUpdateArchetype } from "../schemas/archetype/updateArchetype";
 import { zFilters } from "@common/schemas/pagination";
 import z from "zod";
 import { zAthleteInfo } from "@common/schemas/user/athleteInfo";
+import { zCreateJournal } from "@common/schemas/journal/createJournal";
+import { zUpdateJournal } from "@common/schemas/journal/updateJournal";
+import { zCreateChat } from "@common/schemas/chat/create";
+import { zCreateUserRoute } from "@common/schemas/user/createUserRoute";
 
 const zPaginateRouteQueryInput = z
   .object({
@@ -25,7 +29,13 @@ const zPaginateRouteQueryInput = z
     page: 1,
   });
 
-export const API_ROUTES = ["users", "organizations", "archetypes"] as const;
+export const API_ROUTES = [
+  "users",
+  "organizations",
+  "archetypes",
+  "journals",
+  "chats",
+] as const;
 
 export type IApiRoute = (typeof API_ROUTES)[number];
 
@@ -89,7 +99,7 @@ export const API_ROUTE = {
       url: "/users",
       path: "/",
       method: "post",
-      bodySchema: zCreateUser,
+      bodySchema: zCreateUserRoute,
     },
     update: {
       baseUrl: "/users",
@@ -98,19 +108,18 @@ export const API_ROUTE = {
       method: "put",
       bodySchema: zUpdateUser,
     },
-    me: {
+    updateMe: {
       baseUrl: "/users",
       url: "/users/me",
       path: "/me",
       method: "put",
       bodySchema: zUpdateUser,
     },
-    athlete: {
+    getMe: {
       baseUrl: "/users",
-      url: "/users/athlete",
-      path: "/athlete",
-      method: "put",
-      bodySchema: zAthleteInfo,
+      url: "/users",
+      path: "/me",
+      method: "get",
     },
     get: {
       baseUrl: "/users",
@@ -174,6 +183,69 @@ export const API_ROUTE = {
     paginate: {
       baseUrl: "/archetypes",
       url: "/archetypes/paginate",
+      path: "/paginate",
+      method: "get",
+      bodySchema: zPaginateRouteQueryInput,
+    },
+  },
+  journals: {
+    create: {
+      baseUrl: "/journals",
+      url: "/journals",
+      path: "/",
+      method: "post",
+      bodySchema: zCreateJournal,
+    },
+    update: {
+      baseUrl: "/journals",
+      url: (id: string) => `/journals/${id}`,
+      path: "/",
+      method: "put",
+      bodySchema: zUpdateJournal,
+    },
+    delete: {
+      baseUrl: "/journals",
+      url: (id: string) => `/journals/${id}`,
+      path: "/",
+      method: "delete",
+    },
+    get: {
+      baseUrl: "/journals",
+      url: (id: string) => `/journals/${id}`,
+      path: "/",
+      method: "get",
+    },
+    paginate: {
+      baseUrl: "/journals",
+      url: "/journals/paginate",
+      path: "/paginate",
+      method: "get",
+      bodySchema: zPaginateRouteQueryInput,
+    },
+  },
+  chats: {
+    create: {
+      baseUrl: "/chats",
+      url: "/chats",
+      path: "/",
+      method: "post",
+      bodySchema: zCreateChat,
+    },
+    delete: {
+      baseUrl: "/chats",
+      url: (id: string) => `/chats/${id}`,
+      path: "/",
+      method: "delete",
+    },
+    get: {
+      baseUrl: "/chats",
+      url: (id: string) => `/chats/${id}`,
+      path: "/",
+      method: "get",
+    },
+    paginate: {
+      baseUrl: "/chats",
+      url: "/chats/paginate",
       path: "/paginate",
       method: "get",
       bodySchema: zPaginateRouteQueryInput,

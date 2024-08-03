@@ -19,6 +19,7 @@ export type IJournalDoc = z.infer<typeof zJournalDoc>;
 const journalSchema = new mongoose.Schema<IJournalDoc>(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    title: { type: String, default: "" },
     text: { type: String, default: "" },
     images: [{ type: String }],
     date: {

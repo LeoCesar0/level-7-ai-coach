@@ -15,6 +15,9 @@ export default defineNuxtConfig({
   imports: {
     dirs: ["composables/*.ts", "composables/**/*.ts"],
   },
+  typescript: {
+    typeCheck: true
+  },
   alias: {
     // "@": resolve(__dirname, "./src"),
     // '@common/*':resolve(__dirname, "./../common/*"),

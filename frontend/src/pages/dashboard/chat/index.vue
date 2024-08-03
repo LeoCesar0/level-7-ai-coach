@@ -18,13 +18,13 @@ onMounted(() => {
 });
 const continueChat = () => {
   if (openChat.value) {
-    navigateTo(ROUTE.chat.href + `/${openChat.value._id}`);
+    navigateTo(ROUTE.chats.href + `/${openChat.value._id}`);
   }
 };
 const handleCreateNewChat = async () => {
   const response = await createNewChat();
   if (response.data) {
-    navigateTo(ROUTE.chat.href + `/${response.data._id}`);
+    navigateTo(ROUTE.chats.href + `/${response.data._id}`);
   }
 };
 
@@ -48,7 +48,7 @@ const getChatTitle = (chat: IChat) => {
       <div class="flex items-center gap-4 flex-wrap">
         <ChatCard
           v-for="(chat, index) in closedChats"
-          @click="navigateTo(ROUTE.chat.href + `/${chat._id}`)"
+          @click="navigateTo(ROUTE.chats.href + `/${chat._id}`)"
           :title="getChatTitle(chat)"
         />
       </div>
