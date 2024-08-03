@@ -20,7 +20,9 @@ const roleLabel = computed(() => {
     </div>
     <div class="flex flex-col font-medium">
       <p>{{ currentUser?.name }}</p>
-      <p class="text-muted-foreground text-sm">{{ roleLabel }}</p>
+      <p class="text-muted-foreground text-sm">
+        {{ roleLabel }} - {{ currentUser?.organization.name }}
+      </p>
     </div>
   </div>
 </template>
