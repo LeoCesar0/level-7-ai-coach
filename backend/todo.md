@@ -32,6 +32,8 @@
 - [x] - Add chat limit and tell a story at the end
 - [] - Add Analytics fields to assessment (date fields and slug)
 - [] - Add meeting/schedule feature, where the coach can assign days they are open
+- [] - Change email
+- [] - Change password
 
 **TEST**
 
@@ -44,3 +46,4 @@
 - [] - THINK ABOUT - change getChatChain approach to a manual input of the messages
 - [] - THINK ABOUT (chat chain/memory) - giving more relevance to data retrieved from last chat
 - [] - Remove files from common that are duplicated in backend
+- [] - Add Vector Search Index on code
