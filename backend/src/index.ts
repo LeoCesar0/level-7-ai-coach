@@ -18,6 +18,7 @@ import { cors } from "hono/cors";
 import testRoute from "./routes/test/route";
 import { handleSetupIndexes } from "./handlers/dbIndexes/handleSetupIndexes";
 import { processChatsAssessment } from "./services/assessment/processChatsAssessment";
+import { handleDailyProcessing } from "./services/assessment/handleDailyProcessing";
 
 dotenv.config({ path: "../.env" });
 
@@ -58,7 +59,7 @@ honoApp.use("*", async (ctx, next) => {
 
   try {
     const response = await ctx.res.json();
-    console.log("Response: ", response);
+    // console.log("Response: ", response);
   } catch (err) {}
 });
 
@@ -104,7 +105,11 @@ if (process.env.NODE_ENV !== ENV.TEST) {
   // ("0 3 * * *"); // Every day at 3 am
   // ("*/1 * * * *"); // Every 1 min
   // ("*/30 * * * * *"); // Every 30 sec
-  cron.schedule("0 3 * * *", () => {
-    
+
+  // const timing = "0 3 * * *"
+  const timing = "*/5 * * * *"; // TODO TESTING
+
+  cron.schedule(timing, () => {
+    handleDailyProcessing();
   });
 }

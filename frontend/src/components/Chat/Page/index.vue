@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ROUTE } from "~/static/routes";
 import { type IFormattedMessage } from "@common/schemas/chat/message";
+import debounce from "lodash.debounce";
+import { cn } from "~/lib/utils";
 
 // --------------------------
 // SETUP
@@ -100,6 +102,18 @@ const scrollToLastMessage = () => {
   }
   focusInput();
 };
+const debouncedScrollToLastMessage = debounce(scrollToLastMessage, 50);
+
+watch(
+  messages,
+  () => {
+    scrollToLastMessage();
+  },
+  {
+    immediate: true,
+    deep: true,
+  }
+);
 
 // --------------------------
 // ON MOUNTED
@@ -113,12 +127,14 @@ onMounted(async () => {
   }
 
   messagesContainerRef.value?.addEventListener("DOMNodeInserted", () => {
-    scrollToLastMessage();
+    // scrollToLastMessage();
+    debouncedScrollToLastMessage();
   });
 
   const { data } = await getChat({ chatId: props.chatId });
 
   if (data) {
+    console.log('❗ currentChat -->', data);
     currentChat.value = data;
     await handleGetHistory();
   } else {
@@ -157,12 +173,17 @@ onMounted(async () => {
     <UiCard
       class="shadow-lg py-4 px-8 w-full max-w-[800px] rounded-full flex items-center gap-4 sticky bottom-12"
     >
-      <UiTextarea
-        class="w-full py-0 font-normal border-none shadow-none focus-visible:ring-0 text-lg resize-none max-h-[80px]"
+      <textarea
+        v-model="currentPrompt"
+        :class="
+          cn(
+            'flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
+            'w-full py-0 font-normal border-none shadow-none focus-visible:ring-0 text-lg resize-none max-h-[80px]'
+          )
+        "
         :rows="nRows"
         :tabindex="0"
-        v-model="currentPrompt"
-        :disabled="disabledChat"
+        :disabled="!!disabledChat"
         @keydown.enter.exact.prevent="handleSendMessage"
         ref="inputRef"
       />

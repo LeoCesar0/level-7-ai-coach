@@ -20,9 +20,12 @@ export const processChatsAssessment = async () => {
   const t1 = new Date();
 
   const chats = await ChatModel.find({
-    closed: true,
-    $or: createNullishFilter("assessed"),
+    // closed: true,
+    // $or: createNullishFilter("assessed"),
+    assessed: { $in: [null, undefined, false] },
+    $or: [{ closed: true }, { updatedAt: { $lte: subHours(new Date(), 12) } }],
   });
+
   let completedAssessment = 0;
   for (const chat of chats) {
     try {
@@ -54,7 +57,7 @@ export const processChatsAssessment = async () => {
   }
   const t2 = new Date();
   console.log(
-    `Chats Assessment: completed ${completedAssessment} of ${
+    `📊 Chats Assessment: completed ${completedAssessment} of ${
       chats.length
     } chats assessment. Took ${
       (t2.getTime() - t1.getTime()) / 1000

@@ -29,7 +29,7 @@ export const processUserAnalytics = async () => {
     const collection = getCollection({ name: COLLECTION.USER_ANALYTICS });
 
     await collection.insertOne(entry);
-    console.log("📊 Processed user analytics - count");
+    console.log("📊 Processed user analytics - count", totalUsers);
   } catch (err) {
     console.log("❗ Error processing user count analytics -->", err);
   }

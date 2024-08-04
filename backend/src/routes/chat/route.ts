@@ -350,18 +350,20 @@ export const chatRouter = new Hono()
 
       await memoryVectorStore.addDocuments(documents);
 
+      await ChatModel.updateOne(
+        {
+          _id: chatId,
+        },
+        {
+          updatedAt: new Date(), // Important to update after each message was sent
+          // --------------------------
+          // CLOSE CHAT
+          // --------------------------
+          ...(isEnding ? { closed: true } : {}),
+        }
+      );
+
       if (isEnding) {
-        // --------------------------
-        // CLOSE CHAT
-        // --------------------------
-        await ChatModel.updateOne(
-          {
-            _id: chatId,
-          },
-          {
-            closed: true,
-          }
-        );
         // handleDBSession(async (session) => {
         //   await ChatModel.updateOne(
         //     {

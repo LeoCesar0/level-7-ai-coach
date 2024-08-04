@@ -25,6 +25,8 @@ export const nuxtApiFetcher = async <T>({
   const baseUrl = runtime.public.apiBase;
   const { toast } = useToast();
 
+  console.log("------------- 🟢 START SESSION NuxtApiFetcher -------------");
+
   loadingRefs.forEach((loadingRef) => {
     loadingRef.value = true;
   });
@@ -50,9 +52,9 @@ export const nuxtApiFetcher = async <T>({
     url = url.replace("localhost", "backend");
   }
   console.log("fetcher fullUrl -->", fullUrl);
-  console.log("❗ method -->", method);
-  console.log("❗ !!token -->", !!token);
-  console.log("❗ body -->", body);
+  console.log("method -->", method);
+  console.log("!!token -->", !!token);
+  console.log("body -->", body);
 
   const handleError = async (err: AppResponseError) => {
     if (onError) {
@@ -100,7 +102,9 @@ export const nuxtApiFetcher = async <T>({
     });
   });
 
-  console.log("❗ nuxtApiFetcher res -->", res);
+  console.log("nuxtApiFetcher res -->", res);
+
+  console.log("------------- 🔴 END NuxtApiFetcher -------------");
 
   // --------------------------
   // HANDLE SUCCESS

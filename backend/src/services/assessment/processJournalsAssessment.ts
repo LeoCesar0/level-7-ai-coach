@@ -70,16 +70,17 @@ export const processJournalsAssessment = async () => {
         );
 
         console.log(
-          `📊 Created ${createdAssessments.length} entries to a journal`
+          `Created ${createdAssessments.length} entries to a journal`
         );
       });
+      completedAssessment += 1;
     } catch (err) {
       console.log("❌ Error processing journal entry -->", err);
     }
   }
   const t2 = new Date();
   console.log(
-    `Journals Assessment: completed ${completedAssessment} of ${
+    `📊 Journals Assessment: completed ${completedAssessment} of ${
       journals.length
     } journals assessment. Took ${
       (t2.getTime() - t1.getTime()) / 1000
