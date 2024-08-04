@@ -24,6 +24,8 @@ export const processJournalsAssessment = async () => {
       $lt: subHours(now, 3), // JOURNAL SHOULD BE CREATED AT LEAST 3 HOURS AGO
     },
   });
+  let completedAssessment = 0;
+  const t1 = new Date();
 
   for (const journal of journals) {
     // --------------------------
@@ -75,4 +77,12 @@ export const processJournalsAssessment = async () => {
       console.log("❌ Error processing journal entry -->", err);
     }
   }
+  const t2 = new Date();
+  console.log(
+    `Journals Assessment: completed ${completedAssessment} of ${
+      journals.length
+    } journals assessment. Took ${
+      (t2.getTime() - t1.getTime()) / 1000
+    }s. At ${t1.toLocaleString()}`
+  );
 };

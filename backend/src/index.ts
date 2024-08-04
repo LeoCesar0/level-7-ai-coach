@@ -17,6 +17,7 @@ import { processJournalsAssessment } from "./services/assessment/processJournals
 import { cors } from "hono/cors";
 import testRoute from "./routes/test/route";
 import { handleSetupIndexes } from "./handlers/dbIndexes/handleSetupIndexes";
+import { processChatsAssessment } from "./services/assessment/processChatsAssessment";
 
 dotenv.config({ path: "../.env" });
 
@@ -100,13 +101,10 @@ export default honoApp;
 // --------------------------
 
 if (process.env.NODE_ENV !== ENV.TEST) {
-  ("0 3 * * *"); // Every day at 3 am
-  ("*/1 * * * *"); // Every 1 min
-  ("*/30 * * * * *"); // Every 30 sec
+  // ("0 3 * * *"); // Every day at 3 am
+  // ("*/1 * * * *"); // Every 1 min
+  // ("*/30 * * * * *"); // Every 30 sec
   cron.schedule("0 3 * * *", () => {
-    console.log("Running a task every minute");
-    processJournalsAssessment();
-
-    processUserAnalytics();
+    
   });
 }

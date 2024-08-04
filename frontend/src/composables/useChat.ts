@@ -57,7 +57,7 @@ export const useChat = () => {
       body: body,
       loadingRefs: [aiTyping],
     });
-
+    
     console.log("❗ sendChatMessage response -->", response);
     return response;
   };
