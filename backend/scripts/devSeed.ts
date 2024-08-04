@@ -334,7 +334,8 @@ const run = async () => {
       teamId: teamLiquidFire._id.toString(),
       teamName: "fire",
     });
-    promises.push(promise);
+    // promises.push(promise);
+    await promise;
   }
   for (let i = 0; i < 12; i++) {
     // team liquid fier and similar names
@@ -345,7 +346,8 @@ const run = async () => {
       teamName: "fire",
       userName: "Johnny Doe " + i,
     });
-    promises.push(promise);
+    // promises.push(promise);
+    await promise;
   }
   for (let i = 0; i < 10; i++) {
     const promise = createRandomUser({
@@ -354,7 +356,8 @@ const run = async () => {
       teamId: teamBoltz._id.toString(),
       teamName: "boltz",
     });
-    promises.push(promise);
+    // promises.push(promise);
+    await promise;
   }
 
   await Promise.all(promises);

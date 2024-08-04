@@ -1,5 +1,5 @@
 import type { IUserFull } from "@common/schemas/user/user";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, type Unsubscribe } from "firebase/auth";
 import type { ISignIn } from "~/@schemas/auth";
 import { handleUnexpectedError } from "~/handlers/handleUnexpectedError";
 import { makeStoreKey } from "~/helpers/makeStoreKey";
@@ -16,6 +16,7 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
 
   const authStore = useAuthToken();
   const { authToken } = storeToRefs(authStore);
+  const authPromiseResolved = ref(false);
 
   watch(
     currentUser,
@@ -38,6 +39,22 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
     }
   );
 
+  watch(
+    [currentUser, authToken],
+    async ([user, authToken]) => {
+      if (user && !authToken) {
+        console.log(
+          "------------- 🟢 START SESSION REMOVE CURRENT USER -------------"
+        );
+        currentUser.value = null;
+      }
+    },
+    {
+      deep: true,
+      immediate: true,
+    }
+  );
+
   // const isServerSide = getIsServerSide();
   const isServerSide = typeof window === "undefined";
 
@@ -47,6 +64,11 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
       await firebaseAuth.signOut();
       authToken.value = "";
       currentUser.value = null;
+      authPromiseResolved.value = false;
+      console.log(
+        "❗ authPromiseResolved SET TO FALSE -->",
+        authPromiseResolved
+      );
     } catch (error) {}
     await navigateTo(ROUTE["sign-in"].href);
     loading.value = false;
@@ -81,23 +103,10 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
     }
 
     if (!response.data) {
-      console.error("❗ auth error -->", response.error);
-      // toast.error("You need to sign in again");
+      console.error("❌ auth error -->", response.error);
       currentUser.value = null;
     }
   };
-
-  if (!isServerSide) {
-    firebaseAuth.onIdTokenChanged(async (user) => {
-      if (user) {
-        const token = await user.getIdToken();
-        authToken.value = token;
-      } else {
-        authToken.value = "";
-        currentUser.value = null;
-      }
-    });
-  }
 
   const login = async (values: ISignIn) => {
     const { email, password } = values;
@@ -122,6 +131,65 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
     logout({ expired: true });
   };
 
+  // --------------------------
+  // FIREBASE AUTH OBSERVER
+  // --------------------------
+
+  // if (!isServerSide) {
+  //   firebaseAuth.onIdTokenChanged(async (user) => {
+  //     console.log("❗❗❗ Here onIdTokenChanged 1");
+  //     if (user) {
+  //       const token = await user.getIdToken();
+  //       authToken.value = token;
+  //     } else {
+  //       authToken.value = "";
+  //       currentUser.value = null;
+  //     }
+  //   });
+  // }
+
+  let resolveFirstStateChange = ref<(value: any) => void>();
+  const firebaseTokenPromise = ref(
+    new Promise<any>((resolve) => {
+      resolveFirstStateChange.value = resolve;
+    })
+  );
+  let unsubscribe = ref<Unsubscribe | undefined>(undefined);
+  unsubscribe.value = firebaseAuth.onIdTokenChanged(async (user) => {
+    if (user) {
+      const token = await user.getIdToken();
+      authToken.value = token;
+      await handleFetchCurrentUser();
+    } else {
+      authToken.value = "";
+      currentUser.value = null;
+    }
+    if (!authPromiseResolved.value && resolveFirstStateChange.value) {
+      resolveFirstStateChange.value(user);
+      authPromiseResolved.value = true;
+    }
+  });
+  // const firebaseTokenPromise = ref<Promise<any>>(
+  //   new Promise((resolve, reject) => {
+  //     unsubscribe = firebaseAuth.onIdTokenChanged(async (user) => {
+  //       if (user) {
+  //         const token = await user.getIdToken();
+  //         authToken.value = token;
+  //       } else {
+  //         authToken.value = "";
+  //         currentUser.value = null;
+  //       }
+  //       resolve(user);
+  //     });
+  //   })
+  // );
+
+  onUnmounted(() => {
+    if (unsubscribe.value) {
+      unsubscribe.value();
+    }
+  });
+
   return {
     currentUser,
     loading,
@@ -131,5 +199,7 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
     refreshCurrentUser,
     handleFetchCurrentUser,
     handleSessionExpired,
+    firebaseTokenPromise,
+    authPromiseResolved,
   };
 });

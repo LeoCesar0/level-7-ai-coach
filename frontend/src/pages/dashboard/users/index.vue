@@ -108,7 +108,7 @@ const columns: ColumnDef<TUser>[] = [
       h(
         FancyLink,
         {
-          to: ROUTE.viewOrganization.href + `/${row.original._id}`,
+          to: ROUTE.viewOrganization.href + `/${row.original.organization._id}`,
         },
         row.original.organization.name
       ),

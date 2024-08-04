@@ -1,3 +1,4 @@
+import type { Unsubscribe } from "firebase/auth";
 import { compareRoute } from "~/helpers/compareRoute";
 import { getCurrentRoute } from "~/helpers/routing/getCurrentRoute";
 import { getCurrentRouteFromPath } from "~/helpers/routing/getCurrentRouteFromPath";
@@ -8,21 +9,52 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const fromPath: string = from.path;
 
   const userStore = useUserStore();
-  const { currentUser } = storeToRefs(userStore);
+  const { currentUser, firebaseTokenPromise, authPromiseResolved } =
+    storeToRefs(userStore);
   const { handleFetchCurrentUser } = userStore;
+
+  console.log("❗ authPromiseResolved -->", authPromiseResolved.value);
+  console.log("❗ firebaseTokenPromise -->", firebaseTokenPromise.value);
 
   const authStore = useAuthToken();
   const { authToken } = storeToRefs(authStore);
 
+  await firebaseTokenPromise.value; // AWAIT FIREBASE AUTH RESOLVE
+
+  console.log("❗ authPromiseResolved 2 -->", authPromiseResolved.value);
+  console.log("❗ firebaseTokenPromise 2 -->", firebaseTokenPromise.value);
+
+  // let unsubscribe: Unsubscribe | undefined = undefined;
+
+  // const firebaseTokenPromise = new Promise((resolve, reject) => {
+  //   unsubscribe = firebaseAuth.onIdTokenChanged(async (user) => {
+  //     if (user) {
+  //       const token = await user.getIdToken();
+  //       authToken.value = token;
+  //     } else {
+  //       authToken.value = "";
+  //       currentUser.value = null;
+  //     }
+  //     resolve(user);
+  //   });
+  // });
+  // await firebaseTokenPromise;
+
+  // if (unsubscribe) {
+  //   // @ts-ignore
+  //   unsubscribe();
+  // }
+
   // --------------------------
   // HANDLE CURRENT USER
   // --------------------------
-  if (!currentUser.value && authToken.value) {
-    await handleFetchCurrentUser();
-  }
-  if (currentUser.value && !authToken.value) {
-    currentUser.value = null;
-  }
+
+  // if (!currentUser.value && authToken.value) {
+  //   await handleFetchCurrentUser();
+  // }
+  // if (currentUser.value && !authToken.value) {
+  //   currentUser.value = null;
+  // }
   // --------------------------
 
   // --------------------------

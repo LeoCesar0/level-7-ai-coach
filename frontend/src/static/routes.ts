@@ -191,7 +191,7 @@ export const ROUTE: Record<Route, IRoute> = {
     href: "/dashboard/journals",
     label: "Journals",
     permissions: PERMISSION.journals.paginate,
-    inMenuFor: ["user", "admin", "coach"],
+    inMenuFor: ["user"],
     icon: IconJournal,
     name: "journals",
   },
