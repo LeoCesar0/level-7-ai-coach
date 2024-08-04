@@ -66,7 +66,9 @@ const handleGetHistory = async () => {
 };
 
 const focusInput = () => {
-  inputRef.value?.focus();
+  if (inputRef.value?.focus) {
+    inputRef.value?.focus();
+  }
 };
 
 const handleSendMessage = async () => {
