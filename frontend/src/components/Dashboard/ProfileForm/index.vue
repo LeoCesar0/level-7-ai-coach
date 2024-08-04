@@ -96,6 +96,30 @@ const handleSubmit = form.handleSubmit(async (values) => {
 
 <template>
   <Form @submit="handleSubmit">
+    <div class="my-12">
+      <div class="flex flex-col gap-8">
+        <div
+          class="mx-auto bg-muted text-muted-foreground size-40 rounded-full flex items-center justify-center text-4xl"
+        >
+          {{ currentUser?.name ? currentUser.name.slice(0, 1) : "" }}
+        </div>
+        <div class="">
+          <p class="font-medium">{{ currentUser?.name }}</p>
+          <div class="flex items-center gap-4 justify-between">
+            <p class="text-sm text-muted-foreground">
+              {{ currentUser?.email }}
+            </p>
+            <div class="flex items-center gap-2">
+              <a href="#"><p class="text-primary text-sm">change email</p></a>
+              <span class="text-muted-foreground">|</span>
+              <a href="#"
+                ><p class="text-primary text-sm">change password</p></a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <FormField :name="`name`" label="Name" :required="true" />
     <div class="flex items-center gap-4">
       <FormField :name="`phoneCode`" label="Phone Code" class="max-w-[200px]" />
@@ -124,6 +148,8 @@ const handleSubmit = form.handleSubmit(async (values) => {
       />
     </div>
     <FormField :name="`birthDate`" label="Birth Date" inputVariant="date" />
-    <UiButton type="submit" :disabled="!formIsValid"> Save </UiButton>
+    <FormActions>
+      <UiButton type="submit" :disabled="!formIsValid"> Save </UiButton>
+    </FormActions>
   </Form>
 </template>
