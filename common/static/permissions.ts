@@ -14,8 +14,8 @@ export const PERMISSION = {
     create: ["admin", "coach"],
     update: ["admin", "coach"],
     delete: ["admin", "coach"],
-    list: ["admin", "coach"],
-    paginate: ["admin", "coach"],
+    list: ["admin", "user", "coach"],
+    paginate: ["admin", "user", "coach"],
   },
   users: {
     get: ["admin", "coach"],

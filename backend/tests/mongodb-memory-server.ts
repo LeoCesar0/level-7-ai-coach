@@ -8,6 +8,7 @@ import { ENV } from "@common/static/envs";
 import { IOrganization } from "@common/schemas/organization/organization";
 import { parseUserDoc } from "@/helpers/parseUserDoc";
 import { IUser } from "@common/schemas/user/user";
+import { ChatCard } from "../../frontend/.nuxt/components";
 
 type IConnectTestServer = {
   CONNECT_REAL_SERVER?: boolean;
@@ -16,9 +17,12 @@ type IConnectTestServer = {
 export type ISeedResult = {
   organizationMaster: IOrganization;
   organization1: IOrganization;
+  organization2: IOrganization;
   admin: IUser;
   normalUser: IUser;
+  normalUser2: IUser;
   coachUser: IUser;
+  coachUser2: IUser;
   adminTestToken: string;
   normalUserTestToken: string;
   coachUserTestToken: string;
@@ -89,7 +93,6 @@ export class TestServer {
       inputs: {
         password: "whatever",
         user: {
-          active: true,
           name: "Admin Test",
           role: "admin",
           email: "test_admin_lvl7@level7.com",
@@ -112,7 +115,6 @@ export class TestServer {
       inputs: {
         password: "whatever",
         user: {
-          active: true,
           name: "user_test " + now,
           role: "user",
           email: now + "test_user@level7.com",
@@ -124,11 +126,41 @@ export class TestServer {
       inputs: {
         password: "whatever",
         user: {
-          active: true,
           name: "coach_test " + now,
           role: "coach",
           email: now + "test_coach@level7.com",
           organization: organization1._id.toString(),
+        },
+      },
+    });
+
+    // --------------------------
+    // TEAM 2
+    // --------------------------
+    const organization2 = await OrganizationModel.create({
+      name: "Team 2 Water Test",
+      active: true,
+      slug: slugify("Team 2 Water Test"),
+    });
+    const normalUser2 = await createAppUser({
+      inputs: {
+        password: "whatever",
+        user: {
+          name: "user_test " + now,
+          role: "user",
+          email: now + "test_user2@level7.com",
+          organization: organization2._id.toString(),
+        },
+      },
+    });
+    const coachUser2 = await createAppUser({
+      inputs: {
+        password: "whatever",
+        user: {
+          name: "coach_test " + now,
+          role: "coach",
+          email: now + "test_coach2@level7.com",
+          organization: organization2._id.toString(),
         },
       },
     });
@@ -142,6 +174,9 @@ export class TestServer {
       adminTestToken: this.adminTestToken,
       normalUserTestToken: this.normalUserTestToken,
       coachUserTestToken: this.normalUserTestToken,
+      coachUser2: parseUserDoc(coachUser2),
+      normalUser2: parseUserDoc(normalUser2),
+      organization2: organization2.toObject(),
     };
 
     Object.entries(result).forEach(([key, value]) => {

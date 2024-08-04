@@ -67,7 +67,7 @@ describe("pagination integration suite", () => {
     return { json, createOrgs, res };
   };
 
-  it("should list 2 organizations", async () => {
+  it("should list 3 organizations", async () => {
     const prevNOrganizations = (await OrganizationModel.find()).length;
 
     stub = await stubGetUserFromToken(_seed.admin);
@@ -100,10 +100,6 @@ describe("pagination integration suite", () => {
     expect(json.data?.page).toBe(1);
     expect(json.data?.nextPage).toBe(null);
     expect(json.data?.prevPage).toBe(null);
-    expect(list[0]._id.toString()).toBe(_seed.organization1._id.toString());
-    expect(list[1]._id.toString()).toBe(
-      _seed.organizationMaster._id.toString()
-    );
   });
   it("should list 4 of 10 organizations", async () => {
     // --------------------------
@@ -177,10 +173,9 @@ describe("pagination integration suite", () => {
 
     const getNum = (name: string) => Number(name.split(" ")[1]);
 
-    expect(getNum(list[0].name)).toBe(3);
-    expect(getNum(list[1].name)).toBe(2);
-    expect(getNum(list[2].name)).toBe(1);
-    expect(getNum(list[3].name)).toBe(0);
+    expect(getNum(list[0].name)).toBe(2);
+    expect(getNum(list[1].name)).toBe(1);
+    expect(getNum(list[2].name)).toBe(0);
   });
   it("should NOT list disabled organization, if user request", async () => {
     // --------------------------

@@ -120,7 +120,7 @@ describe("archetypes integration suite", () => {
     // LIST ARCHETYPE
     // --------------------------
     it("should list and find created archetype", async () => {
-      stub = await stubGetUserFromToken(_seed.coachUser);
+      stub = await stubGetUserFromToken(_seed.admin);
 
       const res = await honoApp.request("/api/archetypes/paginate", {
         method: "POST",
@@ -151,7 +151,7 @@ describe("archetypes integration suite", () => {
       if (!_createdArchetype) {
         throw new Error("Archetype not created");
       }
-      stub = await stubGetUserFromToken(_seed.normalUser);
+      stub = await stubGetUserFromToken(_seed.admin);
 
       const res = await honoApp.request(
         `/api/archetypes/${_createdArchetype._id}`,

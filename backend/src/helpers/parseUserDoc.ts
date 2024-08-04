@@ -9,6 +9,6 @@ export const parseUserDoc = (user: IUserDoc): IUser => {
     updatedAt: user.updatedAt.toISOString(),
     organization: user.organization.toString(),
     archetype: user.archetype?.toString() ?? undefined,
-    birthDate: user.birthDate?.toString() ?? undefined,
+    birthDate: user.birthDate,
   };
 };

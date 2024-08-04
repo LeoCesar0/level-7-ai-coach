@@ -39,7 +39,8 @@ describe("journal integration suite", () => {
       stub = await stubGetUserFromToken(parseUserToUserDoc(_seed.normalUser));
       const date = new Date();
       const body: ICreateJournal = {
-        date: date.toISOString(),
+        date: date,
+        title: "My journal title",
         text: _journalText,
         draft: false,
         images: [],

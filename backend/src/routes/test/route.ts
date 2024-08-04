@@ -30,17 +30,19 @@ const testRoute = new Hono()
 
       const search = "john";
 
-      const result = await handlePaginatedSearch<IUserDoc>({
-        collectionName: COLLECTION.USERS,
-        fields: ["name"],
-        searchIndexName: SEARCH_INDEXES.USERS,
-        searchQuery: search,
-        body,
-        populates: {
-          key: "organization",
-          collectionName: COLLECTION.ORGANIZATIONS,
-        },
-      });
+      const result = {};
+
+      // const result = await handlePaginatedSearch<IUserDoc>({
+      //   collectionName: COLLECTION.USERS,
+      //   fields: ["name"],
+      //   searchIndexName: SEARCH_INDEXES.USERS,
+      //   searchQuery: search,
+      //   body,
+      //   populates: {
+      //     key: "organization",
+      //     collectionName: COLLECTION.ORGANIZATIONS,
+      //   },
+      // });
 
       return ctx.json({ result }, 200);
     }

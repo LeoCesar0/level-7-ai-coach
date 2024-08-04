@@ -41,7 +41,7 @@ honoApp.use(
 );
 
 honoApp.use("*", async (ctx, next) => {
-  if (process.env.NODE_ENV === ENV.PRODUCTION) {
+  if (process.env.NODE_ENV !== ENV.DEVELOPMENT) {
     return await next();
   }
 
@@ -57,10 +57,10 @@ honoApp.use("*", async (ctx, next) => {
 
   await next();
 
-  try {
-    const response = await ctx.res.json();
-    // console.log("Response: ", response);
-  } catch (err) {}
+  // try {
+  //   const response = await ctx.res.json();
+  //   console.log("Response: ", response);
+  // } catch (err) {}
 });
 
 const routes = honoApp

@@ -196,7 +196,7 @@ const config: JestConfigWithTsJest = {
   preset: "ts-jest",
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
     useESM: true,
-    prefix: '<rootDir>/'
+    prefix: "<rootDir>/",
   }),
   transform: {
     // '^.+\\.[tj]sx?$' to process ts,js,tsx,jsx with `ts-jest`

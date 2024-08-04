@@ -22,7 +22,6 @@ const exec = async ({
     if (!user) return null;
     return user.toObject();
   } catch (err) {
-    console.log("❗ HERE! err -->", err);
     if (err instanceof FirebaseAuthError) {
       console.log("❗ err.code -->", err.code);
       if (err.code === EXCEPTION_CODE.EXPIRED_TOKEN) {

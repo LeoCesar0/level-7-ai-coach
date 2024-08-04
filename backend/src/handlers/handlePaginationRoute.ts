@@ -33,7 +33,6 @@ export const handlePaginationRoute = async <T>({
       ...(body.filters || {}),
       ...obligatoryFilters,
     };
-    console.log("❗ filters -->", filters);
     let res = model.find({ ...filters });
 
     // if (reqUser.role === "user" && modelHasActive) {
