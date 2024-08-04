@@ -299,7 +299,11 @@ export const chatRouter = new Hono()
         }
       );
 
+      console.log("❗ chain response -->", response);
+
       const aiAnswer = response.toDict().data.content;
+
+      console.log("❗ aiAnswer -->", aiAnswer);
 
       // --------------------------
       // V2

@@ -84,17 +84,26 @@ export const getChatChain = async ({
       (acc, entry) => {
         if (!entry) return acc;
         const [key, value] = entry;
-        if (value) {
-          acc.push(`{Q: ${value.question}, A: ${value.answer}}`);
+        if (value && value.question && value.answer) {
+          acc.push(`[Q: ${value.question}, A: ${value.answer}]`);
         }
         return acc;
       },
       []
     );
-    templateInput.push([
-      "system",
-      `Here is a questionnaire the athlete answered: [${infos.join(",")}]`,
-    ]);
+    console.log("❗ infos -->", infos);
+    // templateInput.push([
+    //   "system",
+    //   `Here is a questionnaire the athlete answered: [${infos.join(",")}]`,
+    // ]);
+    if (infos.length > 0) {
+      templateInput.push([
+        "system",
+        `Here is a questionnaire the athlete answered: '''${infos.join(
+          ","
+        )}'''`,
+      ]);
+    }
   }
 
   if (relevantContextString) {
@@ -132,6 +141,7 @@ export const getChatChain = async ({
       apiKey: process.env.OPENAI_API_KEY,
     })
   );
+
   // --------------------------
   // TEST
   // --------------------------
@@ -164,6 +174,8 @@ export const getChatChain = async ({
     inputMessagesKey: inputKey,
     historyMessagesKey: currentHistoryKey,
   });
+
+  console.log("❗❗❗ Here end get chain");
 
   return {
     chain: chainWithHistory,
