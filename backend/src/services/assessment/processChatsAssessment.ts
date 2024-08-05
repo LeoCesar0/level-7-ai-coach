@@ -14,17 +14,21 @@ import { processChatAssessment } from "./processChatAssessment";
 // Process all chats that should be assessed. To be used globally and scheduled.
 // --------------------------
 
+export const getChatsToAssess = async () => {
+  const now = new Date();
+  const chats = await ChatModel.find({
+    assessed: { $in: [null, undefined, false] },
+    $or: [{ closed: true }, { updatedAt: { $lte: subHours(now, 12) } }], // chats that are open for more than 12h will be processed and closed
+  });
+  return chats;
+};
+
 export const processChatsAssessment = async () => {
   const usersMap = new Map<string, IUserFullDoc>();
 
   const t1 = new Date();
 
-  const chats = await ChatModel.find({
-    // closed: true,
-    // $or: createNullishFilter("assessed"),
-    assessed: { $in: [null, undefined, false] },
-    $or: [{ closed: true }, { updatedAt: { $lte: subHours(new Date(), 12) } }],
-  });
+  const chats = await getChatsToAssess();
 
   let completedAssessment = 0;
   for (const chat of chats) {

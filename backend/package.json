@@ -23,6 +23,7 @@
     "start": "NODE_ENV=production node dist/index.js",
     "build": "NODE_ENV=production pkgroll",
     "test": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules npx jest tests/ --runInBand",
+    "test:current": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules npx jest tests/ --runInBand --testNamePattern=#current",
     "test:dev": "NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules npx jest --watchAll tests/",
     "test:debug": "NODE_ENV=test node --experimental-vm-modules --inspect-brk ./node_modules/jest/bin/jest.js --watchAll ./tests/",
     "ipconfig": "node scripts/ipconfig.js"

@@ -155,7 +155,6 @@ const userRoute = new Hono()
       const inputs = ctx.req.valid("json");
       let resData: AppResponse<IUserDoc>;
 
-      console.log("❗ inputs -->", inputs);
 
       const reqUser = getReqUser(ctx);
 

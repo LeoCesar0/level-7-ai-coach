@@ -12,18 +12,24 @@ import { parseToDate } from "@common/helpers/parseToDate";
 // Process all journals that should be assessed. To be used globally and scheduled.
 // --------------------------
 
-export const processJournalsAssessment = async () => {
-  const usersMap = new Map<string, IUserFullDoc>();
-
+export const getJournalsToAssess = async () => {
   const now = new Date();
 
   const journals = await JournalModel.find({
     shouldAssess: true,
-    $or: createNullishFilter("draft"),
+    draft:{ $in: [null, undefined, false] },
     createdAt: {
-      $lt: subHours(now, 3), // JOURNAL SHOULD BE CREATED AT LEAST 3 HOURS AGO
+      $lt: subHours(now, 6), // JOURNAL SHOULD BE CREATED AT LEAST 6 HOURS AGO
     },
   });
+  return journals;
+};
+
+export const processJournalsAssessment = async () => {
+  const usersMap = new Map<string, IUserFullDoc>();
+
+  const journals = await getJournalsToAssess();
+
   let completedAssessment = 0;
   const t1 = new Date();
 
