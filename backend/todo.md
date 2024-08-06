@@ -34,6 +34,9 @@
 - [] - Add meeting/schedule feature, where the coach can assign days they are open
 - [] - Change email
 - [] - Change password
+- [] - Make sure disabled users and disabled teams can't access the app
+- [] - Format and prettify AI answers
+- [] - Make sure athlete can't access organizations and coach can't access other teams
 
 **TEST**
 
