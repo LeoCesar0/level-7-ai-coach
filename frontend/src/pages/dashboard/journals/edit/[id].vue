@@ -57,14 +57,12 @@ const onSubmit = async (values: IUpdateJournal) => {
 
 <template>
   <NuxtLayout name="dashboard-layout">
-    <DashboardSection :title="`Editing: ${item?.title ?? ''}`">
-      <DashboardJournalForm
-        v-if="initialValues"
-        :initialValues="initialValues"
-        :edit="true"
-        :onSubmit="onSubmit"
-        :isLoading="isLoading"
-      />
-    </DashboardSection>
+    <DashboardJournalForm
+      v-if="initialValues"
+      :initialValues="initialValues"
+      :edit="true"
+      :onSubmit="onSubmit"
+      :isLoading="isLoading"
+    />
   </NuxtLayout>
 </template>

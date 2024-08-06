@@ -134,7 +134,7 @@ export const ROUTE: Record<Route, IRoute> = {
     href: "/dashboard/organizations",
     label: "Teams",
     permissions: PERMISSION.organizations.paginate,
-    inMenuFor: PERMISSION.organizations.paginate,
+    inMenuFor: ['admin'],
     icon: MedalIcon,
     name: "organizations",
   },

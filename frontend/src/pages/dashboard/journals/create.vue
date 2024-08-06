@@ -11,7 +11,8 @@ const formattedNow = format(now, "MM/dd/yyyy");
 const initialValues: ICreateJournal = {
   date: now,
   text: "",
-  title: "My Daily Journal - " + formattedNow,
+  // title: "My Daily Journal - " + formattedNow,
+  title: "",
   draft: true,
 };
 

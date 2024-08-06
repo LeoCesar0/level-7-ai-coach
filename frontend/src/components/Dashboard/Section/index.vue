@@ -19,7 +19,7 @@ const goBackLink = computed(() => {
 
 <template>
   <div class="container">
-    <header class="border-border border-b pb-4 mb-4">
+    <header class="border-border border-b pb-4 mb-12">
       <div v-if="goBackLink" class="flex items-center mb-2">
         <NuxtLink :to="goBackLink" class="flex items-end gap-2 py-2">
           <IconsGoBack />

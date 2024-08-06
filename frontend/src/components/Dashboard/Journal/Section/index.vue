@@ -6,6 +6,7 @@ const router = useRouter();
 
 type Props = {
   title: string;
+  draft?: boolean;
 };
 
 const props = defineProps<Props>();
@@ -29,7 +30,8 @@ const goBackLink = computed(() => {
       <div class="flex justify-between items-center gap-4">
         <div class="flex items-center gap-6">
           <p class="font-medium">
-            <span class="text-muted-foreground">Note /</span> {{ title }}
+            <span class="text-muted-foreground">Note /</span> {{ title
+            }}<span v-if="draft" class="text-yellow-600"> (draft)</span>
           </p>
           <div class="flex items-center gap-4">
             <slot name="actions-left" />

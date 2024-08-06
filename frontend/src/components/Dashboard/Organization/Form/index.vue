@@ -82,8 +82,15 @@ const handleSubmit = form.handleSubmit(async (values) => {
   <!-- <p>initial: {{ initialValues }}</p> -->
   <!-- <p>currentValues: {{ form.values }}</p> -->
   <Form @submit="handleSubmit">
+    <FormField
+      :name="'active'"
+      :input-variant="'switch'"
+      label="Active"
+      v-if="edit"
+    />
     <FormField :name="'name'" label="Name" :required="true" />
-    <FormField :name="'active'" label="Active" v-if="edit" />
-    <UiButton type="submit" :disabled="!formIsValid">Submit</UiButton>
+    <FormActions>
+      <UiButton type="submit" :disabled="!formIsValid">Submit</UiButton>
+    </FormActions>
   </Form>
 </template>

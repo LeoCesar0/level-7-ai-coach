@@ -44,16 +44,23 @@ const canEdit = computed(() => {
           <UiButton>Edit User</UiButton>
         </NuxtLink>
       </template>
-      <UiCard class="max-w-4xl mx-auto p-8 mt-8 card-container" v-if="user">
+      <div class="max-w-4xl mt-8 card-container" v-if="user">
         <div class="flex items-center mb-8">
-          <img
+          <!-- <img
             v-if="user.imageUrl"
             :src="user.imageUrl"
             alt="User Image"
             class="w-24 h-24 rounded-full mr-6"
           />
+          <div
+            v-if="!user.imageUrl"
+            alt="User Image"
+            class="w-24 h-24 rounded-full mr-6 bg-muted flex items-center justify-center text-muted-foreground"
+          >
+            {{ user.name ? user.name.slice(0, 1) : 1 }}
+          </div> -->
           <div>
-            <h1 class="text-2xl font-bold">{{ user.name }}</h1>
+            <h1 class="text-2xl font-bold mb-6">{{ user.name }}</h1>
             <p><strong>Email </strong>{{ user.email }}</p>
             <p><strong>Role </strong>{{ user.role }}</p>
             <p><strong>Active </strong>{{ user.active ? "Yes" : "No" }}</p>
@@ -94,7 +101,7 @@ const canEdit = computed(() => {
             <h2 class="font-semibold text-lg">Athlete Info</h2>
           </div>
         </div>
-      </UiCard>
+      </div>
     </DashboardSection>
   </NuxtLayout>
 </template>

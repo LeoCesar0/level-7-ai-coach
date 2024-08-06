@@ -93,19 +93,23 @@ const handleSubmitDraft = async () => {
   await props.onSubmit(values as unknown as T);
 };
 const handleSubmitFinished = async () => {
+  form.setFieldValue("draft", false);
   const values = form.values;
   await props.onSubmit(values as unknown as T);
 };
 const handleSubmit = form.handleSubmit(async (values) => {
-  await props.onSubmit(values as unknown as T);
+  // await props.onSubmit(values as unknown as T);
 });
 </script>
 
 <template>
   <Form @submit="handleSubmit" :full-width="true">
-    <DashboardJournalSection :title="form.values.title || ''">
+    <DashboardJournalSection
+      :title="form.values.title || ''"
+      :draft="form.values.draft"
+    >
       <template v-slot:actions-right>
-        <FormField :name="'draft'" input-variant="switch" label="Draft" />
+        <!-- <FormField :name="'draft'" input-variant="switch" label="Draft" /> -->
         <FormField
           :name="'date'"
           input-variant="date"
@@ -120,6 +124,7 @@ const handleSubmit = form.handleSubmit(async (values) => {
           :inputProps="{
             class:
               'text-2xl font-semibold bg-transparent border-0 focus:outline-none',
+            placeholder: 'My Daily Journal - ' + formattedNow,
           }"
         />
       </template>
@@ -139,8 +144,11 @@ const handleSubmit = form.handleSubmit(async (values) => {
           variant="outline"
           >Save as draft</UiButton
         >
-        <UiButton @click="handleSubmit" type="submit" :disabled="!formIsValid"
-          >Save</UiButton
+        <UiButton
+          type="button"
+          @click="handleSubmitFinished"
+          :disabled="!formIsValid"
+          >Save as ready</UiButton
         >
       </FormActions>
     </DashboardJournalSection>
