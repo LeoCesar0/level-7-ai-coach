@@ -10,6 +10,7 @@ const {} = useUserStore;
 
 <template>
   <NuxtLayout name="dashboard-layout">
+    <HomeDetails />
     <div class="container flex-1 grid items-center">
       <div class="text-center">
         <span class="flex items-center justify-center gap-4 mb-4">

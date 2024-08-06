@@ -51,13 +51,15 @@ export const ROUTES = [
 
 export type Route = (typeof ROUTES)[number];
 
+export type AppIcon = typeof IconChat | typeof DashboardIcon | typeof UsersIcon;
+
 export type IRoute = {
   name: Route;
   label: string;
   href: string;
   permissions?: IRole[]; // undefined means no permission required, empty list means any authenticated user can access
   inMenuFor?: IRole[];
-  icon?: typeof IconChat | typeof DashboardIcon | typeof UsersIcon;
+  icon?: AppIcon;
   backsTo?: Route;
 };
 
@@ -134,7 +136,7 @@ export const ROUTE: Record<Route, IRoute> = {
     href: "/dashboard/organizations",
     label: "Teams",
     permissions: PERMISSION.organizations.paginate,
-    inMenuFor: ['admin'],
+    inMenuFor: ["admin"],
     icon: MedalIcon,
     name: "organizations",
   },

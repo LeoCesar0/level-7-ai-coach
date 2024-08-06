@@ -10,9 +10,9 @@ const { currentUser } = storeToRefs(userStore);
 <template>
   <div class="flex flex-1 relative pl-[var(--drawer-width)]">
     <DashboardMenu />
-    <div class="flex-1 flex flex-col width-full pb-8">
+    <div class="flex-1 flex flex-col width-full">
       <DashboardHeader />
-      <div class="p-4 flex-1 flex flex-col animate-fade">
+      <div class="p-4 pb-8 pt-10 flex-1 flex flex-col animate-fade relative">
         <slot />
       </div>
       <!-- <DashboardFooter /> -->
