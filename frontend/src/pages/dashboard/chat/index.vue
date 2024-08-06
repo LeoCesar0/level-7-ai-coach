@@ -2,6 +2,20 @@
 import { ROUTE } from "../../../static/routes";
 import { parseToDate } from "@common/helpers/parseToDate";
 import { type IChat } from "@common/schemas/chat/chat";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
 const { createNewChat, getOpenChats, getChats } = useChat();
 
 const openChat = ref<IChat | null>(null);
@@ -88,31 +102,51 @@ const getChatTitle = (chat: IChat) => {
               </svg>
             </template>
           </ChatCard>
-          <ChatCard
-            @click="continueChat"
-            title="History"
-            description="View old conversation histories"
-          >
-            <template v-slot:icon>
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+          <Sheet>
+            <SheetTrigger as-child>
+              <ChatCard
+                title="History"
+                description="View old conversation histories"
               >
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M4.80005 4.80002C4.80005 4.1635 5.05291 3.55306 5.50299 3.10297C5.95308 2.65288 6.56353 2.40002 7.20005 2.40002H12.7032C13.3397 2.40016 13.9501 2.65311 14.4 3.10322L18.4968 7.20002C18.947 7.65001 19.1999 8.26036 19.2 8.89682V19.2C19.2 19.8365 18.9472 20.447 18.4971 20.8971C18.047 21.3472 17.4366 21.6 16.8 21.6H7.20005C6.56353 21.6 5.95308 21.3472 5.50299 20.8971C5.05291 20.447 4.80005 19.8365 4.80005 19.2V4.80002Z"
-                  fill="#FFBB3E"
-                />
-              </svg>
-            </template>
-          </ChatCard>
+                <template v-slot:icon>
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M4.80005 4.80002C4.80005 4.1635 5.05291 3.55306 5.50299 3.10297C5.95308 2.65288 6.56353 2.40002 7.20005 2.40002H12.7032C13.3397 2.40016 13.9501 2.65311 14.4 3.10322L18.4968 7.20002C18.947 7.65001 19.1999 8.26036 19.2 8.89682V19.2C19.2 19.8365 18.9472 20.447 18.4971 20.8971C18.047 21.3472 17.4366 21.6 16.8 21.6H7.20005C6.56353 21.6 5.95308 21.3472 5.50299 20.8971C5.05291 20.447 4.80005 19.8365 4.80005 19.2V4.80002Z"
+                      fill="#FFBB3E"
+                    />
+                  </svg>
+                </template>
+              </ChatCard>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Chats History</SheetTitle>
+              </SheetHeader>
+              <div class="grid gap-4 py-8">
+                <div class="flex items-center gap-4 flex-wrap">
+                  <UiCard
+                    v-for="(chat, index) in closedChats"
+                    @click="navigateTo(ROUTE.chats.href + `/${chat._id}`)"
+                    class="p-4 cursor-pointer hover:bg-accent transition-colors"
+                  >
+                    {{ getChatTitle(chat) }}
+                  </UiCard>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </main>
       </div>
     </section>
+
     <!-- <main class="flex container flex-col flex-1 justify-center gap-6">
       <div class="">
         <ChatCard

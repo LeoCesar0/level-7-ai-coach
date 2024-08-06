@@ -17,7 +17,7 @@ const props = defineProps<Props>();
     <div class="flex items-center justify-center gap-3">
       <slot name="icon" />
       <component :is="icon" v-if="icon" />
-      <h1 class="text-2xl font-medium">{{ title }}</h1>
+      <h1 class="text-xl font-medium">{{ title }}</h1>
     </div>
     <div>
       <p class="text-muted-foreground text-center text-sm">
