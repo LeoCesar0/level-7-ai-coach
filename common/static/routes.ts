@@ -2,17 +2,17 @@ import type { ZodSchema } from "zod";
 import { zCreateOrganization } from "../schemas/organization/createOrganization";
 import { zUpdateOrganization } from "../schemas/organization/updateOrganization";
 import type { IRouteApiAction, IRouteMethod } from "./methods";
-import { zCreateUser } from "../schemas/user/createUser";
 import { zUpdateUser } from "../schemas/user/updateUserRoute";
 import { zCreateArchetype } from "../schemas/archetype/createArchetype";
 import { zUpdateArchetype } from "../schemas/archetype/updateArchetype";
-import { zFilters } from "@common/schemas/pagination";
+import { zFilters } from "../schemas/pagination";
 import z from "zod";
-import { zAthleteInfo } from "@common/schemas/user/athleteInfo";
-import { zCreateJournal } from "@common/schemas/journal/createJournal";
-import { zUpdateJournal } from "@common/schemas/journal/updateJournal";
-import { zCreateChat } from "@common/schemas/chat/create";
-import { zCreateUserRoute } from "@common/schemas/user/createUserRoute";
+import { zCreateJournal } from "../schemas/journal/createJournal";
+import { zUpdateJournal } from "../schemas/journal/updateJournal";
+import { zCreateChat } from "../schemas/chat/create";
+import { zCreateUserRoute } from "../schemas/user/createUserRoute";
+import { type IRole } from "../schemas/roles";
+import { zCreateMessage } from "../schemas/chat/createMessage";
 
 const zPaginateRouteQueryInput = z
   .object({
@@ -35,6 +35,7 @@ export const API_ROUTES = [
   "archetypes",
   "journals",
   "chats",
+  "assessments",
 ] as const;
 
 export type IApiRoute = (typeof API_ROUTES)[number];
@@ -45,11 +46,14 @@ export type IApiRouteActionItem = {
   url: string | ((param: string) => string); // full url
   method: IRouteMethod;
   bodySchema?: ZodSchema;
+  permissions?: IRole[];
 };
 export type IApiRouteActionSchema = {
   [key in IRouteApiAction | string]?: IApiRouteActionItem;
 };
-export type IApiRouteSchema = Record<IApiRoute, IApiRouteActionSchema>;
+export type IApiRouteSchema = {
+  [key in IApiRoute | string]?: IApiRouteActionSchema;
+};
 
 export const API_ROUTE = {
   organizations: {
@@ -59,6 +63,7 @@ export const API_ROUTE = {
       path: "/",
       method: "post",
       bodySchema: zCreateOrganization,
+      permissions: ["admin", "coach"],
     },
     update: {
       baseUrl: "/organizations",
@@ -66,24 +71,28 @@ export const API_ROUTE = {
       path: "/",
       method: "put",
       bodySchema: zUpdateOrganization,
+      permissions: ["admin", "coach"],
     },
     delete: {
       baseUrl: "/organizations",
       url: (id: string) => `/organizations/${id}`,
       path: "/",
       method: "delete",
+      permissions: ["admin", "coach"],
     },
     get: {
       baseUrl: "/organizations",
       url: (id: string) => `/organizations/${id}`,
       path: "/",
       method: "get",
+      permissions: ["user", "admin", "coach"],
     },
     list: {
       baseUrl: "/organizations",
       url: "/organizations/list",
       path: "/list",
       method: "get",
+      permissions: ["user", "admin", "coach"],
     },
     paginate: {
       baseUrl: "/organizations",
@@ -91,6 +100,7 @@ export const API_ROUTE = {
       path: "/paginate",
       method: "get",
       bodySchema: zPaginateRouteQueryInput,
+      permissions: ["user", "admin", "coach"],
     },
   },
   users: {
@@ -100,6 +110,7 @@ export const API_ROUTE = {
       path: "/",
       method: "post",
       bodySchema: zCreateUserRoute,
+      permissions: ["admin", "coach"],
     },
     update: {
       baseUrl: "/users",
@@ -107,6 +118,7 @@ export const API_ROUTE = {
       path: "/",
       method: "put",
       bodySchema: zUpdateUser,
+      permissions: ["admin", "coach"],
     },
     updateMe: {
       baseUrl: "/users",
@@ -114,30 +126,35 @@ export const API_ROUTE = {
       path: "/me",
       method: "put",
       bodySchema: zUpdateUser,
+      permissions: ["user", "admin", "coach"],
     },
     getMe: {
       baseUrl: "/users",
       url: "/users",
       path: "/me",
       method: "get",
+      permissions: ["user", "admin", "coach"],
     },
     get: {
       baseUrl: "/users",
       url: (id: string) => `/users/${id}`,
       path: "/",
       method: "get",
+      permissions: ["admin", "coach"],
     },
     delete: {
       baseUrl: "/users",
       url: (id: string) => `/users/${id}`,
       path: "/",
       method: "delete",
+      permissions: ["admin", "coach"],
     },
     list: {
       baseUrl: "/users",
       url: "/users/list",
       path: "/list",
       method: "get",
+      permissions: ["admin", "coach"],
     },
     paginate: {
       baseUrl: "/users",
@@ -145,6 +162,7 @@ export const API_ROUTE = {
       path: "/paginate",
       method: "get",
       bodySchema: zPaginateRouteQueryInput,
+      permissions: ["admin", "coach"],
     },
   },
   archetypes: {
@@ -154,6 +172,7 @@ export const API_ROUTE = {
       path: "/",
       method: "post",
       bodySchema: zCreateArchetype,
+      permissions: ["admin"],
     },
     update: {
       baseUrl: "/archetypes",
@@ -161,24 +180,28 @@ export const API_ROUTE = {
       path: "/",
       method: "put",
       bodySchema: zUpdateArchetype,
+      permissions: ["admin"],
     },
     delete: {
       baseUrl: "/archetypes",
       url: (id: string) => `/archetypes/${id}`,
       path: "/",
       method: "delete",
+      permissions: ["admin"],
     },
     get: {
       baseUrl: "/archetypes",
       url: (id: string) => `/archetypes/${id}`,
       path: "/",
       method: "get",
+      permissions: ["admin"],
     },
     list: {
       baseUrl: "/archetypes",
       url: "/archetypes/list",
       path: "/list",
       method: "get",
+      permissions: ["admin"],
     },
     paginate: {
       baseUrl: "/archetypes",
@@ -186,6 +209,7 @@ export const API_ROUTE = {
       path: "/paginate",
       method: "get",
       bodySchema: zPaginateRouteQueryInput,
+      permissions: ["admin"],
     },
   },
   journals: {
@@ -195,6 +219,7 @@ export const API_ROUTE = {
       path: "/",
       method: "post",
       bodySchema: zCreateJournal,
+      permissions: ["user"],
     },
     update: {
       baseUrl: "/journals",
@@ -202,18 +227,21 @@ export const API_ROUTE = {
       path: "/",
       method: "put",
       bodySchema: zUpdateJournal,
+      permissions: ["user"],
     },
     delete: {
       baseUrl: "/journals",
       url: (id: string) => `/journals/${id}`,
       path: "/",
       method: "delete",
+      permissions: ["user"],
     },
     get: {
       baseUrl: "/journals",
       url: (id: string) => `/journals/${id}`,
       path: "/",
       method: "get",
+      permissions: ["admin", "coach", "user"],
     },
     paginate: {
       baseUrl: "/journals",
@@ -221,6 +249,7 @@ export const API_ROUTE = {
       path: "/paginate",
       method: "get",
       bodySchema: zPaginateRouteQueryInput,
+      permissions: ["admin", "coach", "user"],
     },
   },
   chats: {
@@ -230,18 +259,21 @@ export const API_ROUTE = {
       path: "/",
       method: "post",
       bodySchema: zCreateChat,
+      permissions: ["admin", "coach", "user"],
     },
     delete: {
       baseUrl: "/chats",
       url: (id: string) => `/chats/${id}`,
       path: "/",
       method: "delete",
+      permissions: ["admin", "coach", "user"],
     },
     get: {
       baseUrl: "/chats",
       url: (id: string) => `/chats/${id}`,
       path: "/",
       method: "get",
+      permissions: ["admin", "coach", "user"],
     },
     paginate: {
       baseUrl: "/chats",
@@ -249,6 +281,45 @@ export const API_ROUTE = {
       path: "/paginate",
       method: "get",
       bodySchema: zPaginateRouteQueryInput,
+      permissions: ["admin", "coach", "user"],
+    },
+    send: {
+      baseUrl: "/chats",
+      url: "/chats/send",
+      path: "/send",
+      method: "post",
+      bodySchema: zCreateMessage,
+      permissions: ["admin", "coach", "user"],
+    },
+    history: {
+      baseUrl: "/chats",
+      url: "/chats/history",
+      path: "/history",
+      method: "get",
+      permissions: ["admin", "coach", "user"],
+    },
+  },
+  assessments: {
+    "process-journals": {
+      baseUrl: "/assessments",
+      url: "/assessments/process-journals",
+      path: "/process-journals",
+      method: "post",
+      permissions: ["admin"],
+    },
+    "process-chats": {
+      baseUrl: "/assessments",
+      url: "/assessments/process-chats",
+      path: "/process-chats",
+      method: "post",
+      permissions: ["admin"],
+    },
+    paginate: {
+      baseUrl: "/assessments",
+      url: "/assessments/paginate",
+      path: "/paginate",
+      method: "post",
+      permissions: ["admin", "coach"],
     },
   },
 } satisfies IApiRouteSchema;

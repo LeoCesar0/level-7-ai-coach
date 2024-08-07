@@ -49,4 +49,7 @@ export const PERMISSION = {
     delete: ["user"],
     paginate: ["admin", "user", "coach"],
   },
+  assessments:{
+    
+  }
 } satisfies IPermissionRecord;

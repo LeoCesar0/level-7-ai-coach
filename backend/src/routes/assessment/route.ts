@@ -17,14 +17,18 @@ import { zPaginateRouteQueryInput } from "@common/schemas/pagination";
 import { FilterQuery } from "mongoose";
 import { EXCEPTIONS } from "@common/static/exceptions";
 import { getReqUser } from "@/helpers/getReqUser";
+import { processChatsAssessment } from "@/services/assessment/processChatsAssessment";
+import { API_ROUTE } from "@common/static/routes";
+
+const ROUTE = API_ROUTE.assessments;
 
 const assessmentRoute = new Hono()
   // --------------------------
   // create
   // --------------------------
   .post(
-    "process-journals",
-    authValidator({ permissionsTo: ["admin"] }),
+    ROUTE["process-journals"].path,
+    authValidator({ permissionsTo: ROUTE["process-journals"].permissions }),
     async (ctx) => {
       const result = await processJournalsAssessment();
 
@@ -37,92 +41,13 @@ const assessmentRoute = new Hono()
     }
   )
   .post(
-    "/chat/:id",
-    authValidator({ permissionsTo: ["user", "coach", "admin"] }),
-    routeValidator({
-      schema: z.object({
-        id: z.string(),
-      }),
-      target: "param",
-    }),
+    ROUTE["process-chats"].path,
+    authValidator({ permissionsTo: ROUTE["process-chats"].permissions }),
     async (ctx) => {
-      const { id: chatId } = ctx.req.valid("param");
-      const reqUser = getReqUser(ctx);
+      const result = await processChatsAssessment();
 
-      if (!reqUser) {
-        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
-      }
-
-      const foundChat = await ChatModel.findById(chatId);
-
-      if (!foundChat) {
-        throw new HTTPException(404, { message: "Chat not found" });
-      }
-
-      if (!foundChat.closed) {
-        throw new HTTPException(404, { message: "Chat is not finished yet" });
-      }
-
-      const userId = foundChat.user.toString();
-
-      const user = await UserModel.findById<IUserFullDoc>(userId).populate(
-        USER_POPULATES
-      );
-
-      if (!user) {
-        throw new HTTPException(404, { message: "User not found" });
-      }
-      const { assessment, chat } = await handleDBSession(async (session) => {
-        const result = await processChatAssessment({
-          chatId,
-          user,
-          session,
-          date: parseToDate(foundChat.createdAt),
-        });
-
-        return result;
-      });
-
-      const resData: AppResponse<{
-        assessment: IAssessmentDoc[];
-        chat: IChatDoc | null;
-      }> = {
-        data: {
-          assessment,
-          chat,
-        },
-        error: null,
-      };
-      return ctx.json(resData, 200);
-    }
-  )
-  .get(
-    "/chat/:id",
-    authValidator({ permissionsTo: ["user", "coach", "admin"] }),
-    routeValidator({
-      schema: z.object({
-        id: z.string(),
-      }),
-      target: "param",
-    }),
-    async (ctx) => {
-      const { id: chatId } = ctx.req.valid("param");
-      const reqUser = getReqUser(ctx);
-
-      if (!reqUser) {
-        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
-      }
-
-      const foundChat = await ChatModel.findById(chatId);
-
-      if (!foundChat) {
-        throw new HTTPException(404, { message: "Chat not found" });
-      }
-
-      const assessment = await AssessmentModel.find({ chat: chatId });
-
-      const resData: AppResponse<IAssessmentDoc[]> = {
-        data: assessment,
+      const resData: AppResponse<boolean> = {
+        data: true,
         error: null,
       };
 
@@ -133,8 +58,8 @@ const assessmentRoute = new Hono()
   // PAGINATE
   // --------------------------
   .post(
-    "/paginate",
-    authValidator({ permissionsTo: ["admin", "user", "coach"] }),
+    ROUTE.paginate.path,
+    authValidator({ permissionsTo: ROUTE.paginate.permissions }),
     routeValidator({
       schema: zPaginateRouteQueryInput,
       target: "json",
@@ -167,5 +92,98 @@ const assessmentRoute = new Hono()
       return ctx.json(resData, 200);
     }
   );
+// .post(
+//   "/chat/:id",
+//   authValidator({ permissionsTo: ["user", "coach", "admin"] }),
+//   routeValidator({
+//     schema: z.object({
+//       id: z.string(),
+//     }),
+//     target: "param",
+//   }),
+//   async (ctx) => {
+//     const { id: chatId } = ctx.req.valid("param");
+//     const reqUser = getReqUser(ctx);
+
+//     if (!reqUser) {
+//       throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+//     }
+
+//     const foundChat = await ChatModel.findById(chatId);
+
+//     if (!foundChat) {
+//       throw new HTTPException(404, { message: "Chat not found" });
+//     }
+
+//     if (!foundChat.closed) {
+//       throw new HTTPException(404, { message: "Chat is not finished yet" });
+//     }
+
+//     const userId = foundChat.user.toString();
+
+//     const user = await UserModel.findById<IUserFullDoc>(userId).populate(
+//       USER_POPULATES
+//     );
+
+//     if (!user) {
+//       throw new HTTPException(404, { message: "User not found" });
+//     }
+//     const { assessment, chat } = await handleDBSession(async (session) => {
+//       const result = await processChatAssessment({
+//         chatId,
+//         user,
+//         session,
+//         date: parseToDate(foundChat.createdAt),
+//       });
+
+//       return result;
+//     });
+
+//     const resData: AppResponse<{
+//       assessment: IAssessmentDoc[];
+//       chat: IChatDoc | null;
+//     }> = {
+//       data: {
+//         assessment,
+//         chat,
+//       },
+//       error: null,
+//     };
+//     return ctx.json(resData, 200);
+//   }
+// )
+// .get(
+//   "/chat/:id",
+//   authValidator({ permissionsTo: ["user", "coach", "admin"] }),
+//   routeValidator({
+//     schema: z.object({
+//       id: z.string(),
+//     }),
+//     target: "param",
+//   }),
+//   async (ctx) => {
+//     const { id: chatId } = ctx.req.valid("param");
+//     const reqUser = getReqUser(ctx);
+
+//     if (!reqUser) {
+//       throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+//     }
+
+//     const foundChat = await ChatModel.findById(chatId);
+
+//     if (!foundChat) {
+//       throw new HTTPException(404, { message: "Chat not found" });
+//     }
+
+//     const assessment = await AssessmentModel.find({ chat: chatId });
+
+//     const resData: AppResponse<IAssessmentDoc[]> = {
+//       data: assessment,
+//       error: null,
+//     };
+
+//     return ctx.json(resData, 200);
+//   }
+// )
 
 export default assessmentRoute;

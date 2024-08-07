@@ -17,46 +17,14 @@ import { API_ROUTE } from "@common/static/routes";
 import { PERMISSION } from "@common/static/permissions";
 
 const ROUTE = API_ROUTE.organizations;
-const ROUTE_PERMISSION = PERMISSION.organizations;
 
 const organizationsRoute = new Hono()
-  // --------------------------
-  // LIST
-  // --------------------------
-  .get(
-    "/list",
-    authValidator({ permissionsTo: ROUTE_PERMISSION.list }),
-    async (ctx) => {
-      const reqUser = getReqUser(ctx);
-
-      if (!reqUser) {
-        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
-      }
-
-      const filters: FilterQuery<IOrganizationDoc> = {};
-
-      if (reqUser.role === "coach") {
-        filters._id = reqUser.organization.toString();
-      }
-
-      const list = await OrganizationModel.find({
-        ...filters,
-      });
-
-      const resData: AppResponse<IOrganizationDoc[]> = {
-        data: list,
-        error: null,
-      };
-
-      return ctx.json(resData, 200);
-    }
-  )
   // --------------------------
   // PAGINATE
   // --------------------------
   .post(
     "/paginate",
-    authValidator({ permissionsTo: ROUTE_PERMISSION.paginate }),
+    authValidator({ permissionsTo: ROUTE.paginate.permissions }),
     routeValidator({
       schema: zPaginateRouteQueryInput,
       target: "json",
@@ -97,7 +65,7 @@ const organizationsRoute = new Hono()
       target: "param",
       schema: z.object({ id: zStringNotEmpty }),
     }),
-    authValidator({ permissionsTo: ROUTE_PERMISSION.get }),
+    authValidator({ permissionsTo: ROUTE.get.permissions }),
     async (ctx) => {
       const id = ctx.req.param("id");
 
@@ -121,7 +89,7 @@ const organizationsRoute = new Hono()
   .post(
     "/",
     routeValidator({ schema: ROUTE.create.bodySchema }),
-    authValidator({ permissionsTo: ROUTE_PERMISSION.create }),
+    authValidator({ permissionsTo: ROUTE.create.permissions }),
     async (ctx) => {
       const input = ctx.req.valid("json");
 
@@ -139,7 +107,7 @@ const organizationsRoute = new Hono()
   .put(
     "/:id",
     routeValidator({ schema: ROUTE.update.bodySchema }),
-    authValidator({ permissionsTo: ROUTE_PERMISSION.update }),
+    authValidator({ permissionsTo: ROUTE.update.permissions }),
     async (ctx) => {
       const orgId = ctx.req.param("id");
       const inputs = ctx.req.valid("json");
@@ -187,7 +155,7 @@ const organizationsRoute = new Hono()
   )
   .delete(
     "/:id",
-    authValidator({ permissionsTo: ROUTE_PERMISSION.delete }),
+    authValidator({ permissionsTo: ROUTE.delete.permissions }),
     async (ctx) => {
       const orgId = ctx.req.param("id");
 

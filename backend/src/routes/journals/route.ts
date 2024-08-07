@@ -16,7 +16,6 @@ import { API_ROUTE } from "@common/static/routes.js";
 import { PERMISSION } from "@common/static/permissions";
 
 const ROUTE = API_ROUTE.journals;
-const ROUTE_PERMISSION = PERMISSION.journals;
 
 // --------------------------
 // GET
@@ -28,7 +27,7 @@ export const journalRoute = new Hono()
       schema: z.object({ id: zStringNotEmpty }),
       target: "param",
     }),
-    authValidator({ permissionsTo: ROUTE_PERMISSION.get }),
+    authValidator({ permissionsTo: ROUTE.get.permissions }),
     async (ctx) => {
       const reqUser = getReqUser(ctx);
 
@@ -68,7 +67,7 @@ export const journalRoute = new Hono()
   // --------------------------
   .post(
     "/paginate",
-    authValidator({ permissionsTo: ROUTE_PERMISSION.paginate }),
+    authValidator({ permissionsTo: ROUTE.paginate.permissions }),
     routeValidator({
       schema: zPaginateRouteQueryInput,
       target: "json",
@@ -110,7 +109,7 @@ export const journalRoute = new Hono()
       schema: ROUTE.create.bodySchema,
     }),
     authValidator({
-      permissionsTo: ROUTE_PERMISSION.create,
+      permissionsTo: ROUTE.create.permissions,
     }),
     async (ctx) => {
       const body = ctx.req.valid("json");
@@ -158,7 +157,7 @@ export const journalRoute = new Hono()
       schema: ROUTE.update.bodySchema,
     }),
     authValidator({
-      permissionsTo: ROUTE_PERMISSION.update,
+      permissionsTo: ROUTE.update.permissions,
     }),
     async (ctx) => {
       const values = ctx.req.valid("json");
@@ -215,7 +214,7 @@ export const journalRoute = new Hono()
       target: "param",
     }),
     authValidator({
-      permissionsTo: ROUTE_PERMISSION.delete,
+      permissionsTo: ROUTE.delete.permissions,
     }),
     async (ctx) => {
       const values = ctx.req.valid("json");

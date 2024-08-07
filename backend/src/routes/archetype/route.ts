@@ -13,32 +13,39 @@ import { zPaginateRouteQueryInput } from "@common/schemas/pagination";
 import { zUpdateArchetype } from "@common/schemas/archetype/updateArchetype";
 import { getReqUser } from "@/helpers/getReqUser";
 import { FilterQuery } from "mongoose";
+import { API_ROUTE } from "@common/static/routes";
+
+const ROUTE = API_ROUTE.archetypes;
 
 const archetypeRoute = new Hono()
-  .get("/list", authValidator({ permissionsTo: ["admin"] }), async (ctx) => {
-    const reqUser = getReqUser(ctx);
+  .get(
+    ROUTE.list.path,
+    authValidator({ permissionsTo: ROUTE.list.permissions }),
+    async (ctx) => {
+      const reqUser = getReqUser(ctx);
 
-    if (!reqUser) {
-      throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      if (!reqUser) {
+        throw new HTTPException(401, { message: EXCEPTIONS.NOT_AUTHORIZED });
+      }
+
+      const list = await ArchetypeModel.find();
+
+      const resData: AppResponse<IArchetypeDoc[]> = {
+        data: list,
+        error: null,
+      };
+
+      return ctx.json(resData, 200);
     }
-
-    const list = await ArchetypeModel.find();
-
-    const resData: AppResponse<IArchetypeDoc[]> = {
-      data: list,
-      error: null,
-    };
-
-    return ctx.json(resData, 200);
-  })
+  )
   // --------------------------
   // create
   // --------------------------
   .post(
     "/",
-    authValidator({ permissionsTo: ["admin"] }),
+    authValidator({ permissionsTo: ROUTE.create.permissions }),
     routeValidator({
-      schema: zCreateArchetype,
+      schema: ROUTE.create.bodySchema,
       target: "json",
     }),
     async (ctx) => {
@@ -79,7 +86,7 @@ const archetypeRoute = new Hono()
   // --------------------------
   .get(
     "/:id",
-    authValidator({ permissionsTo: ["admin"] }),
+    authValidator({ permissionsTo: ROUTE.get.permissions }),
     routeValidator({
       schema: z.object({
         id: z.string(),
@@ -108,7 +115,7 @@ const archetypeRoute = new Hono()
   // --------------------------
   .put(
     "/:id",
-    authValidator({ permissionsTo: ["admin"] }),
+    authValidator({ permissionsTo: ROUTE.update.permissions }),
     routeValidator({
       schema: z.object({
         id: z.string(),
@@ -116,7 +123,7 @@ const archetypeRoute = new Hono()
       target: "param",
     }),
     routeValidator({
-      schema: zUpdateArchetype,
+      schema: ROUTE.update.bodySchema,
       target: "json",
     }),
     async (ctx) => {
@@ -158,7 +165,7 @@ const archetypeRoute = new Hono()
   // --------------------------
   .delete(
     "/:id",
-    authValidator({ permissionsTo: ["admin"] }),
+    authValidator({ permissionsTo: ROUTE.delete.permissions }),
     routeValidator({
       schema: z.object({
         id: z.string(),
@@ -191,7 +198,7 @@ const archetypeRoute = new Hono()
   // --------------------------
   .post(
     "/paginate",
-    authValidator({ permissionsTo: ["admin"] }),
+    authValidator({ permissionsTo: ROUTE.paginate.permissions }),
     routeValidator({
       schema: zPaginateRouteQueryInput,
       target: "json",

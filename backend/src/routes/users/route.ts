@@ -22,16 +22,15 @@ import { FilterQuery } from "mongoose";
 import { API_ROUTE } from "@common/static/routes";
 import { PERMISSION } from "@common/static/permissions";
 
-const CURRENT_API_ROUTE = API_ROUTE.users;
-const CURRENT_PERMISSION = PERMISSION.users;
+const ROUTE = API_ROUTE.users;
 
 const userRoute = new Hono()
   // --------------------------
   // PAGINATE
   // --------------------------
   .post(
-    "/paginate",
-    authValidator({ permissionsTo: CURRENT_PERMISSION.paginate }),
+    ROUTE.paginate.path,
+    authValidator({ permissionsTo: ROUTE.paginate.permissions }),
     routeValidator({
       schema: zPaginateRouteQueryInput,
       target: "json",
@@ -82,9 +81,9 @@ const userRoute = new Hono()
     }
   )
   .get(
-    "/me",
+    ROUTE.getMe.path,
     authValidator({
-      permissionsTo: CURRENT_PERMISSION.getMe,
+      permissionsTo: ROUTE.getMe.permissions,
     }),
     async (ctx) => {
       const reqUser = getReqUser(ctx);
@@ -116,7 +115,7 @@ const userRoute = new Hono()
   // --------------------------
   .get(
     "/:id",
-    authValidator({ permissionsTo: CURRENT_PERMISSION.get }),
+    authValidator({ permissionsTo: ROUTE.get.permissions }),
     async (ctx) => {
       const userId = ctx.req.param("id");
 
@@ -149,12 +148,11 @@ const userRoute = new Hono()
   // --------------------------
   .post(
     "/",
-    routeValidator({ schema: CURRENT_API_ROUTE.create.bodySchema }),
-    authValidator({ permissionsTo: CURRENT_PERMISSION.create }),
+    routeValidator({ schema: ROUTE.create.bodySchema }),
+    authValidator({ permissionsTo: ROUTE.create.permissions }),
     async (ctx) => {
       const inputs = ctx.req.valid("json");
       let resData: AppResponse<IUserDoc>;
-
 
       const reqUser = getReqUser(ctx);
 
@@ -250,9 +248,9 @@ const userRoute = new Hono()
   .put(
     "/me",
     routeValidator({
-      schema: CURRENT_API_ROUTE.updateMe.bodySchema,
+      schema: ROUTE.updateMe.bodySchema,
     }),
-    authValidator({ permissionsTo: CURRENT_PERMISSION.updateMe }),
+    authValidator({ permissionsTo: ROUTE.updateMe.permissions }),
     async (ctx) => {
       const inputs = ctx.req.valid("json");
       const reqUser = getReqUser(ctx);
@@ -269,9 +267,9 @@ const userRoute = new Hono()
   .put(
     "/:id",
     routeValidator({
-      schema: CURRENT_API_ROUTE.update.bodySchema,
+      schema: ROUTE.update.bodySchema,
     }),
-    authValidator({ permissionsTo: CURRENT_PERMISSION.update }),
+    authValidator({ permissionsTo: ROUTE.update.permissions }),
     async (ctx) => {
       const userId = ctx.req.param("id");
       const inputs = ctx.req.valid("json");
@@ -287,7 +285,7 @@ const userRoute = new Hono()
   )
   .delete(
     "/:id",
-    authValidator({ permissionsTo: CURRENT_PERMISSION.delete }),
+    authValidator({ permissionsTo: ROUTE.delete.permissions }),
     async (ctx) => {
       const userId = ctx.req.param("id");
       let resData: AppResponse<boolean>;
