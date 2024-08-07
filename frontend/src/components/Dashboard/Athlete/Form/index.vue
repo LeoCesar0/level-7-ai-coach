@@ -138,7 +138,7 @@ const handleSubmit = form.handleSubmit(async (values) => {
         :size="'icon'"
         ><ArrowRightIcon
       /></UiButton>
-      <UiButton type="submit" :disabled="!formIsValid || nextTab">Save</UiButton>
+      <UiButton type="submit" v-if="!nextTab" :disabled="!formIsValid">Save</UiButton>
     </div>
   </Form>
 </template>

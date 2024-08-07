@@ -17,30 +17,32 @@ const onSubmit = async (values: ISignIn) => {
 </script>
 <template>
   <NuxtLayout name="home-layout">
-    <h2 class="text-2xl font-medium mb-6">Sign In</h2>
-    <UiAutoForm
-      :field-config="{
-        email: {
-          label: 'Email',
-        },
-        password: {
-          label: 'Password',
-          inputProps: {
-            type: 'password',
+    <div class="mx-auto w-full max-w-[630px]" >
+      <h2 class="text-2xl font-medium mb-6">Sign In</h2>
+      <UiAutoForm
+        :field-config="{
+          email: {
+            label: 'Email',
           },
-        },
-      }"
-      :schema="zSignIn"
-      @submit="
+          password: {
+            label: 'Password',
+            inputProps: {
+              type: 'password',
+            },
+          },
+        }"
+        :schema="zSignIn"
+        @submit="
       (values) => {
         onSubmit(values as ISignIn);
       }
     "
-    >
-      <div class="mt-4">
-        <UiButton type="submit"> Submit </UiButton>
-      </div>
-    </UiAutoForm>
+      >
+        <div class="mt-4">
+          <UiButton type="submit"> Submit </UiButton>
+        </div>
+      </UiAutoForm>
+    </div>
   </NuxtLayout>
 </template>
 

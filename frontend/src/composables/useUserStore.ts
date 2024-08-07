@@ -61,7 +61,7 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
   const logout = async ({ expired }: { expired?: boolean } = {}) => {
     loading.value = true;
     try {
-      window.alert('🔌 LOG OUT')
+      // window.alert('🔌 LOG OUT')
       await firebaseAuth.signOut();
       authToken.value = "";
       currentUser.value = null;
@@ -158,12 +158,12 @@ export const useUserStore = defineStore(makeStoreKey("users"), () => {
   let unsubscribe = ref<Unsubscribe | undefined>(undefined);
   unsubscribe.value = firebaseAuth.onIdTokenChanged(async (user) => {
     if (user) {
-      window.alert("✅ HAS USER!");
+      // window.alert("✅ HAS USER!");
       const token = await user.getIdToken();
       authToken.value = token;
       await handleFetchCurrentUser();
     } else {
-      window.alert("❌ NOT HAS USER!");
+      // window.alert("❌ NOT HAS USER!");
       authToken.value = "";
       currentUser.value = null;
     }

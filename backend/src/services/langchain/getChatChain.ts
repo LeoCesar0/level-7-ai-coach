@@ -44,7 +44,7 @@ export const getChatChain = async ({
     }
     return acc;
   }, 0);
-  const isEnding = nAiResponses > aiResponseLimit;
+  const isEnding = nAiResponses >= aiResponseLimit;
 
   let relevantContextString = "";
 
@@ -73,13 +73,13 @@ export const getChatChain = async ({
 
   let templateInput: ChatTemplateInput = [["system", agentTemplate]];
 
-  if (user.archetype) {
+  if (user.archetype && !isEnding) {
     templateInput.push([
       "system",
-      `User archetype is ${user.archetype.name}. Description: ${user.archetype.description}`,
+      `Adjust your answers to match the athlete's archetype. Don't share this archetype with the athlete, just be aware of it. Athlete archetype is ${user.archetype.name}. Description: ${user.archetype.description}`,
     ]);
   }
-  if (user.athleteInfo) {
+  if (user.athleteInfo && !isEnding) {
     const infos = Object.entries(user.athleteInfo).reduce<string[]>(
       (acc, entry) => {
         if (!entry) return acc;
@@ -116,7 +116,7 @@ export const getChatChain = async ({
   if (isEnding) {
     templateInput.push([
       "system",
-      "You have reached final of this current session. You must now politely end the session, answering the athlete's last question and telling the athlete a story that fits the current session and will help the athlete. You should use real great players or philosophers as characters for this story. Add Stoicism topics and beliefs to it.",
+      "You have reached the final of this current coaching session. You must now politely end the session telling the athlete a story that fits the current session and will help the athlete. You should use real great players or philosophers as characters for this story. Add Stoicism topics and beliefs to it.",
     ]);
   }
 
