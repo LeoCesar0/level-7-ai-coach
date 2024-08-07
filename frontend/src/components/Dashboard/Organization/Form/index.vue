@@ -12,7 +12,6 @@ import {
   zUpdateOrganization,
   type IUpdateOrganization,
 } from "@common/schemas/organization/updateOrganization";
-import { API_ROUTE } from "@common/static/routes";
 
 // type T = ICreateOrganization | IUpdateOrganization;
 
@@ -25,8 +24,6 @@ type Props = {
 
 const props = defineProps<Props>();
 
-console.log("❗ props.initialValues -->", props.initialValues);
-
 const schema = props.edit ? zUpdateOrganization : zCreateOrganization;
 
 // --------------------------
@@ -34,15 +31,6 @@ const schema = props.edit ? zUpdateOrganization : zCreateOrganization;
 // --------------------------
 
 const userStore = useUserStore();
-const { currentUser } = storeToRefs(userStore);
-
-// --------------------------
-// GET ORGANIZATION OPTIONS
-// --------------------------
-
-const { data: orgRes } = await useListApi<IOrganization>({
-  url: API_ROUTE.organizations.list.url,
-});
 
 // --------------------------
 // FORM

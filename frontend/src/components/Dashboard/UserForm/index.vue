@@ -19,6 +19,7 @@ import {
 } from "@common/schemas/user/updateUserRoute";
 import type { IArchetype } from "@common/schemas/archetype/archetype";
 import { API_ROUTE } from "@common/static/routes";
+import type { IPaginationBody } from "@common/schemas/pagination";
 
 type Props =
   | {
@@ -54,12 +55,17 @@ const { currentUser } = storeToRefs(userStore);
 // GET ORGANIZATION OPTIONS
 // --------------------------
 
-const { data: orgRes } = await useListApi<IOrganization>({
-  url: API_ROUTE.organizations.list.url,
+const paginationRef = ref<IPaginationBody<IOrganization>>({
+  limit: 999,
+});
+
+const { data: orgRes } = await usePaginateApi<IOrganization>({
+  url: API_ROUTE.organizations.paginate.url,
+  bodyRef: paginationRef,
 });
 
 const organizationOptions = computed<ISelectOption[]>(() => {
-  const orgs = orgRes.value?.data ?? [];
+  const orgs = orgRes.value?.data?.list ?? [];
   return orgs.map((item) => {
     return {
       label: item.name,

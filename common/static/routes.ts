@@ -87,13 +87,6 @@ export const API_ROUTE = {
       method: "get",
       permissions: ["user", "admin", "coach"],
     },
-    list: {
-      baseUrl: "/organizations",
-      url: "/organizations/list",
-      path: "/list",
-      method: "get",
-      permissions: ["user", "admin", "coach"],
-    },
     paginate: {
       baseUrl: "/organizations",
       url: "/organizations/paginate",

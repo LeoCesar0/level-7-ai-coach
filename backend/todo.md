@@ -37,6 +37,7 @@
 - [] - Make sure disabled users and disabled teams can't access the app
 - [] - Format and prettify AI answers
 - [] - Make sure athlete can't access organizations and coach can't access other teams
+- [] - Review the Organization options when creating an user if the currentUser is a coach or whatever
 
 **TEST**
 
