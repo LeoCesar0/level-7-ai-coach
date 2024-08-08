@@ -2,19 +2,28 @@ import { ROUTES_LIST, type IRoute } from "~/static/routes";
 
 export const getCurrentRoute = () => {
   const route = useRoute();
-  const strengthByRoute = new Map();
+  const matchesByRoute = new Map();
 
   const currentPage = ROUTES_LIST.reduce<IRoute | undefined>((acc, entry) => {
     if (entry.href === "/" && route.path !== "/") {
       return acc;
     }
 
-    const strength = entry.href.split("/").length;
-    strengthByRoute.set(entry.href, strength);
+    const entrySplit = entry.href.split("/");
+    const routeSplits = route.path.split("/");
 
-    const currentStrength = acc ? strengthByRoute.get(acc.href) : -1;
+    let nMatches = 0;
 
-    if (route.path.includes(entry.href) && strength > currentStrength) {
+    for (const item of routeSplits) {
+      if (entrySplit.find((_item) => _item === item)) {
+        nMatches += 1;
+      }
+    }
+    matchesByRoute.set(entry.href, nMatches);
+
+    const currentMaxMatch = acc ? matchesByRoute.get(acc.href) : -1;
+
+    if (nMatches > currentMaxMatch) {
       return entry;
     }
 

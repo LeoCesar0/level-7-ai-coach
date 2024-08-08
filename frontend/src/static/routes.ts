@@ -119,6 +119,7 @@ export const ROUTE = {
     label: "User Assessments",
     permissions: API_ROUTE.assessments.paginate.permissions,
     name: "userAssessments",
+    backsTo: "users",
   },
   createUser: {
     href: "/dashboard/users/create",
