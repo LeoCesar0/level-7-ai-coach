@@ -10,8 +10,9 @@ import {
   UsersIcon,
   UserIcon,
   MedalIcon,
+  BarChartIcon,
 } from "lucide-vue-next";
-import { PERMISSION } from "@common/static/permissions";
+import { API_ROUTE } from "@common/static/routes";
 
 export const ROUTES = [
   "home",
@@ -47,6 +48,10 @@ export const ROUTES = [
   "journals",
   "createJournal",
   "editJournal",
+  // --------------------------
+  // assessment
+  // --------------------------
+  "assessments",
 ] as const;
 
 export type Route = (typeof ROUTES)[number];
@@ -91,7 +96,7 @@ export const ROUTE: Record<Route, IRoute> = {
   chats: {
     href: "/dashboard/chat",
     label: "Chats",
-    permissions: PERMISSION.chats.paginate,
+    permissions: API_ROUTE.chats.paginate.permissions,
     inMenuFor: ["user"],
     icon: IconChat,
     name: "chats",
@@ -103,29 +108,29 @@ export const ROUTE: Record<Route, IRoute> = {
   users: {
     href: "/dashboard/users",
     label: "Users",
-    permissions: PERMISSION.users.paginate,
-    inMenuFor: PERMISSION.users.paginate,
+    permissions: API_ROUTE.users.paginate.permissions,
+    inMenuFor: API_ROUTE.users.paginate.permissions,
     icon: UsersIcon,
     name: "users",
   },
   createUser: {
     href: "/dashboard/users/create",
     label: "Create User",
-    permissions: PERMISSION.users.create,
+    permissions: API_ROUTE.users.create.permissions,
     backsTo: "users",
     name: "createUser",
   },
   editUser: {
     href: "/dashboard/users/edit",
     label: "Edit User",
-    permissions: PERMISSION.users.update,
+    permissions: API_ROUTE.users.update.permissions,
     backsTo: "users",
     name: "editUser",
   },
   viewUser: {
     href: "/dashboard/users/view",
     label: "View User",
-    permissions: PERMISSION.users.get,
+    permissions: API_ROUTE.users.get.permissions,
     backsTo: "users",
     name: "viewUser",
   },
@@ -135,7 +140,7 @@ export const ROUTE: Record<Route, IRoute> = {
   organizations: {
     href: "/dashboard/organizations",
     label: "Teams",
-    permissions: PERMISSION.organizations.paginate,
+    permissions: API_ROUTE.organizations.paginate.permissions,
     inMenuFor: ["admin"],
     icon: MedalIcon,
     name: "organizations",
@@ -143,21 +148,21 @@ export const ROUTE: Record<Route, IRoute> = {
   createOrganization: {
     href: "/dashboard/organizations/create",
     label: "Create Team",
-    permissions: PERMISSION.organizations.create,
+    permissions: API_ROUTE.organizations.create.permissions,
     backsTo: "organizations",
     name: "createOrganization",
   },
   editOrganization: {
     href: "/dashboard/organizations/edit",
     label: "Edit Team",
-    permissions: PERMISSION.organizations.update,
+    permissions: API_ROUTE.organizations.update.permissions,
     backsTo: "organizations",
     name: "editOrganization",
   },
   viewOrganization: {
     href: "/dashboard/organizations/view",
     label: "View Team",
-    permissions: PERMISSION.organizations.get,
+    permissions: API_ROUTE.organizations.get.permissions,
     backsTo: "organizations",
     name: "viewOrganization",
   },
@@ -167,22 +172,22 @@ export const ROUTE: Record<Route, IRoute> = {
   archetypes: {
     href: "/dashboard/archetypes",
     label: "Archetypes",
-    permissions: PERMISSION.archetypes.paginate,
-    inMenuFor: PERMISSION.archetypes.paginate,
+    permissions: API_ROUTE.archetypes.paginate.permissions,
+    inMenuFor: API_ROUTE.archetypes.paginate.permissions,
     icon: BookUserIcon,
     name: "archetypes",
   },
   createArchetype: {
     href: "/dashboard/archetypes/create",
     label: "Create Archetype",
-    permissions: PERMISSION.archetypes.create,
+    permissions: API_ROUTE.archetypes.create.permissions,
     backsTo: "archetypes",
     name: "createArchetype",
   },
   editArchetype: {
     href: "/dashboard/archetypes/edit",
     label: "Edit Archetype",
-    permissions: PERMISSION.archetypes.update,
+    permissions: API_ROUTE.archetypes.update.permissions,
     backsTo: "archetypes",
     name: "editArchetype",
   },
@@ -192,7 +197,7 @@ export const ROUTE: Record<Route, IRoute> = {
   journals: {
     href: "/dashboard/journals",
     label: "Journals",
-    permissions: PERMISSION.journals.paginate,
+    permissions: API_ROUTE.journals.paginate.permissions,
     inMenuFor: ["user"],
     icon: IconJournal,
     name: "journals",
@@ -200,16 +205,27 @@ export const ROUTE: Record<Route, IRoute> = {
   createJournal: {
     href: "/dashboard/journals/create",
     label: "Create Journal",
-    permissions: PERMISSION.journals.create,
+    permissions: API_ROUTE.journals.create.permissions,
     backsTo: "journals",
     name: "createJournal",
   },
   editJournal: {
     href: "/dashboard/journals/edit",
     label: "Edit Journal",
-    permissions: PERMISSION.journals.update,
+    permissions: API_ROUTE.journals.update.permissions,
     backsTo: "journals",
     name: "editJournal",
+  },
+  // --------------------------
+  // ASSESSMENT
+  // --------------------------
+  assessments: {
+    href: "/dashboard/assessments",
+    label: "Assessments",
+    permissions: API_ROUTE.assessments.paginate.permissions,
+    inMenuFor: ["admin"],
+    icon: BarChartIcon,
+    name: "assessments",
   },
   // --------------------------
   // other
@@ -217,8 +233,8 @@ export const ROUTE: Record<Route, IRoute> = {
   profile: {
     href: "/dashboard/profile",
     label: "Profile",
-    permissions: PERMISSION.users.updateMe,
-    inMenuFor: PERMISSION.users.updateMe,
+    permissions: API_ROUTE.users.updateMe.permissions,
+    inMenuFor: API_ROUTE.users.updateMe.permissions,
     name: "profile",
     icon: UserIcon,
   },
