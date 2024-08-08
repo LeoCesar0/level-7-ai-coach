@@ -71,13 +71,23 @@ const getDropdownItems = (item: TUser): IDropdownItem[] => {
     permissions: API_ROUTE.users["update"].permissions,
     user: currentUser.value,
   });
-  return [
+  const items: IDropdownItem[] = [
     {
       label: "View",
       action: () => {
         navigateTo(ROUTE.viewUser.href + `/${item._id}`);
       },
     },
+    ...(item.role === "user"
+      ? [
+          {
+            label: "Assessments",
+            action: () => {
+              navigateTo(ROUTE.userAssessments.href.replace("[id]", item._id));
+            },
+          },
+        ]
+      : []),
     {
       label: "Edit",
       action: () => {
@@ -94,6 +104,8 @@ const getDropdownItems = (item: TUser): IDropdownItem[] => {
       disabled: !canDelete,
     },
   ];
+
+  return items;
 };
 
 const columns: ColumnDef<TUser>[] = [

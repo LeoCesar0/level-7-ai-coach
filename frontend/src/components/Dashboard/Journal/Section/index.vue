@@ -14,6 +14,7 @@ const props = defineProps<Props>();
 const goBackLink = computed(() => {
   const page = getCurrentRoute();
   const backsToPage = page?.backsTo ? ROUTE[page.backsTo] : undefined;
+
   return backsToPage?.href ?? "";
 });
 </script>

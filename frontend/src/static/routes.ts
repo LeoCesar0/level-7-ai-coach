@@ -29,6 +29,7 @@ export const ROUTES = [
   "createUser",
   "editUser",
   "viewUser",
+  "userAssessments",
   // --------------------------
   // orgs
   // --------------------------
@@ -68,7 +69,7 @@ export type IRoute = {
   backsTo?: Route;
 };
 
-export const ROUTE: Record<Route, IRoute> = {
+export const ROUTE = {
   home: {
     href: "/",
     label: "Home",
@@ -112,6 +113,12 @@ export const ROUTE: Record<Route, IRoute> = {
     inMenuFor: API_ROUTE.users.paginate.permissions,
     icon: UsersIcon,
     name: "users",
+  },
+  userAssessments: {
+    href: `/dashboard/users/[id]/assessments`,
+    label: "User Assessments",
+    permissions: API_ROUTE.assessments.paginate.permissions,
+    name: "userAssessments",
   },
   createUser: {
     href: "/dashboard/users/create",
@@ -246,6 +253,6 @@ export const ROUTE: Record<Route, IRoute> = {
     icon: IconSettings,
     name: "settings",
   },
-};
+} satisfies Record<Route, IRoute>;
 
 export const ROUTES_LIST: IRoute[] = Object.values(ROUTE);
