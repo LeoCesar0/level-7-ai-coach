@@ -20,7 +20,6 @@ import { COLLECTION } from "@/lib/langchain/@static";
 import { SEARCH_INDEXES } from "@/handlers/dbIndexes/setup";
 import { FilterQuery } from "mongoose";
 import { API_ROUTE } from "@common/static/routes";
-import { PERMISSION } from "@common/static/permissions";
 
 const ROUTE = API_ROUTE.users;
 

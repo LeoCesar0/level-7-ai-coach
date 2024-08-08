@@ -4,30 +4,15 @@ import { verifyUserPermission } from "./verifyUserPermission";
 import type { IRouteApiAction } from "../static/methods";
 import type { IPermissionItem } from "../static/permissions";
 import { verifyMutatePermission } from "./verifyMutatePermission";
+import type { IRole } from "@common/schemas/roles";
 
 export const verifyRoutePermission = ({
   user,
-  routePermissions,
-  item,
-  action,
+  permissions,
 }: {
   user: Nullish<IUser | IUserFull>;
-  routePermissions: IPermissionItem;
-  item: Record<string, any>;
-  action: IRouteApiAction;
+  permissions?: IRole[];
 }) => {
-  const isMutating =
-    action === "create" || action === "update" || action === "delete";
-  if (isMutating) {
-    return verifyMutatePermission({
-      item,
-      action,
-      routePermissions,
-      user,
-    });
-  }
-
-  const permissions = routePermissions[action];
   const permissionToRoute = verifyUserPermission({
     user,
     routePermissions: permissions,
@@ -35,10 +20,6 @@ export const verifyRoutePermission = ({
 
   if (!permissionToRoute) {
     return false;
-  }
-
-  if (!isMutating) {
-    return permissionToRoute;
   }
 
   return true;

@@ -55,23 +55,16 @@ const getDropdownItems = (item: IOrganization): IDropdownItem[] => {
       },
     });
   };
-  const canView = verifyRoutePermission({
+
+  const canDelete = verifyMutatePermission({
     item,
-    routePermissions: PERMISSION.organizations,
+    permissions: API_ROUTE.organizations["delete"].permissions,
     user: currentUser.value,
-    action: "get",
   });
-  const canDelete = verifyRoutePermission({
+  const canEdit = verifyMutatePermission({
     item,
-    routePermissions: PERMISSION.organizations,
+    permissions: API_ROUTE.organizations["update"].permissions,
     user: currentUser.value,
-    action: "delete",
-  });
-  const canEdit = verifyRoutePermission({
-    item,
-    routePermissions: PERMISSION.organizations,
-    user: currentUser.value,
-    action: "update",
   });
 
   const items: IDropdownItem[] = [
@@ -80,7 +73,6 @@ const getDropdownItems = (item: IOrganization): IDropdownItem[] => {
       action: () => {
         navigateTo(ROUTE.viewOrganization.href + `/${item._id}`);
       },
-      disabled: !canView,
     },
     {
       label: "Edit",

@@ -13,7 +13,6 @@ import { FilterQuery } from "mongoose";
 import { getReqUser } from "@/helpers/getReqUser.js";
 import { EXCEPTIONS } from "@common/static/exceptions.js";
 import { API_ROUTE } from "@common/static/routes.js";
-import { PERMISSION } from "@common/static/permissions";
 
 const ROUTE = API_ROUTE.journals;
 

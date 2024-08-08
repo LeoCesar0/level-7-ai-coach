@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { verifyMutatePermission } from "@common/helpers/verifyMutatePermission";
 import { verifyRoutePermission } from "@common/helpers/verifyRoutePermission";
 import type { IOrganization } from "@common/schemas/organization/organization";
 import { PERMISSION } from "@common/static/permissions";
@@ -27,11 +28,10 @@ const { status, data } = await useGetApi<IOrganization>({
 const item = computed(() => data.value?.data);
 
 const canEdit = computed(() => {
-  return verifyRoutePermission({
+  return verifyMutatePermission({
     item,
-    routePermissions: PERMISSION.organizations,
+    permissions:API_ROUTE.organizations['update'].permissions,
     user: currentUser.value,
-    action: "update",
   });
 });
 </script>

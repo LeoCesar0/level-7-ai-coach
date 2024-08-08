@@ -11,6 +11,7 @@ import { verifyRoutePermission } from "@common/helpers/verifyRoutePermission";
 import { API_ROUTE } from "@common/static/routes";
 import type { IJournal } from "@common/schemas/journal/journal";
 import TableDraftCell from "@/components/Table/DraftCell.vue";
+import { verifyMutatePermission } from "@common/helpers/verifyMutatePermission";
 
 const userStore = useUserStore();
 const { currentUser } = storeToRefs(userStore);
@@ -55,17 +56,15 @@ const getDropdownItems = (item: IJournal): IDropdownItem[] => {
       },
     });
   };
-  const canDelete = verifyRoutePermission({
+  const canDelete = verifyMutatePermission({
     item,
-    routePermissions: PERMISSION.journals,
+    permissions: API_ROUTE.journals["delete"].permissions,
     user: currentUser.value,
-    action: "delete",
   });
-  const canEdit = verifyRoutePermission({
+  const canEdit = verifyMutatePermission({
     item,
-    routePermissions: PERMISSION.journals,
+    permissions: API_ROUTE.journals["update"].permissions,
     user: currentUser.value,
-    action: "update",
   });
 
   const items: IDropdownItem[] = [

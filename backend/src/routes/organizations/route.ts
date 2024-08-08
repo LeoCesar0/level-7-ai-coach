@@ -14,7 +14,6 @@ import { FilterQuery } from "mongoose";
 import { zPaginateRouteQueryInput } from "@common/schemas/pagination";
 import { getReqUser } from "@/helpers/getReqUser";
 import { API_ROUTE } from "@common/static/routes";
-import { PERMISSION } from "@common/static/permissions";
 
 const ROUTE = API_ROUTE.organizations;
 

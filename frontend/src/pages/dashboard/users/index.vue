@@ -13,6 +13,10 @@ import { type IDropdownItem } from "../../../@schemas/dropdown";
 import { makeDeleteToastOptions } from "~/helpers/fetch/toastOptions";
 import { API_ROUTE } from "@common/static/routes";
 import FancyLink from "@components/FancyLink/index.vue";
+import { verifyMutatePermission } from "@common/helpers/verifyMutatePermission";
+
+const userStore = useUserStore();
+const { currentUser } = storeToRefs(userStore);
 
 type TUser = IUserFull;
 
@@ -42,33 +46,44 @@ const handleDeleteUser = async (id: string) => {
 
 const { openDialog } = useAlertDialog();
 
-const getDropdownItems = (user: TUser): IDropdownItem[] => {
+const getDropdownItems = (item: TUser): IDropdownItem[] => {
   const handleDeleteDialog = () => {
     openDialog({
-      title: "Delete " + user.name,
+      title: "Delete " + item.name,
       message:
         "This action cannot be undone. Are you sure you want to delete this user?",
       confirm: {
         label: "Delete",
         variant: "danger",
         action: async () => {
-          handleDeleteUser(user._id);
+          handleDeleteUser(item._id);
         },
       },
     });
   };
+  const canDelete = verifyMutatePermission({
+    item,
+    permissions: API_ROUTE.users["delete"].permissions,
+    user: currentUser.value,
+  });
+  const canEdit = verifyMutatePermission({
+    item,
+    permissions: API_ROUTE.users["update"].permissions,
+    user: currentUser.value,
+  });
   return [
     {
       label: "View",
       action: () => {
-        navigateTo(ROUTE.viewUser.href + `/${user._id}`);
+        navigateTo(ROUTE.viewUser.href + `/${item._id}`);
       },
     },
     {
       label: "Edit",
       action: () => {
-        navigateTo(ROUTE.editUser.href + `/${user._id}`);
+        navigateTo(ROUTE.editUser.href + `/${item._id}`);
       },
+      disabled: !canEdit,
     },
     {
       label: "Delete",
@@ -76,6 +91,7 @@ const getDropdownItems = (user: TUser): IDropdownItem[] => {
         handleDeleteDialog();
       },
       variant: "danger",
+      disabled: !canDelete,
     },
   ];
 };

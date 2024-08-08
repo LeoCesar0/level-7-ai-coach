@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { verifyMutatePermission } from "@common/helpers/verifyMutatePermission";
 import { verifyRoutePermission } from "@common/helpers/verifyRoutePermission";
 import type { IUserFull } from "@common/schemas/user/user";
 import { PERMISSION } from "@common/static/permissions";
@@ -27,11 +28,10 @@ const { status, data } = await useGetApi<IUserFull>({
 const user = computed(() => data.value?.data);
 
 const canEdit = computed(() => {
-  return verifyRoutePermission({
+  return verifyMutatePermission({
     item: user,
-    routePermissions: PERMISSION.organizations,
+    permissions: API_ROUTE.users["update"].permissions,
     user: currentUser.value,
-    action: "update",
   });
 });
 </script>

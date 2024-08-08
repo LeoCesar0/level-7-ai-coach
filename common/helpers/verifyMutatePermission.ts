@@ -11,6 +11,8 @@ import {
 import type { Nullish } from "../type/helpers";
 import { verifyUserPermission } from "./verifyUserPermission";
 import type { IPermissionItem } from "../static/permissions";
+import type { IRoute } from "~/static/routes";
+import type { IRole } from "@common/schemas/roles";
 
 export const itemIsUser = (item: any): item is IUser | IUserFull => {
   return zUser.safeParse(item).success || zUserFull.safeParse(item).success;
@@ -28,16 +30,13 @@ export const itemIsOrgAdmin = (item: any): item is IOrganization => {
 
 export const verifyMutatePermission = ({
   user,
-  routePermissions,
+  permissions,
   item,
-  action,
 }: {
   user: Nullish<IUser | IUserFull>;
-  routePermissions: IPermissionItem;
   item: Record<string, any>;
-  action: "create" | "update" | "delete";
+  permissions?: IRole[];
 }) => {
-  const permissions = routePermissions[action];
   const permissionToRoute = verifyUserPermission({
     user,
     routePermissions: permissions,

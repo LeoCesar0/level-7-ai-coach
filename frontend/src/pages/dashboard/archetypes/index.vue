@@ -54,17 +54,15 @@ const getDropdownItems = (item: IArchetype): IDropdownItem[] => {
       },
     });
   };
-  const canDelete = verifyRoutePermission({
+  const canDelete = verifyMutatePermission({
     item,
-    routePermissions: PERMISSION.archetypes,
+    permissions: API_ROUTE.archetypes["delete"].permissions,
     user: currentUser.value,
-    action: "delete",
   });
-  const canEdit = verifyRoutePermission({
+  const canEdit = verifyMutatePermission({
     item,
-    routePermissions: PERMISSION.archetypes,
+    permissions: API_ROUTE.archetypes["update"].permissions,
     user: currentUser.value,
-    action: "update",
   });
 
   const items: IDropdownItem[] = [
