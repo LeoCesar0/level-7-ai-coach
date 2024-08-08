@@ -1,8 +1,16 @@
 <script setup lang="ts">
+import type { IAssessment } from "@common/schemas/assessment/assessment";
+import type { IPaginationBody } from "@common/schemas/pagination";
 import type { IUserFull } from "@common/schemas/user/user";
 import { API_ROUTE } from "@common/static/routes";
 import { ROUTE } from "@static/routes";
 import { getSingleParams } from "~/helpers/getSingleParams";
+import { LineChart, type BaseChartProps } from "@/components/ui/chart-line";
+import type { IAssessmentKey } from "@common/schemas/assessment/enums";
+import { beautifyObjectName } from "~/components/ui/auto-form/utils";
+import { formatDate } from "~/helpers/formatDate";
+import { parseToDate } from "@common/helpers/parseToDate";
+import { format } from "date-fns";
 
 const userStore = useUserStore();
 const { currentUser } = storeToRefs(userStore);
@@ -12,11 +20,63 @@ const { fetchApi } = useFetchApi();
 const id = getSingleParams("id");
 const isLoading = ref(false);
 
-const { status, data: userRes } = await useGetApi<IUserFull>({
+const { data: userRes } = await useGetApi<IUserFull>({
   url: API_ROUTE.users.get.url(id),
   loadingRefs: [isLoading],
 });
 const user = computed(() => userRes.value?.data);
+
+const key = ref<IAssessmentKey>("moodAndMindsetRating");
+
+const paginateAssessmentRef = computed<IPaginationBody<IAssessment>>(() => {
+  return {
+    filters: {
+      user: user.value?._id,
+      section: "effort",
+      // key: key.value,
+    },
+    sortBy: 'date',
+    sortOrder: 'asc'
+  };
+});
+
+const {
+  data: paginationResult,
+  error,
+  status,
+  refresh,
+} = await usePaginateApi<IAssessment>({
+  bodyRef: paginateAssessmentRef,
+  url: API_ROUTE.assessments.paginate.url,
+  immediate: true,
+});
+
+const assessments = computed(() => {
+  const list = paginationResult.value?.data?.list || [];
+
+  return list.map((item) => {
+    const date = parseToDate(item.date);
+    const formattedDate = item.date ? format(date, "MM/dd hh:mm") : "";
+    return {
+      date: formattedDate,
+      score: item.value,
+      key: `Topic: ${beautifyObjectName(item.key)}`,
+      section: `Section: ${beautifyObjectName(item.section)}`,
+      justification: `Justification: ${item.justification}`,
+    };
+  });
+});
+
+watch(paginateAssessmentRef, () => {
+  refresh();
+});
+
+const yFormatter: BaseChartProps<any>["yFormatter"] = (tick, i) => {
+  return tick.toString();
+};
+const xFormatter: BaseChartProps<any>["xFormatter"] = (tick, i, ticks) => {
+  return assessments.value[tick as number]?.["date"] ?? "";
+};
 </script>
 
 <template>
@@ -27,6 +87,17 @@ const user = computed(() => userRes.value?.data);
           <UiButton>Something</UiButton>
         </NuxtLink>
       </template>
+      <p>key: {{ beautifyObjectName(key) }}</p>
+      <LineChart
+        :data="assessments"
+        index="date"
+        :categories="['score']"
+        :y-formatter="yFormatter"
+        :xFormatter="xFormatter"
+      />
+      <!-- <div>
+        {{ paginationResult?.data }} -->
+      <!-- </div> -->
     </DashboardSection>
   </NuxtLayout>
 </template>

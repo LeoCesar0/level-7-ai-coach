@@ -5,7 +5,7 @@ type Options = {
 };
 
 export const formatDate = (
-  date: string | Date | undefined,
+  date: string | Date | number | undefined,
   { time = false }: Options = {}
 ) => {
   if (!date) return "";

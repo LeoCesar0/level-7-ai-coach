@@ -43,6 +43,40 @@
     --chart-5: 27 87% 67%;
 
     // --------------------------
+    // vis charts
+    // --------------------------
+    --vis-color0: #4d8cfd;
+    --vis-color1: #ff6b7e;
+    --vis-color2: #f4b83e;
+    --vis-color3: #a6cc74;
+    --vis-color4: #00c19a;
+    --vis-color5: #6859be;
+    --vis-dark-color0: #4d8cfd;
+    --vis-dark-color1: #ff6b7e;
+    --vis-dark-color2: #ffc16d;
+    --vis-dark-color3: #a6cc74;
+    --vis-dark-color4: #00c19a;
+    --vis-dark-color5: #7887e0;
+    -vis-color-main: #4d8cfd;
+    --vis-color-main-light: #d0e0fe;
+    --vis-color-main-dark: #3c588a;
+    --vis-color-grey: #2a2a2a;
+
+    --vis-tooltip-background-color: none !important;
+    --vis-tooltip-text-color: var(--muted-foreground) !important;
+    --vis-tooltip-shadow-color: rgba(0, 0, 0, 0.95) !important;
+    --vis-tooltip-backdrop-filter: none !important;
+    --vis-tooltip-padding: none !important;
+
+    --vis-primary-color: var(--primary) !important;
+    --vis-secondary-color: var(--secondary) !important;
+    --vis-text-color: var(--foreground) !important;
+
+    --vis-dark-tooltip-text-color: var(--muted-foreground) !important;
+    --vis-dark-tooltip-border-color: var(--border) !important;
+    --vis-dark-tooltip-shadow-color: rgba(0, 0, 0, 0.95) !important;
+
+    // --------------------------
     // custom
     // --------------------------
     --drawer: 202 25% 53%;
