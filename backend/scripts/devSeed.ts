@@ -407,6 +407,8 @@ const run = async () => {
   const nDays = differenceInBusinessDays(now, startingDate);
   const assessmentsPerModule = 12;
 
+  const assessmentUserId = normalUser._id;
+
   for (const dayIndex of Array.from({ length: nDays }).map(
     (_, index) => index
   )) {
@@ -415,7 +417,7 @@ const run = async () => {
 
     const chatOfTheDay = (
       await ChatModel.create({
-        user: normalUser._id,
+        user: assessmentUserId,
         date: day,
         closed: true,
         assessed: true,
@@ -426,7 +428,7 @@ const run = async () => {
 
     const journalOfTheDay = (
       await JournalModel.create({
-        user: normalUser._id,
+        user: assessmentUserId,
         date: day,
         assessed: true,
         shouldAssess: false,
@@ -461,6 +463,8 @@ const run = async () => {
           section: section,
           createdAt: day,
           updatedAt: day,
+          date: day,
+          user: assessmentUserId,
         });
       }
       // --------------------------
@@ -479,6 +483,8 @@ const run = async () => {
         section: _section ?? "others",
         createdAt: day,
         updatedAt: day,
+        date: day,
+        user: assessmentUserId,
       });
     }
   }

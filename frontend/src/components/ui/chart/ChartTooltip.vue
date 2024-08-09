@@ -19,7 +19,7 @@ defineProps<{
         {{ title }}
       </CardTitle>
     </CardHeader>
-    <CardContent class="p-3 min-w-[180px] flex flex-col gap-1">
+    <CardContent class="p-3 min-w-[180px] max-w-[50vw] flex flex-col gap-1">
       <div
         v-for="(item, key) in data"
         :key="key"
@@ -38,7 +38,7 @@ defineProps<{
           </span>
         </div>
         <p class="font-semibold ml-4" v-if="item.name">
-          {{ `${item.name ? `${beautifyObjectName(item.name || "")}:` : ""}` }}
+          {{ beautifyObjectName(item.name || "") }}
           {{ " "
           }}<span class="font-regular text-muted-foreground">{{
             item.value

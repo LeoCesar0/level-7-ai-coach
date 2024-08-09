@@ -8,6 +8,7 @@ import { type LazyFetcherCommonOptions } from "../../../@types/lazyFetcher";
 
 interface Options<T> extends LazyFetcherCommonOptions {
   bodyRef: MaybeRefOrGetter<IPaginationBody<T>>;
+  noLimit?: boolean;
 }
 
 export default function usePaginateApi<T>({
@@ -18,6 +19,7 @@ export default function usePaginateApi<T>({
   loadingRefs,
   onError,
   onSuccess,
+  noLimit,
 }: Options<T>) {
   const method = "POST";
   const key = slugify(`${url}-${method}`).replace("/", "");
@@ -26,10 +28,14 @@ export default function usePaginateApi<T>({
     () => {
       const _url = parsePath({ url: url });
       const body = toValue(bodyRef);
+
       return nuxtApiFetcher<IPaginationResult<T>>({
         method: method,
         url: _url,
-        body: body,
+        body: {
+          ...body,
+          limit: noLimit ? 99999 : body.limit,
+        },
         toastOptions,
         loadingRefs,
         onError,

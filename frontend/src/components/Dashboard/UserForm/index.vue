@@ -56,7 +56,7 @@ const { currentUser } = storeToRefs(userStore);
 // --------------------------
 
 const paginationRef = ref<IPaginationBody<IOrganization>>({
-  limit: 999,
+  limit: 9999,
 });
 
 const { data: orgRes } = await usePaginateApi<IOrganization>({

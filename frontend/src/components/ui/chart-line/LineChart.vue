@@ -26,7 +26,8 @@ const props = withDefaults(
     }
   >(),
   {
-    curveType: CurveType.MonotoneX,
+    // curveType: CurveType.MonotoneX,
+    curveType: CurveType.Linear,
     filterOpacity: 0.2,
     margin: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
     showXAxis: true,
