@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   ASSESSMENT_SECTIONS,
+  ASSESSMENT_TOPIC,
   zAssessmentKey,
   zAssessmentSection,
 } from "../assessment/enums";

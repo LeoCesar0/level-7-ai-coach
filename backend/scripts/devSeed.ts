@@ -27,6 +27,11 @@ import { ICreateArchetype } from "@common/schemas/archetype/createArchetype";
 import { ArchetypeModel } from "@/routes/archetype/schemas/archetype";
 import { faker } from "@faker-js/faker";
 import { IRole } from "@common/schemas/roles";
+import { clamp } from "../../common/helpers/clamp";
+import { zAssessmentKey } from "@common/schemas/assessment/enums";
+import { addDays, differenceInBusinessDays, subMonths } from "date-fns";
+import { getRandomOfArray } from "../../common/test/helpers/getRandomOfArray";
+import { ATHLETE_QUESTIONS } from "@common/schemas/user/athleteInfo";
 
 dotenv.config({ path: "../.env" });
 
@@ -392,6 +397,48 @@ const run = async () => {
   //   }
   // );
   // await memoryCol.insertMany(memoryMessages);
+
+  // --------------------------
+  // ASSESSMENTS
+  // --------------------------
+
+  const now = new Date();
+  const startingDate = subMonths(now, 1);
+  const nDays = differenceInBusinessDays(now, startingDate);
+  const assessmentsPerDay = 12;
+
+  for (const dayIndex of Array.from({ length: nDays }).map(
+    (_, index) => index
+  )) {
+    const day = addDays(startingDate, dayIndex);
+
+    const chatOfTheDay = (
+      await ChatModel.create({
+        user: normalUser._id,
+        date: new Date().toISOString(),
+        _id: "6689d09602953bab4d753649",
+      })
+    ).toObject();
+
+    for (const assess of Array.from({ length: assessmentsPerDay })) {
+      const entryAssessmentKey = getRandomOfArray(zAssessmentKey.options);
+
+      const found = ATHLETE_QUESTIONS.find(
+        (item) => item.key === entryAssessmentKey
+      );
+      const section = found?.section || "others";
+
+      await AssessmentModel.create({
+        chat: chat._id,
+        justification: faker.lorem.sentences(),
+        value: clamp(Math.floor(Math.random() * 11), 0, 10),
+        key: entryAssessmentKey,
+        section: section,
+        createdAt: day,
+        updatedAt: day,
+      });
+    }
+  }
 
   // --------------------------
 
