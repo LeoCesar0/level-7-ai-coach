@@ -405,35 +405,78 @@ const run = async () => {
   const now = new Date();
   const startingDate = subMonths(now, 1);
   const nDays = differenceInBusinessDays(now, startingDate);
-  const assessmentsPerDay = 12;
+  const assessmentsPerModule = 12;
 
   for (const dayIndex of Array.from({ length: nDays }).map(
     (_, index) => index
   )) {
+    // For each day
     const day = addDays(startingDate, dayIndex);
 
     const chatOfTheDay = (
       await ChatModel.create({
         user: normalUser._id,
-        date: new Date().toISOString(),
-        _id: "6689d09602953bab4d753649",
+        date: day,
+        closed: true,
+        assessed: true,
+        createdAt: day,
+        updatedAt: day,
       })
     ).toObject();
 
-    for (const assess of Array.from({ length: assessmentsPerDay })) {
-      const entryAssessmentKey = getRandomOfArray(zAssessmentKey.options);
+    const journalOfTheDay = (
+      await JournalModel.create({
+        user: normalUser._id,
+        date: day,
+        assessed: true,
+        shouldAssess: false,
+        title: faker.lorem.sentence(),
+        text: faker.lorem.text(),
+        draft: false,
+        createdAt: day,
+        updatedAt: day,
+      })
+    ).toObject();
 
-      const found = ATHLETE_QUESTIONS.find(
-        (item) => item.key === entryAssessmentKey
-      );
-      const section = found?.section || "others";
+    for (const [modelIndex, model] of [
+      chatOfTheDay,
+      journalOfTheDay,
+    ].entries()) {
+      // For each model
+      for (const assess of Array.from({ length: assessmentsPerModule })) {
+        // Create N assessments
+        const entryAssessmentKey = getRandomOfArray(zAssessmentKey.options);
+
+        const found = ATHLETE_QUESTIONS.find(
+          (item) => item.key === entryAssessmentKey
+        );
+        const section = found?.section || "others";
+
+        await AssessmentModel.create({
+          chat: modelIndex === 0 ? model._id : undefined,
+          journal: modelIndex === 1 ? model._id : undefined,
+          justification: faker.lorem.sentences(),
+          value: clamp(Math.floor(Math.random() * 11), 0, 10),
+          key: entryAssessmentKey,
+          section: section,
+          createdAt: day,
+          updatedAt: day,
+        });
+      }
+      // --------------------------
+      // ALWAYS ADD THE FOLLOWING ASSESSMENT
+      // --------------------------
+      const _section = ATHLETE_QUESTIONS.find(
+        (item) => item.key === "handlingFailure"
+      )?.section;
 
       await AssessmentModel.create({
-        chat: chat._id,
+        chat: modelIndex === 0 ? model._id : undefined,
+        journal: undefined,
         justification: faker.lorem.sentences(),
         value: clamp(Math.floor(Math.random() * 11), 0, 10),
-        key: entryAssessmentKey,
-        section: section,
+        key: "motivationalFactors",
+        section: _section ?? "others",
         createdAt: day,
         updatedAt: day,
       });
